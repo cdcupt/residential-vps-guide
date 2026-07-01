@@ -69,8 +69,8 @@
   </div>
 </header>
 
-<main class="wrap narrow prose" style="padding-bottom:3rem">
-  <p>Enter your boxes (there's example data to start — overwrite it). Get each box's <a href="choose.html#bench">benchmark numbers</a> from the ten-minute method, then hit <strong>Compute scores</strong>. Everything runs in your browser; nothing is sent anywhere.</p>
+<main class="wrap" style="padding-bottom:3rem">
+  <p class="prose">Enter your boxes (there's example data to start — overwrite it). Get each box's <a href="choose.html#bench">benchmark numbers</a> from the ten-minute method, then hit <strong>Compute scores</strong>. Everything runs in your browser; nothing is sent anywhere.</p>
 
   <div class="tool-wrap">
     <table class="io">
@@ -99,6 +99,7 @@
 
   <div id="results" style="margin-top:2rem"></div>
 
+  <div class="prose">
   <h2 style="margin-top:2.4rem">How the score works</h2>
   <p>For each metric, your best box scores 100 and the others score in proportion (<span class="mono">value ÷ column-best × 100</span>). A box's <strong>Overall</strong> is the average of its metric scores — every axis counts equally. Leave a cell blank to exclude that metric from a box's average. <strong>Units don't matter</strong> as long as they're consistent within a column — scores are relative to your best box — so raw sysbench <span class="mono">MiB/s</span> is fine even under a "GB/s" header.</p>
   <div class="callout tip">
@@ -108,6 +109,7 @@
   <div class="callout dont">
     <div class="ct">✕ Watch the capped disk</div>
     If a residential box's disk read and write both sit near a flat ~2,000 IOPS, that's a provider cap, not real speed — enter it honestly, but don't read it as raw capability.
+  </div>
   </div>
 </main>
 
