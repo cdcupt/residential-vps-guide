@@ -204,6 +204,21 @@ pre .k{color:oklch(78% 0.12 264)}  /* keyword/accent */
 .mtable thead th{font-family:var(--mono); font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); border-bottom:1px solid var(--line-2)}
 .mtable td:first-child{font-weight:600}
 .mtable .mono{font-family:var(--mono); font-size:.85em; color:var(--ink-2)}
+/* diagrams / figures */
+.fig{margin:1.7rem 0; background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--shadow-sm); padding:1.4rem 1.1rem 1rem; overflow-x:auto}
+.fig svg{display:block; margin:0 auto; height:auto; min-width:0}
+.fig figcaption{margin:1rem auto 0; max-width:62ch; text-align:center; color:var(--ink-soft); font-size:.82rem; line-height:1.5}
+.dg-box{fill:var(--card); stroke:var(--line-2); stroke-width:1.4}
+.dg-box.a{fill:var(--accent-bg); stroke:var(--accent)}
+.dg-box.e{fill:var(--exit-bg); stroke:var(--exit)}
+.dg-box.dash{fill:var(--card); stroke:var(--exit); stroke-dasharray:5 4}
+.dg-t{font-family:var(--sans); font-weight:650; fill:var(--ink)}
+.dg-s{font-family:var(--sans); fill:var(--ink-soft)}
+.dg-m{font-family:var(--mono); fill:var(--accent-ink)}
+.dg-me{font-family:var(--mono); fill:var(--exit-ink)}
+.dg-arw{stroke:var(--ink-soft); stroke-width:1.6; fill:none}
+.dg-lbl{font-family:var(--mono); font-size:10px; letter-spacing:.04em; fill:var(--ink-soft); text-transform:uppercase}
+
 /* checklist */
 .check{list-style:none; padding:0; margin:1.4rem 0}
 .check li{position:relative; padding:.5rem 0 .5rem 2rem; border-bottom:1px solid var(--line)}

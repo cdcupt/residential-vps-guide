@@ -56,9 +56,33 @@
       <section id="arch">
         <h2><span class="n">01</span>The architecture</h2>
         <p>One idea does all the work: <strong>separate the fast part from the trusted part.</strong> Datacenter boxes are fast but their IPs are flagged as hosting. Residential boxes have trusted IPs but weak everything else. So you chain them.</p>
-        <pre><span class="k">you</span>  →  <span class="k">entry relay</span> (datacenter)  →  <span class="k">exit</span> (residential)  →  the internet
-     encrypted tunnel        forwards traffic          egresses on a
-     terminates here         over a private hop        real home-ISP IP</pre>
+        <figure class="fig">
+          <svg viewBox="0 0 900 200" style="width:100%;min-width:660px" role="img" aria-label="Your client encrypts into a datacenter entry relay, which forwards over a private hop to a residential exit, which egresses on a real home-ISP IP.">
+            <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-soft)"/></marker></defs>
+            <rect class="dg-box"      x="6"   y="66" width="140" height="68"  rx="11"/>
+            <rect class="dg-box a"    x="236" y="50" width="178" height="100" rx="12"/>
+            <rect class="dg-box e"    x="504" y="50" width="178" height="100" rx="12"/>
+            <rect class="dg-box dash" x="772" y="66" width="122" height="68"  rx="11"/>
+            <line class="dg-arw" x1="146" y1="100" x2="230" y2="100" marker-end="url(#ah)"/>
+            <line class="dg-arw" x1="414" y1="100" x2="500" y2="100" marker-end="url(#ah)"/>
+            <line class="dg-arw" x1="682" y1="100" x2="768" y2="100" marker-end="url(#ah)"/>
+            <g transform="translate(180,80)"><rect x="0" y="0" width="8" height="6" rx="1" fill="var(--exit-ink)"/><path d="M1.4 0 v-1.6 a2.6 2.6 0 0 1 5.2 0 V0" fill="none" stroke="var(--exit-ink)" stroke-width="1.1"/></g>
+            <text class="dg-lbl" x="200" y="90" text-anchor="middle">encrypted</text>
+            <text class="dg-lbl" x="457" y="90" text-anchor="middle">private hop</text>
+            <text class="dg-lbl" x="725" y="90" text-anchor="middle">egress</text>
+            <text class="dg-t"  x="76"  y="97"  text-anchor="middle" font-size="15">You</text>
+            <text class="dg-s"  x="76"  y="115" text-anchor="middle" font-size="10.5">phone / laptop</text>
+            <text class="dg-t"  x="325" y="86"  text-anchor="middle" font-size="15">Entry relay</text>
+            <text class="dg-s"  x="325" y="104" text-anchor="middle" font-size="10.5">datacenter · fast backbone</text>
+            <text class="dg-m"  x="325" y="124" text-anchor="middle" font-size="9.5">terminates the tunnel</text>
+            <text class="dg-t"  x="593" y="86"  text-anchor="middle" font-size="14">Residential exit</text>
+            <text class="dg-s"  x="593" y="104" text-anchor="middle" font-size="10.5">real home ISP line</text>
+            <text class="dg-me" x="593" y="124" text-anchor="middle" font-size="9.5">makes the outbound call</text>
+            <text class="dg-t"  x="833" y="97"  text-anchor="middle" font-size="13">The internet</text>
+            <text class="dg-s"  x="833" y="115" text-anchor="middle" font-size="10">sees a home IP</text>
+          </svg>
+          <figcaption>The client only ever talks to the relay. The relay forwards over a private hop to the exit, which makes the final connection — so the site sees the exit's <strong>home-ISP address</strong>, never the datacenter or you.</figcaption>
+        </figure>
         <ul>
           <li>Your client only ever connects to the <strong>relay</strong> — a fast, stable datacenter box on a good backbone. It's the single public entry point.</li>
           <li>The relay forwards your decrypted traffic over a private hop to a <strong>residential exit</strong>, which makes the final outbound connection.</li>
@@ -79,9 +103,26 @@
           <li><strong>Borrowed handshake</strong> — Reality proxies the TLS handshake of a real, popular HTTPS site that isn't yours. In config the target is <span class="mono">dest</span> (the site whose handshake is borrowed) and <span class="mono">serverNames</span> is the SNI your client presents — point both at the same real, unrelated site that stays up. A strong choice matters: weak or suspicious ones get probed and blocked faster on hostile networks.</li>
           <li><strong>One inbound per exit</strong> — give each exit its own port + keypair on the relay, and a routing rule sending that inbound's traffic to that exit. Clean, and you can add/remove exits independently.</li>
         </ul>
-        <pre><span class="c"># conceptual: one Reality inbound per exit, each routed to its exit's proxy</span>
-inbound  :<span class="k">PORT_A</span>  (Reality, Vision, borrowed-SNI)  ── route ──▶  outbound → EXIT_A:PROXY
-inbound  :<span class="k">PORT_B</span>  (Reality, Vision, borrowed-SNI)  ── route ──▶  outbound → EXIT_B:PROXY</pre>
+        <figure class="fig">
+          <svg viewBox="0 0 820 224" style="width:100%;min-width:560px" role="img" aria-label="One Reality inbound per exit: the relay routes each port to its own residential exit proxy.">
+            <defs><marker id="ah2" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-soft)"/></marker></defs>
+            <rect class="dg-box a" x="20" y="67" width="200" height="90" rx="12"/>
+            <text class="dg-t" x="120" y="99"  text-anchor="middle" font-size="15">Entry relay</text>
+            <text class="dg-s" x="120" y="117" text-anchor="middle" font-size="10.5">Reality · Vision</text>
+            <text class="dg-m" x="120" y="136" text-anchor="middle" font-size="9.5">one inbound per exit</text>
+            <line class="dg-arw" x1="220" y1="98"  x2="571" y2="66"  marker-end="url(#ah2)"/>
+            <line class="dg-arw" x1="220" y1="128" x2="571" y2="166" marker-end="url(#ah2)"/>
+            <text class="dg-lbl" x="330" y="70"  text-anchor="middle">:PORT_A → route</text>
+            <text class="dg-lbl" x="330" y="156" text-anchor="middle">:PORT_B → route</text>
+            <rect class="dg-box e" x="575" y="30"  width="220" height="72" rx="11"/>
+            <text class="dg-t"  x="685" y="61" text-anchor="middle" font-size="14">Exit A</text>
+            <text class="dg-me" x="685" y="81" text-anchor="middle" font-size="9.5">gost proxy · home IP</text>
+            <rect class="dg-box e" x="575" y="130" width="220" height="72" rx="11"/>
+            <text class="dg-t"  x="685" y="161" text-anchor="middle" font-size="14">Exit B</text>
+            <text class="dg-me" x="685" y="181" text-anchor="middle" font-size="9.5">gost proxy · home IP</text>
+          </svg>
+          <figcaption>Give each exit its own port + keypair on the relay, plus a routing rule. Add or remove exits independently — a client picks its exit just by choosing which port to connect to.</figcaption>
+        </figure>
         <div class="callout dont">
           <div class="ct">✕ Ports are not free</div>
           Every new inbound port needs its firewall opened <em>and</em> the tunnel reloaded. Forget the firewall rule and the handshake silently fails with no error. On some networks, non-standard ports draw active probing — prefer ordinary-looking ones.
