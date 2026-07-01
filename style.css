@@ -106,7 +106,32 @@ h3{font-size:clamp(1.2rem, 1rem + .8vw, 1.55rem); margin:2.2em 0 .4em; letter-sp
 @media(max-width:640px){ .brand .g{display:none} }
 
 /* ---------- hero ---------- */
-.hero{padding:clamp(3rem,7vw,6rem) 0 clamp(2rem,4vw,3.5rem)}
+.hero{padding:clamp(3rem,7vw,6rem) 0 clamp(2rem,4vw,3.5rem); position:relative; overflow:hidden}
+.hero .wrap{position:relative; z-index:2}
+/* decorative network-of-nodes background */
+.hero-bg{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+.hero-bg svg{position:absolute; top:-6%; right:-4%; width:min(940px,66%); height:auto}
+.hero-bg .edge{stroke:var(--accent); stroke-width:1.1; fill:none; opacity:.2}
+.hero-bg .node{fill:var(--paper); stroke:var(--accent); stroke-width:1.5; opacity:.42}
+.hero-bg .node.a{fill:var(--accent); stroke:none; opacity:.9}
+.hero-bg .node.e{fill:var(--exit); stroke:none; opacity:.9}
+.hero-bg .halo{fill:none; stroke-width:1.4}
+.hero-bg .halo.a{stroke:var(--accent)} .hero-bg .halo.e{stroke:var(--exit)}
+.hero-bg .pulse{transform-box:fill-box; transform-origin:center; opacity:.55; animation:nodepulse 3.6s ease-in-out infinite}
+.hero-bg .pulse.d2{animation-delay:1.2s} .hero-bg .pulse.d3{animation-delay:2.4s}
+@keyframes nodepulse{0%,100%{opacity:.3; transform:scale(1)} 50%{opacity:.9; transform:scale(1.55)}}
+/* soft radial glow behind the mesh + gentle fade behind the headline (left) only */
+.hero-bg::before{content:""; position:absolute; top:-12%; right:-6%; width:56%; height:80%;
+  background:radial-gradient(closest-side, var(--accent-bg), transparent 72%); opacity:.7}
+.hero-bg::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(92deg, var(--paper) 15%, transparent 48%)}
+
+/* ---------- social ---------- */
+.social{display:flex; flex-wrap:wrap; gap:.55rem; margin-top:1rem}
+.social a{display:inline-flex; align-items:center; gap:.45rem; padding:.42rem .8rem; border:1px solid var(--line-2);
+  border-radius:999px; color:var(--ink-2); text-decoration:none; font-size:.85rem; font-weight:600; transition:.15s}
+.social a:hover{border-color:var(--ink); color:var(--ink); background:var(--card); transform:translateY(-1px)}
+.social svg{width:16px; height:16px; fill:currentColor}
 .hero h1{margin:.2em 0 .4em; max-width:16ch}
 .hero .lede{max-width:56ch; margin:0 0 1.8rem}
 .hero-cta{display:flex; flex-wrap:wrap; gap:.8rem; align-items:center}
