@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VPS score tool — Residential VPS Guide</title>
+<meta name="description" content="Turn raw VPS benchmark numbers into one comparable 0–100 score. Enter your boxes, get an instant ranking using an equal-weight normalized method.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380..600&family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .tool-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-md); background:var(--card); box-shadow:var(--shadow-sm); margin:1.6rem 0}
+  table.io{width:100%; border-collapse:collapse; font-size:.86rem; min-width:760px}
+  table.io th{font-family:var(--mono); font-size:.62rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft);
+    text-align:right; padding:.7rem .55rem; border-bottom:1px solid var(--line-2); white-space:nowrap; background:var(--paper-2)}
+  table.io th:first-child,table.io th.lbl{text-align:left}
+  table.io th small{display:block; font-weight:400; color:var(--ink-soft); opacity:.8}
+  table.io td{padding:.35rem .4rem; border-bottom:1px solid var(--line)}
+  table.io tr:last-child td{border-bottom:none}
+  table.io input{width:100%; border:1px solid transparent; background:transparent; font-family:var(--mono); font-size:.86rem;
+    text-align:right; padding:.35rem .45rem; border-radius:6px; color:var(--ink)}
+  table.io input.name{text-align:left; font-family:var(--sans); font-weight:600}
+  table.io input:hover{border-color:var(--line-2)}
+  table.io input:focus{outline:none; box-shadow:0 0 0 3px var(--accent-bg); border-color:var(--accent); background:var(--paper)}
+  .rm{border:none; background:transparent; color:var(--ink-soft); cursor:pointer; font-size:1.1rem; line-height:1; padding:.2rem .4rem; border-radius:6px}
+  .rm:hover{color:var(--warn); background:var(--warn-bg)}
+  .tool-actions{display:flex; flex-wrap:wrap; gap:.7rem; align-items:center; margin:.4rem 0 0}
+  .res-table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:640px}
+  .res-table th{font-family:var(--mono); font-size:.62rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); text-align:right; padding:.7rem .6rem; border-bottom:1px solid var(--line-2)}
+  .res-table th:nth-child(-n+2){text-align:left}
+  .res-table td{padding:.7rem .6rem; border-bottom:1px solid var(--line); text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums}
+  .res-table td:nth-child(2){text-align:left; font-family:var(--sans); font-weight:650}
+  .res-table td.sc{font-weight:800; font-size:1.02rem}
+  .res-table td.sc.hi{background:var(--accent-bg); color:var(--accent-ink)}
+  .res-table td.sc.lo{background:var(--warn-bg); color:var(--warn)}
+  .res-table td.rk{color:var(--ink-soft)}
+  .bar{height:7px; border-radius:99px; background:var(--line); overflow:hidden; min-width:60px}
+  .bar>i{display:block; height:100%; background:var(--accent)}
+  #results:empty{display:none}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg class="mk" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1.2" y="1.2" width="29.6" height="29.6" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+        <circle cx="9" cy="16" r="3" fill="var(--accent)"/><circle cx="23" cy="16" r="3" fill="var(--exit)"/>
+        <path d="M12 16 H20" stroke="var(--ink-2)" stroke-width="1.6" stroke-dasharray="2 2"/>
+      </svg>
+      Residential VPS<span class="g">&nbsp;Guide</span>
+    </a>
+    <div class="nav-links">
+      <a href="choose.html">Choose a VPS</a>
+      <a href="build.html">Build a network</a>
+      <a href="tool.html" aria-current="page">Score tool</a>
+      <a class="cta" href="choose.html">How to benchmark →</a>
+    </div>
+  </div>
+</nav>
+
+<header class="guide-hero">
+  <div class="wrap">
+    <p class="eyebrow">Tool</p>
+    <h1>Score a VPS</h1>
+    <p class="lede">Raw benchmark numbers are hard to compare across boxes and units. This turns them into one <strong>0–100 score</strong> — each metric normalized to the best box you entered, then averaged with equal weight. Same method for everyone; no thumb on the scale.</p>
+  </div>
+</header>
+
+<main class="wrap narrow prose" style="padding-bottom:3rem">
+  <p>Enter your boxes (there's example data to start — overwrite it). Get each box's <a href="choose.html#bench">benchmark numbers</a> from the ten-minute method, then hit <strong>Compute scores</strong>. Everything runs in your browser; nothing is sent anywhere.</p>
+
+  <div class="tool-wrap">
+    <table class="io">
+      <thead>
+        <tr>
+          <th class="lbl" scope="col">VPS</th>
+          <th scope="col">CPU 1-core<small>eps</small></th>
+          <th scope="col">CPU all-core<small>eps</small></th>
+          <th scope="col">Mem read<small>GB/s</small></th>
+          <th scope="col">Mem write<small>GB/s</small></th>
+          <th scope="col">Net &darr;<small>Mbps</small></th>
+          <th scope="col">Disk read<small>IOPS</small></th>
+          <th scope="col">Disk write<small>IOPS</small></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div class="tool-actions">
+    <button class="btn btn-primary" id="compute">Compute scores</button>
+    <button class="btn btn-ghost" id="addrow">+ Add VPS</button>
+    <button class="btn btn-ghost" id="reset">Reset examples</button>
+  </div>
+
+  <div id="results" style="margin-top:2rem"></div>
+
+  <h2 style="margin-top:2.4rem">How the score works</h2>
+  <p>For each metric, your best box scores 100 and the others score in proportion (<span class="mono">value ÷ column-best × 100</span>). A box's <strong>Overall</strong> is the average of its metric scores — every axis counts equally. Leave a cell blank to exclude that metric from a box's average. <strong>Units don't matter</strong> as long as they're consistent within a column — scores are relative to your best box — so raw sysbench <span class="mono">MiB/s</span> is fine even under a "GB/s" header.</p>
+  <div class="callout tip">
+    <div class="ct">▲ Read it in context</div>
+    Overall is a <em>balance</em> score. A box can win on raw disk yet trail overall if its CPU and network lag. Sort by the axis you actually care about, too — a great all-rounder isn't always the right pick for a single job.
+  </div>
+  <div class="callout dont">
+    <div class="ct">✕ Watch the capped disk</div>
+    If a residential box's disk read and write both sit near a flat ~2,000 IOPS, that's a provider cap, not real speed — enter it honestly, but don't read it as raw capability.
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <div class="brand" style="font-size:1.05rem;margin-bottom:.5rem">Residential VPS Guide</div>
+      <p class="disc">An independent, vendor-neutral field guide. No affiliation with any provider, no affiliate links. Methods and anonymized findings only — never anyone's live infrastructure.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="index.html">Home</a> · <a href="choose.html">Choose a VPS</a> · <a href="build.html">Build a network</a> · <a href="tool.html">Score tool</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var METRICS = [
+    {k:'st',l:'CPU single-core'}, {k:'mt',l:'CPU all-core'}, {k:'memr',l:'memory read'}, {k:'memw',l:'memory write'},
+    {k:'net',l:'network download'}, {k:'dr',l:'disk read'}, {k:'dw',l:'disk write'}
+  ];
+  // illustrative starter data (generic — NOT any real host)
+  var EXAMPLES = [
+    {name:'Box A · datacenter',      v:[1400, 3000, 42, 24, 2000, 65000, 58000]},
+    {name:'Box B · residential',     v:[600,  5300, 44, 26, 570,  100000,100000]},
+    {name:'Box C · budget resi',     v:[300,  600,  18, 13, 100,  2000,  2000]}
+  ];
+  var rowsEl = document.getElementById('rows');
+
+  function makeRow(name, vals){
+    var tr = document.createElement('tr');
+    var cells = '<td><input class="name" type="text" aria-label="VPS name" value="'+ (name||'') +'" placeholder="name"></td>';
+    for (var i=0;i<7;i++){
+      var val = (vals && vals[i]!=null) ? vals[i] : '';
+      cells += '<td><input type="number" min="0" step="any" aria-label="'+METRICS[i].l+'" data-m="'+METRICS[i].k+'" value="'+val+'"></td>';
+    }
+    cells += '<td><button class="rm" title="Remove" aria-label="Remove row">×</button></td>';
+    tr.innerHTML = cells;
+    tr.querySelector('.rm').addEventListener('click', function(){ tr.remove(); });
+    return tr;
+  }
+  function load(data){
+    rowsEl.innerHTML = '';
+    data.forEach(function(r){ rowsEl.appendChild(makeRow(r.name, r.v)); });
+  }
+
+  function compute(scroll){
+    var rows = [].slice.call(rowsEl.querySelectorAll('tr')).map(function(tr){
+      var name = (tr.querySelector('.name').value || 'unnamed').trim();
+      var v = {};
+      tr.querySelectorAll('input[type=number]').forEach(function(inp){
+        var n = parseFloat(inp.value);
+        v[inp.dataset.m] = (isFinite(n) && n>0) ? n : null;
+      });
+      return {name:name, v:v};
+    }).filter(function(r){ return METRICS.some(function(m){ return r.v[m.k]!=null; }); });
+
+    if (rows.length < 1){ document.getElementById('results').innerHTML =
+      '<p style="color:var(--ink-soft)">Enter at least one box with a number.</p>'; return; }
+
+    var max = {};
+    METRICS.forEach(function(m){
+      max[m.k] = Math.max.apply(null, rows.map(function(r){ return r.v[m.k]||0; }));
+    });
+    rows.forEach(function(r){
+      var parts = METRICS.filter(function(m){ return r.v[m.k]!=null && max[m.k]>0; })
+        .map(function(m){ return r.v[m.k]/max[m.k]*100; });
+      r.overall = parts.length ? Math.round(parts.reduce(function(a,b){return a+b;},0)/parts.length) : 0;
+    });
+    rows.sort(function(a,b){ return b.overall - a.overall; });
+
+    // median of overall for hi/lo tint
+    var ov = rows.map(function(r){return r.overall;}).sort(function(a,b){return a-b;});
+    var med = ov.length%2 ? ov[(ov.length-1)/2] : (ov[ov.length/2-1]+ov[ov.length/2])/2;
+    var html = '<div class="tool-wrap"><table class="res-table"><thead><tr>'+
+      '<th scope="col">#</th><th scope="col">VPS</th><th scope="col" style="text-align:left">Overall / 100</th><th scope="col"></th></tr></thead><tbody>';
+    rows.forEach(function(r, i){
+      var cls = r.overall>med ? ' hi' : (r.overall<med ? ' lo' : '');
+      html += '<tr><td class="rk">'+(i+1)+'</td><td>'+esc(r.name)+'</td>'+
+        '<td class="sc'+cls+'">'+r.overall+'</td>'+
+        '<td style="width:40%"><div class="bar"><i style="width:'+Math.max(4,r.overall)+'%"></i></div></td></tr>';
+    });
+    html += '</tbody></table></div><p style="color:var(--ink-soft);font-size:.85rem">Best per column scores 100; Overall = equal-weight average of the metrics you entered. Above-median overall in blue, below-median in red.</p>';
+    document.getElementById('results').innerHTML = html;
+    if (scroll) document.getElementById('results').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+  document.getElementById('addrow').addEventListener('click', function(){ rowsEl.appendChild(makeRow('', null)); });
+  document.getElementById('reset').addEventListener('click', function(){ load(EXAMPLES); document.getElementById('results').innerHTML=''; });
+  document.getElementById('compute').addEventListener('click', function(){ compute(true); });
+  load(EXAMPLES);
+  compute(false);
+})();
+</script>
+</body>
+</html>

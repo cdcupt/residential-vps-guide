@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to choose a VPS — Residential VPS Guide</title>
+<meta name="description" content="Read the specs that matter, spot throttled disks and oversubscribed CPUs, judge residential-IP quality, and benchmark any VPS in ten minutes before you buy.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380..600&family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg class="mk" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1.2" y="1.2" width="29.6" height="29.6" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+        <circle cx="9" cy="16" r="3" fill="var(--accent)"/><circle cx="23" cy="16" r="3" fill="var(--exit)"/>
+        <path d="M12 16 H20" stroke="var(--ink-2)" stroke-width="1.6" stroke-dasharray="2 2"/>
+      </svg>
+      Residential VPS<span class="g">&nbsp;Guide</span>
+    </a>
+    <div class="nav-links">
+      <a href="choose.html" aria-current="page">Choose a VPS</a>
+      <a href="build.html">Build a network</a>
+      <a href="tool.html">Score tool</a>
+      <a class="cta" href="build.html">Next: build →</a>
+    </div>
+  </div>
+</nav>
+
+<header class="guide-hero">
+  <div class="wrap">
+    <p class="eyebrow">Guide 01 · Select</p>
+    <h1>How to choose a VPS</h1>
+    <p class="lede">Spec sheets are marketing. This is how to see through them — pick a box that isn't secretly throttled, judge residential-IP quality, and prove it with a ten-minute benchmark before you pay.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="guide">
+    <aside class="toc" aria-label="On this page">
+      <div class="tt">On this page</div>
+      <a href="#fork">1 · The first fork</a>
+      <a href="#specs">2 · Reading the spec sheet</a>
+      <a href="#ip">3 · Residential-IP quality</a>
+      <a href="#bench">4 · Benchmark before you buy</a>
+      <a href="#flags">5 · Red flags</a>
+      <a href="#checklist">6 · Decision checklist</a>
+    </aside>
+
+    <div class="gbody prose">
+
+      <section id="fork">
+        <h2><span class="n">01</span>The first fork: residential or datacenter?</h2>
+        <p>Before any spec, answer one question: <strong>does your traffic need to look like a home user, or just be fast?</strong> That single fork decides everything else.</p>
+        <table class="mtable">
+          <thead><tr><th>Need</th><th>Pick</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Websites, APIs, apps, backups</td><td>Datacenter</td><td>Far more compute, memory, disk and bandwidth per dollar. The IP being flagged as "hosting" is irrelevant — nobody's checking.</td></tr>
+            <tr><td>Look like a real person (scraping, ad verification, social ops, region-locked access)</td><td>Residential exit</td><td>A genuine consumer-ISP address (Comcast, Spectrum, Verizon, Cox…) that anti-fraud systems trust. Weak hardware, but that's not the point.</td></tr>
+            <tr><td>Both — speed <em>and</em> a clean home IP</td><td>Both, chained</td><td>A fast datacenter <em>relay</em> in front of a residential <em>exit</em>. That's the whole second half of this guide.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout tip">
+          <div class="ct">▲ The trap</div>
+          People buy an expensive residential VPS expecting datacenter performance, or a cheap datacenter VPS expecting a clean residential IP. Decide which axis you're paying for <em>first</em>, then optimize only that one.
+        </div>
+      </section>
+
+      <section id="specs">
+        <h2><span class="n">02</span>Reading the spec sheet — what matters, what's a lie</h2>
+        <p>Providers list numbers that sound impressive and hide the ones that hurt. Here's what each line actually tells you.</p>
+        <table class="mtable">
+          <thead><tr><th>The spec says</th><th>What it really means</th></tr></thead>
+          <tbody>
+            <tr><td>vCPU count</td><td>A <em>share</em> of cores, not cores. "4 vCPU" on an oversold host can be slower than "2 vCPU" elsewhere. Count means nothing without a per-core benchmark.</td></tr>
+            <tr><td>CPU model</td><td>Often <span class="mono">masked</span> (a generic "QEMU Virtual CPU" or bare "Skylake"). A masked CPU can be secretly great <em>or</em> a decade-old Xeon — you can't tell without running it.</td></tr>
+            <tr><td>"NVMe SSD"</td><td>The <em>device</em> is fast; your <em>allowance</em> may not be. Many budget tiers cap you to a few thousand IOPS regardless of the disk underneath.</td></tr>
+            <tr><td>Bandwidth ("1 Gbps port")</td><td>The <em>port</em> speed, not your sustained throughput. Real transfer is set by peering, contention, and sometimes a soft per-VM cap.</td></tr>
+            <tr><td>RAM</td><td>The one number that's usually honest. Still worth confirming the <em>bandwidth</em> if you do memory-heavy work.</td></tr>
+            <tr><td>Location / "Los Angeles"</td><td>Where the <em>company</em> is, not always where the <em>IP geolocates</em>. Registrant-address artifacts routinely put a box on the map a few states from where it physically sits.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout dont">
+          <div class="ct">✕ Don't trust</div>
+          vCPU count, "NVMe", "1 Gbps", and marketing CPU names — in isolation. Every one of them can be true on paper and useless in practice.
+        </div>
+        <div class="callout do">
+          <div class="ct">✓ Do trust</div>
+          Numbers <em>you</em> measured, on <em>that</em> box, with the same method every time. The next section is how.
+        </div>
+      </section>
+
+      <section id="ip">
+        <h2><span class="n">03</span>Residential-IP quality (if you're buying an exit)</h2>
+        <p>For an exit, the hardware barely matters — the <strong>IP's reputation</strong> is the product. Two boxes on the same "residential" plan can be night-and-day. Check four things:</p>
+        <ul>
+          <li><strong>Real ISP, real ASN.</strong> Look up the IP's autonomous system. A genuine eyeball ISP — a big consumer broadband/cable/fiber network (Comcast, Charter/Spectrum, Verizon, Cox, CenturyLink…) — is what you want. A hosting ASN dressed up as "residential" is not.</li>
+          <li><strong>"Residential VPS" ≠ home line.</strong> Some providers rent VPS on IP blocks that <em>register</em> as an ISP but are really datacenter allocations (netname hints like <span class="mono">*-CGNT</span>, registrant under a transit carrier). Sophisticated anti-fraud detects these as non-residential.</li>
+            <li><strong>Reputation score.</strong> Run the IP through a fraud/abuse scorer. A low abuse score and no "proxy/hosting/mobile" flags is the goal. A brand-new residential IP that's already flagged has been abused by whoever had it before you.</li>
+          <li><strong>Geo sanity.</strong> Confirm the IP geolocates where you expect. MaxMind-based lookups lag reality and inherit registrant addresses — verify with more than one source.</li>
+        </ul>
+        <div class="callout tip">
+          <div class="ct">▲ Ranking rule of thumb</div>
+          Large consumer ISPs blend in best (huge, clean subscriber pools). Regional ISPs are fine. A "residential VPS" on a transit-owned block is the weakest — usable, but detectable.
+        </div>
+      </section>
+
+      <section id="bench">
+        <h2><span class="n">04</span>Benchmark before you buy — the ten-minute method</h2>
+        <p>Most providers offer an hourly or trial box. Spin one up, run the same four tests you'd run on every candidate, then destroy it. Identical commands each time is the whole trick — that's what makes numbers <em>comparable</em>.</p>
+
+        <h3>CPU — single- and multi-core</h3>
+        <pre><span class="c"># same params every time; "events per second" is your score</span>
+sudo apt install -y sysbench
+sysbench cpu --cpu-max-prime=20000 --threads=<span class="k">1</span> --time=10 run   <span class="c"># single-core</span>
+sysbench cpu --cpu-max-prime=20000 --threads=<span class="k">$(nproc)</span> --time=10 run <span class="c"># all-core</span></pre>
+
+        <h3>Memory bandwidth</h3>
+        <pre>sysbench memory --memory-block-size=1M --memory-total-size=10G --memory-oper=read  run
+sysbench memory --memory-block-size=1M --memory-total-size=10G --memory-oper=write run</pre>
+
+        <h3>Disk — 4K random IOPS (where the caps hide)</h3>
+        <pre>sudo apt install -y fio
+fio --name=r --filename=./t --size=256M --direct=1 --ioengine=libaio \
+    --iodepth=16 --bs=4k --rw=<span class="k">randread</span>  --runtime=10 --time_based --group_reporting
+<span class="c"># repeat with --rw=randwrite, then: rm -f ./t</span></pre>
+        <p style="font-size:.92rem;color:var(--ink-2)">That's for <strong>KVM</strong>. On container-virtualized boxes (OpenVZ/LXC — common in the cheap-residential tier), <span class="mono">libaio</span> or <span class="mono">O_DIRECT</span> are often missing and fio will abort; swap <span class="mono">--ioengine=psync</span> and drop <span class="mono">--direct=1</span> (page-cache will flatter the numbers, so read them as a ceiling).</p>
+
+        <h3>Network — real download throughput</h3>
+        <pre><span class="c"># bytes/sec ×8 ÷ 1e6 = Mbps</span>
+curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
+     'https://speed.cloudflare.com/__down?bytes=524288000'</pre>
+        <p style="font-size:.92rem;color:var(--ink-2)">Use a big payload (500&nbsp;MB+) and run it 2–3 times. On a gigabit box a small download finishes in a fraction of a second — too fast to escape TCP slow-start, so it <em>under</em>-reports exactly the fast links you're trying to rank.</p>
+
+        <div class="callout do">
+          <div class="ct">✓ Turn it into one number</div>
+          Score each metric as a percentage of the best box you've tested, then average them. A single 0–100 rating makes "which VPS is better overall" a glance instead of an argument. The <a href="tool.html">score tool</a> does this for you.
+        </div>
+      </section>
+
+      <section id="flags">
+        <h2><span class="n">05</span>Red flags the benchmark exposes</h2>
+        <ul>
+          <li><strong>The ~2,000-IOPS wall.</strong> Disk read <em>and</em> write landing on the same suspiciously round number (~2,000) is a provider QoS cap, not a slow disk. Budget residential tiers love this. Real NVMe does tens of thousands.</li>
+          <li><strong>Oversubscription.</strong> A CPU score far below the model's spec, or that swings run-to-run, means you're sharing a packed host. Test at a few different hours.</li>
+          <li><strong>Bandwidth throttle.</strong> A "1 Gbps" box that tops out at a suspiciously flat ~50 or ~100 Mbps has a soft per-VM cap.</li>
+          <li><strong>Burst vs. sustained.</strong> A short disk test can flatter a box that's fast for two seconds then collapses. If it matters, run 60–120s.</li>
+          <li><strong>Geo mismatch.</strong> The IP maps somewhere you didn't expect — a problem for region-locked use cases.</li>
+        </ul>
+        <div class="callout dont">
+          <div class="ct">✕ The lesson</div>
+          A cheap VPS and a pricey one can differ <strong>50× on the axis you care about</strong> — and the spec sheet will show them as near-identical. Only your own numbers tell the truth.
+        </div>
+      </section>
+
+      <section id="checklist">
+        <h2><span class="n">06</span>Decision checklist</h2>
+        <ul class="check">
+          <li>Decided the axis I'm paying for: <strong>speed</strong> (datacenter) or <strong>clean IP</strong> (residential) — or both, chained.</li>
+          <li>Benchmarked a trial box with the identical four tests (CPU, memory, disk IOPS, network).</li>
+          <li>Confirmed disk isn't capped (IOPS not pinned to a round number).</li>
+          <li>Confirmed CPU is stable across a couple of hours (not oversold).</li>
+          <li>For an exit: verified a real consumer ISP/ASN, a clean reputation score, and sane geolocation.</li>
+          <li>Turned the numbers into one 0–100 score and compared candidates side by side.</li>
+        </ul>
+        <p>Got your box? The next guide wires it into a real network.</p>
+        <div class="next-cards">
+          <a class="track exit" href="build.html" style="box-shadow:none">
+            <span class="edge" aria-hidden="true"></span>
+            <span class="num">02 — BUILD</span>
+            <h3 style="font-size:1.25rem">Build a VPS network →</h3>
+            <p style="margin:0">Chain a relay to residential exits, securely.</p>
+          </a>
+          <a class="track" href="tool.html" style="box-shadow:none">
+            <span class="edge" aria-hidden="true"></span>
+            <span class="num">TOOL</span>
+            <h3 style="font-size:1.25rem">Score a VPS →</h3>
+            <p style="margin:0">Turn your benchmarks into one number.</p>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <div class="brand" style="font-size:1.05rem;margin-bottom:.5rem">Residential VPS Guide</div>
+      <p class="disc">An independent, vendor-neutral field guide. No affiliation with any provider, no affiliate links. Methods and anonymized findings only — never anyone's live infrastructure.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="index.html">Home</a> · <a href="choose.html">Choose a VPS</a> · <a href="build.html">Build a network</a> · <a href="tool.html">Score tool</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

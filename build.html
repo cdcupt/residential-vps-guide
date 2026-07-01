@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to build a VPS network — Residential VPS Guide</title>
+<meta name="description" content="Chain a fast datacenter relay to cheap residential exits with an encrypted tunnel, lock it down, and operate it without ever cutting off your own access.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380..600&family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg class="mk" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1.2" y="1.2" width="29.6" height="29.6" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+        <circle cx="9" cy="16" r="3" fill="var(--accent)"/><circle cx="23" cy="16" r="3" fill="var(--exit)"/>
+        <path d="M12 16 H20" stroke="var(--ink-2)" stroke-width="1.6" stroke-dasharray="2 2"/>
+      </svg>
+      Residential VPS<span class="g">&nbsp;Guide</span>
+    </a>
+    <div class="nav-links">
+      <a href="choose.html">Choose a VPS</a>
+      <a href="build.html" aria-current="page">Build a network</a>
+      <a href="tool.html">Score tool</a>
+      <a class="cta" href="tool.html">Score tool →</a>
+    </div>
+  </div>
+</nav>
+
+<header class="guide-hero">
+  <div class="wrap">
+    <p class="eyebrow">Guide 02 · Build</p>
+    <h1>How to build a VPS network</h1>
+    <p class="lede">Cheap residential boxes are slow and unreliable, and their networks are fragile. The fix is architecture: encrypt into a fast datacenter relay, hand off to the residential exit, and egress on a real home IP — with security and operations that don't lock you out of your own boxes.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="guide">
+    <aside class="toc" aria-label="On this page">
+      <div class="tt">On this page</div>
+      <a href="#arch">1 · The architecture</a>
+      <a href="#relay">2 · The entry relay</a>
+      <a href="#exit">3 · The residential exit</a>
+      <a href="#security">4 · Security</a>
+      <a href="#ops">5 · Operations</a>
+      <a href="#lessons">6 · Hard-won lessons</a>
+    </aside>
+
+    <div class="gbody prose">
+
+      <section id="arch">
+        <h2><span class="n">01</span>The architecture</h2>
+        <p>One idea does all the work: <strong>separate the fast part from the trusted part.</strong> Datacenter boxes are fast but their IPs are flagged as hosting. Residential boxes have trusted IPs but weak everything else. So you chain them.</p>
+        <pre><span class="k">you</span>  →  <span class="k">entry relay</span> (datacenter)  →  <span class="k">exit</span> (residential)  →  the internet
+     encrypted tunnel        forwards traffic          egresses on a
+     terminates here         over a private hop        real home-ISP IP</pre>
+        <ul>
+          <li>Your client only ever connects to the <strong>relay</strong> — a fast, stable datacenter box on a good backbone. It's the single public entry point.</li>
+          <li>The relay forwards your decrypted traffic over a private hop to a <strong>residential exit</strong>, which makes the final outbound connection.</li>
+          <li>The website sees the <strong>exit's home-ISP address</strong> — never the datacenter, never you.</li>
+        </ul>
+        <div class="callout tip">
+          <div class="ct">▲ Why not connect straight to the residential box?</div>
+          Residential IPs change, sit behind flaky home uplinks, and are often unreachable from the outside (CGNAT, inbound firewalls, provider whitelists). The datacenter relay gives you one stable, always-reachable front door; the residential box only ever has to make <em>outbound</em> connections.
+        </div>
+      </section>
+
+      <section id="relay">
+        <h2><span class="n">02</span>The entry relay</h2>
+        <p>The relay terminates an encrypted tunnel and routes each inbound to the right exit. The current best-in-class approach for blending in is <strong>Reality</strong> — a TLS-camouflage layer (used with VLESS, usually plus the Vision flow) that borrows a real third-party site's TLS handshake, so there's no certificate or fingerprint <em>of your own</em> to detect.</p>
+        <h3>Reality, briefly</h3>
+        <ul>
+          <li><strong>Vision flow</strong> (<span class="mono">xtls-rprx-vision</span>) — reduces the "TLS-in-TLS" tell that naive proxies leak.</li>
+          <li><strong>Borrowed handshake</strong> — Reality proxies the TLS handshake of a real, popular HTTPS site that isn't yours. In config the target is <span class="mono">dest</span> (the site whose handshake is borrowed) and <span class="mono">serverNames</span> is the SNI your client presents — point both at the same real, unrelated site that stays up. A strong choice matters: weak or suspicious ones get probed and blocked faster on hostile networks.</li>
+          <li><strong>One inbound per exit</strong> — give each exit its own port + keypair on the relay, and a routing rule sending that inbound's traffic to that exit. Clean, and you can add/remove exits independently.</li>
+        </ul>
+        <pre><span class="c"># conceptual: one Reality inbound per exit, each routed to its exit's proxy</span>
+inbound  :<span class="k">PORT_A</span>  (Reality, Vision, borrowed-SNI)  ── route ──▶  outbound → EXIT_A:PROXY
+inbound  :<span class="k">PORT_B</span>  (Reality, Vision, borrowed-SNI)  ── route ──▶  outbound → EXIT_B:PROXY</pre>
+        <div class="callout dont">
+          <div class="ct">✕ Ports are not free</div>
+          Every new inbound port needs its firewall opened <em>and</em> the tunnel reloaded. Forget the firewall rule and the handshake silently fails with no error. On some networks, non-standard ports draw active probing — prefer ordinary-looking ones.
+        </div>
+      </section>
+
+      <section id="exit">
+        <h2><span class="n">03</span>The residential exit</h2>
+        <p>The exit's only job is to receive traffic from the relay and make the outbound connection from its home IP. Keep it dead simple: a single lightweight forward proxy.</p>
+        <pre><span class="c"># a minimal HTTP forward proxy, listening only for the relay</span>
+gost -L "http://0.0.0.0:<span class="k">PROXY_PORT</span>"
+
+<span class="c"># if the box exposes more than one egress interface/IP, bind to the one you want</span>
+gost -L "http://0.0.0.0:PROXY_PORT?interface=<span class="k">EGRESS_IP</span>"</pre>
+        <p>A single-process proxy like <span class="mono">gost</span> multiplexes connections and won't fall over under the pool of idle tunnels a relay holds open — unlike fork-per-connection proxies, which starve their worker pool and hang. Run it under a supervisor that restarts on failure.</p>
+        <div class="callout tip">
+          <div class="ct">▲ TCP only</div>
+          An HTTP forward proxy carries TCP (via <span class="mono">CONNECT</span> for HTTPS) — <strong>not UDP</strong>. QUIC / HTTP-3 won't traverse it, so QUIC-heavy traffic silently fails or falls back to TCP. If you need UDP egress, use a SOCKS5/relay path that supports it, or have clients disable QUIC.
+        </div>
+        <div class="callout dont">
+          <div class="ct">✕ Never leave the proxy open to the world</div>
+          A no-auth proxy on a public IP will be found and abused within hours. Firewall the proxy port to <strong>accept only the relay's IP</strong> — nothing else should ever reach it.
+        </div>
+        <pre>ufw allow 22/tcp
+ufw allow from <span class="k">RELAY_IP</span> to any port PROXY_PORT proto tcp
+ufw --force enable   <span class="c"># allow SSH FIRST, or you lock yourself out</span></pre>
+      </section>
+
+      <section id="security">
+        <h2><span class="n">04</span>Security</h2>
+        <ul>
+          <li><strong>Key-only SSH.</strong> Disable password auth everywhere. Residential images often ship with it on — turn it off after your key works.</li>
+          <li><strong>Least-exposure firewall.</strong> The exit exposes only SSH (to you) and the proxy port (to the relay). The relay exposes only its tunnel ports. Nothing else.</li>
+          <li><strong>Provider IP-whitelist modes.</strong> Some residential providers offer a firewall mode that admits only whitelisted source IPs — everything else is dropped at their edge. If yours does, whitelist just your relay. It's a strong second layer: the box becomes invisible to everyone but your own infrastructure.</li>
+          <li><strong>Rotate anything exposed.</strong> Emailed root passwords, any key that ever touched a chat or screenshot — rotate them. Treat the residential box as semi-trusted.</li>
+        </ul>
+        <div class="callout tip">
+          <div class="ct">▲ Whitelist = free stealth</div>
+          When the exit only answers a single relay IP, scanners, probes and abuse traffic never even reach it. Fewer open doors than a datacenter box, on a residential line nobody's watching.
+        </div>
+      </section>
+
+      <section id="ops">
+        <h2><span class="n">05</span>Operations — don't lock yourself out</h2>
+        <p>The failure mode that bites everyone: the box carries both your VPN <em>and</em> the path you manage it through. Break one, break both.</p>
+        <div class="callout dont">
+          <div class="ct">✕ Never blindly stop the tunnel service</div>
+          If your own management traffic rides through the same box, a bare <span class="mono">stop</span> can strand the service and cut your session before you can start it again — leaving you locked out until a console rescue. Changing an inbound only needs a brief <em>restart</em>, not a stop.
+        </div>
+        <div class="callout do">
+          <div class="ct">✓ Apply changes safely</div>
+          <ul style="margin:.4rem 0 0">
+            <li><strong>Detached + self-healing.</strong> Run restarts detached (so a dropped session can't leave the service half-down), and have the script verify health afterwards and auto-restore the last-good config if the box comes back unhealthy.</li>
+            <li><strong>Back up before you touch.</strong> Snapshot the config/DB before any edit; a one-line restore beats an hour of forensics.</li>
+            <li><strong>Test the config first.</strong> Dry-run/validate the new config before you reload the live one — catch a typo before it takes the tunnel down.</li>
+            <li><strong>Expect a brief blip.</strong> Any tunnel reload drops live connections for a second or two; they reconnect. Do it when you're not mid-session on that exit.</li>
+          </ul>
+        </div>
+        <p><strong>Verify from a clean vantage.</strong> Don't trust <span class="mono">ping</span>/<span class="mono">nc</span> from a machine behind its own tunnel or fake-IP proxy — they can report success that isn't real; run those from a neutral box. To prove the <em>egress IP</em>, curl through the proxy — but that has to run <strong>from the relay</strong> (the only host the exit's firewall admits), or temporarily whitelist your test box first:</p>
+        <pre><span class="c"># run FROM the relay: prove traffic really exits on the home IP</span>
+curl -x http://EXIT_IP:PROXY_PORT https://api.ipify.org</pre>
+      </section>
+
+      <section id="lessons">
+        <h2><span class="n">06</span>Hard-won lessons</h2>
+        <ul>
+          <li><strong>Non-443 + weak SNI gets probed.</strong> On hostile networks, a fresh IP running a tunnel on an odd port with a flimsy borrowed SNI draws active probing and gets blocked. Strong SNI, ordinary port, real backbone.</li>
+          <li><strong>The ~2,000-IOPS cap is real.</strong> Budget residential tiers often throttle disk hard. Fine for a proxy (it barely touches disk) — just don't expect to run anything I/O-heavy on the exit.</li>
+          <li><strong>One test file, not the device.</strong> Benchmark disks against a temp file, never a raw block device. And deprioritize benchmarks (<span class="mono">nice</span>/<span class="mono">ionice</span>) so they don't starve a live service.</li>
+          <li><strong>Watch your shell.</strong> Automation quirk that eats hours: some shells don't word-split unquoted variables (zsh), so a host list in a loop silently becomes one giant argument. Use explicit lists.</li>
+          <li><strong>Keep exits separate.</strong> Don't route your own management traffic through the very exit you're modifying. Keep a clean path in reserve.</li>
+        </ul>
+        <div class="callout tip">
+          <div class="ct">▲ The whole thing, in one line</div>
+          Fast where you can (datacenter relay), trusted where you must (residential exit), and never build an operation that can sever its own lifeline.
+        </div>
+        <div class="next-cards">
+          <a class="track" href="tool.html" style="box-shadow:none">
+            <span class="edge" aria-hidden="true"></span>
+            <span class="num">TOOL</span>
+            <h3 style="font-size:1.25rem">Score your VPS →</h3>
+            <p style="margin:0">Rank candidate boxes on one 0–100 scale.</p>
+          </a>
+          <a class="track exit" href="choose.html" style="box-shadow:none">
+            <span class="edge" aria-hidden="true"></span>
+            <span class="num">01 — SELECT</span>
+            <h3 style="font-size:1.25rem">← Choosing a VPS</h3>
+            <p style="margin:0">Start here if you haven't picked boxes yet.</p>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <div class="brand" style="font-size:1.05rem;margin-bottom:.5rem">Residential VPS Guide</div>
+      <p class="disc">An independent, vendor-neutral field guide. No affiliation with any provider, no affiliate links. Methods and anonymized findings only — never anyone's live infrastructure.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="index.html">Home</a> · <a href="choose.html">Choose a VPS</a> · <a href="build.html">Build a network</a> · <a href="tool.html">Score tool</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
