@@ -108,6 +108,24 @@
           <div class="ct">▲ Ranking rule of thumb</div>
           Large consumer ISPs blend in best (huge, clean subscriber pools). Regional ISPs are fine. A "residential VPS" on a transit-owned block is the weakest — usable, but detectable.
         </div>
+
+        <h3 style="margin-top:2.2rem">IP purity — our residential IPs, checked</h3>
+        <p>The reputation checks above, run on our own residential boxes (2026-07-02, aggregating Scamalytics / IPQS / AbuseIPDB / IPinfo / IP2Location). The question that matters: does the IP read as a <strong>real home line</strong>, and is it <strong>clean</strong>?</p>
+        <div class="tool-wrap">
+          <table class="perf-ref">
+            <thead><tr>
+              <th>Provider</th><th>Classified as</th>
+              <th>Fraud score<small>/100</small></th>
+              <th>Abuse</th><th>Netflix</th>
+            </tr></thead>
+            <tbody>
+          <tr><td class="box">SolaDrive</td><td class="type">Residential ISP · 4/5 sources</td><td class="hi">0</td><td class="type">0% · clean</td><td class="type">Native</td></tr>
+          <tr><td class="box">VirVM</td><td class="type">Residential ISP · 5/5 sources</td><td class="">18</td><td class="type">0% · clean</td><td class="type">Native</td></tr>
+          <tr><td class="box">AaITR</td><td class="type">Residential ISP · 5/5 sources</td><td class="">13</td><td class="type">0% · clean</td><td class="type">Native</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.9rem;color:var(--ink-soft)">All three read as a <strong>genuine residential ISP line</strong> (not hosting-in-disguise), with <strong>near-zero fraud and abuse scores</strong> and native Netflix — exactly what an exit needs. <em>One caveat:</em> a single scanner (IPQS) flags "proxy" on SolaDrive &amp; VirVM — only because we run a proxy service on them; the underlying IP reputation is clean. And a clean IP isn&#x27;t enough on its own: AaITR&#x27;s address is spotless, yet its route (above) drops 40–70% of packets. Check <strong>purity and route together</strong>.</p>
       </section>
 
       <section id="bench">
