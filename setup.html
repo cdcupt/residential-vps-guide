@@ -18,10 +18,6 @@
   .skill-head .btn{padding:.4rem .8rem; font-size:.8rem}
   .skill-body{max-height:60vh; overflow:auto; margin:0}
   .skill-body pre{margin:0; border:none; border-radius:0; box-shadow:none; font-size:.8rem; line-height:1.55}
-  .use-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.2rem; margin:1.4rem 0}
-  .use-card{border:1px solid var(--line); border-radius:var(--r-md); padding:1.1rem 1.2rem; background:var(--card)}
-  .use-card h3{margin:.1rem 0 .5rem; font-size:1.05rem}
-  .use-card pre{font-size:.78rem; margin:.6rem 0 0}
   .copybtn.done{background:var(--exit); border-color:var(--exit); color:#fff}
 </style>
 </head>
@@ -383,41 +379,8 @@ v2rayN / Nekoray / sing-box. `sid` must exactly equal the server&#x27;s `shortId
 </pre></div>
   </div>
 
-  <div class="prose"><h2 style="margin-top:2rem">Use it in your agent</h2>
-    <p>It's a task your agent <strong>follows on request</strong> — not a system prompt. Install it in its own place; never paste it over your global instructions.</p>
-  </div>
-  <div class="use-grid">
-    <div class="use-card">
-      <h3>Claude Code</h3>
-      <p style="margin:0 0 .3rem;color:var(--ink-soft);font-size:.9rem">Install as a skill — its own folder, nothing else touched. Then ask in plain English.</p>
-      <pre>mkdir -p ~/.claude/skills/deploy-vps-network
-mv deploy-vps-network.md \
-   ~/.claude/skills/deploy-vps-network/SKILL.md
-
-# then, in Claude Code:
-"deploy a single-VPS VPN on root@203.0.113.10"</pre>
-    </div>
-    <div class="use-card">
-      <h3>Codex &amp; other agents</h3>
-      <p style="margin:0 0 .3rem;color:var(--ink-soft);font-size:.9rem">Keep the file and point the agent at it — no config overwritten.</p>
-      <pre># in your working dir, just ask:
-"follow ./deploy-vps-network.md to build a
- relay + exit across my two servers"
-
-# optional reusable slash-command in Codex:
-mkdir -p ~/.codex/prompts
-cp deploy-vps-network.md ~/.codex/prompts/
-# -> then run  /deploy-vps-network</pre>
-    </div>
-  </div>
-  <div class="prose">
-    <div class="callout dont">
-      <div class="ct">✕ Don't overwrite your agent's instructions</div>
-      Never <code>cp</code> this over your <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or any always-on instructions file — that <strong>replaces your whole system prompt</strong> and pins a VPN playbook to every session. It's an on-demand task file: install it as a skill, save it as a slash-command, or just reference it by path.
-    </div>
-  </div>
-
-  <div class="prose">
+  <div class="prose" style="margin-top:1.6rem">
+    <p><strong>Download it and install it wherever your agent loads skills</strong> — a Claude Code skill folder, a Codex prompt, or just a file you reference by path. It's a task the agent runs on request, so keep it out of your always-on system prompt.</p>
     <div class="callout dont">
       <div class="ct">✕ Your servers only</div>
       The skill runs privileged commands over SSH. Point it only at hosts you own or are authorized to administer — and the residential exit must be <strong>your own home line</strong>, never a resold/commercial "residential proxy" IP.
