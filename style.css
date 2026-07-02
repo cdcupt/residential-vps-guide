@@ -83,6 +83,7 @@ h3{font-size:clamp(1.2rem, 1rem + .8vw, 1.55rem); margin:2.2em 0 .4em; letter-sp
 .nav-links a:hover{color:var(--ink); background:var(--paper-2)}
 .nav-links a.cta{background:var(--ink); color:var(--paper)}
 .nav-links a.cta:hover{background:var(--accent-ink); color:#fff}
+.nl-short{display:none}
 @media(max-width:640px){
   .nav-links a.cta{display:none}
   .nav .wrap{gap:.5rem}
@@ -90,9 +91,10 @@ h3{font-size:clamp(1.2rem, 1rem + .8vw, 1.55rem); margin:2.2em 0 .4em; letter-sp
   .nav-links a{padding:.3rem .38rem; font-size:.8rem; white-space:nowrap}
   .brand{font-size:.92rem; white-space:nowrap}
 }
-/* phones: logo-only brand so all three section links fit the header */
-@media(max-width:480px){ .brand{font-size:0} .brand .mk{width:26px; height:26px} .nav-links a{padding:.4rem .45rem} }
-@media(max-width:360px){ .nav-links a{font-size:.72rem; padding:.35rem .3rem} }
+/* phones: logo-only brand + short nav labels so all four sections fit the header */
+@media(max-width:560px){ .nl-full{display:none} .nl-short{display:inline} }
+@media(max-width:480px){ .brand{font-size:0} .brand .mk{width:26px; height:26px} .nav-links a{padding:.4rem .5rem} }
+@media(max-width:360px){ .nav-links a{font-size:.76rem; padding:.4rem .42rem} }
 
 /* ---------- buttons ---------- */
 .btn{display:inline-flex; align-items:center; gap:.5rem; font-weight:600; font-size:.95rem;
@@ -200,10 +202,27 @@ pre .k{color:oklch(78% 0.12 264)}  /* keyword/accent */
 .gbody h2 .n{font-family:var(--mono); font-size:.9rem; color:var(--accent-ink); font-weight:400; margin-right:.6rem; vertical-align:middle}
 /* mini comparison table */
 .mtable{width:100%; border-collapse:collapse; font-size:.9rem; margin:1.4rem 0}
-.mtable th,.mtable td{text-align:left; padding:.7rem .8rem; border-bottom:1px solid var(--line); vertical-align:top}
+.mtable th,.mtable td{text-align:left; padding:.7rem .8rem; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere}
+@media(max-width:480px){ .mtable th,.mtable td{padding:.6rem .5rem} .mtable{font-size:.84rem} }
 .mtable thead th{font-family:var(--mono); font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); border-bottom:1px solid var(--line-2)}
 .mtable td:first-child{font-weight:600}
 .mtable .mono{font-family:var(--mono); font-size:.85em; color:var(--ink-2)}
+/* scrollable table container (shared) */
+.tool-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-md); background:var(--card); box-shadow:var(--shadow-sm); margin:1.6rem 0; -webkit-overflow-scrolling:touch}
+
+/* reference-deployment performance table */
+.perf-ref{width:100%; border-collapse:collapse; font-size:.86rem; min-width:840px}
+.perf-ref thead th{font-family:var(--mono); font-size:.6rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); text-align:right; padding:.7rem .5rem; border-bottom:1px solid var(--line-2); white-space:nowrap}
+.perf-ref thead th:nth-child(-n+2){text-align:left}
+.perf-ref thead th small{display:block; font-weight:400; opacity:.75}
+.perf-ref tbody td{padding:.72rem .5rem; border-bottom:1px solid var(--line); text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--ink)}
+.perf-ref tbody tr:last-child td{border-bottom:none}
+.perf-ref tbody td.box{text-align:left; font-family:var(--sans); font-weight:700}
+.perf-ref tbody td.type{text-align:left; font-family:var(--sans); color:var(--ink-soft); font-size:.82rem}
+.perf-ref td.sc{font-weight:800; font-size:1rem}
+.perf-ref td.hi{background:var(--accent-bg); color:var(--accent-ink)}
+.perf-ref td.lo{background:var(--warn-bg); color:var(--warn-ink)}
+
 /* diagrams / figures */
 .fig{margin:1.7rem 0; background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--shadow-sm); padding:1.4rem 1.1rem 1rem; overflow-x:auto}
 .fig svg{display:block; margin:0 auto; height:auto; min-width:0}

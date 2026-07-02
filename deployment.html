@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference deployment — Residential VPS Guide</title>
+<meta name="description" content="A real nine-box VPS fleet we run, measured with the same uniform benchmarks — anonymized. See the numbers, how it's built, and how it's used.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380..600&family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg class="mk" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1.2" y="1.2" width="29.6" height="29.6" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+        <circle cx="9" cy="16" r="3" fill="var(--accent)"/><circle cx="23" cy="16" r="3" fill="var(--exit)"/>
+        <path d="M12 16 H20" stroke="var(--ink-2)" stroke-width="1.6" stroke-dasharray="2 2"/>
+      </svg>
+      Residential VPS<span class="g">&nbsp;Guide</span>
+    </a>
+    <div class="nav-links">
+      <a href="choose.html"><span class="nl-full">Choose a VPS</span><span class="nl-short">Choose</span></a>
+      <a href="build.html"><span class="nl-full">Build a network</span><span class="nl-short">Build</span></a>
+      <a href="deployment.html" aria-current="page"><span class="nl-full">Deployment</span><span class="nl-short">Deploy</span></a>
+      <a href="tool.html"><span class="nl-full">Score tool</span><span class="nl-short">Score</span></a>
+    </div>
+  </div>
+</nav>
+
+<header class="guide-hero">
+  <div class="wrap">
+    <p class="eyebrow">Reference deployment</p>
+    <h1>A real fleet, measured.</h1>
+    <p class="lede">Advice is cheap. This is the actual nine-box fleet we run — three datacenter, six residential, across several providers — put through the exact benchmarks in this guide. Real numbers, anonymized: no IPs, hostnames, ISPs, ports or topology, so it teaches without exposing anything.</p>
+  </div>
+</header>
+
+<main class="wrap" style="padding-bottom:3rem">
+
+  <div class="prose">
+    <p class="kicker">The numbers</p>
+    <h2 style="margin-top:.3em">Performance, ranked</h2>
+    <p>Every box, one uniform pass: single- &amp; all-core CPU (sysbench events/s), memory bandwidth (GB/s), network download (Mbps), and 4K-random disk IOPS — then a single equal-weight <strong>Overall / 100</strong>. Best per column tints blue, worst red.</p>
+  </div>
+
+  <div class="tool-wrap">
+    <table class="perf-ref">
+      <thead>
+        <tr>
+          <th>Box</th><th>Type</th>
+          <th>Overall<small>/100</small></th>
+          <th>CPU 1-core<small>eps</small></th>
+          <th>CPU all-core<small>eps</small></th>
+          <th>Mem read<small>GB/s</small></th>
+          <th>Mem write<small>GB/s</small></th>
+          <th>Net &darr;<small>Mbps</small></th>
+          <th>Disk read<small>IOPS</small></th>
+          <th>Disk write<small>IOPS</small></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr><td class="box">Res-1</td><td class="type">residential</td><td class="sc hi">88</td><td class="hi">1323</td><td class="hi">5344</td><td class="hi">44</td><td class="hi">26</td><td class="hi">569</td><td class="hi">109,775</td><td class="hi">113,304</td></tr>
+          <tr><td class="box">DC-1</td><td class="type">datacenter</td><td class="sc hi">83</td><td class="hi">1377</td><td class="hi">5352</td><td class="hi">43</td><td class="hi">24</td><td class="hi">2280</td><td class="hi">57,318</td><td class="">48,246</td></tr>
+          <tr><td class="box">DC-2</td><td class="type">datacenter</td><td class="sc hi">80</td><td class="hi">1411</td><td class="hi">2777</td><td class="hi">42</td><td class="hi">24</td><td class="hi">2357</td><td class="hi">72,418</td><td class="hi">64,681</td></tr>
+          <tr><td class="box">DC-3</td><td class="type">datacenter</td><td class="sc hi">75</td><td class="hi">1376</td><td class="hi">4206</td><td class="hi">41</td><td class="">22</td><td class="hi">1774</td><td class="">55,499</td><td class="hi">51,469</td></tr>
+          <tr><td class="box">Res-2</td><td class="type">residential</td><td class="sc">48</td><td class="">606</td><td class="lo">611</td><td class="">31</td><td class="hi">23</td><td class="lo">29</td><td class="hi">73,408</td><td class="hi">62,388</td></tr>
+          <tr><td class="box">Res-3</td><td class="type">residential</td><td class="sc lo">38</td><td class="lo">431</td><td class="">1722</td><td class="lo">23</td><td class="lo">19</td><td class="lo">94</td><td class="lo">38,813</td><td class="lo">46,692</td></tr>
+          <tr><td class="box">Res-4</td><td class="type">residential</td><td class="sc lo">21</td><td class="lo">353</td><td class="lo">706</td><td class="lo">20</td><td class="lo">14</td><td class="">103</td><td class="lo">2,020<b>*</b></td><td class="lo">2,019<b>*</b></td></tr>
+          <tr><td class="box">Res-5</td><td class="type">residential</td><td class="sc lo">19</td><td class="lo">290</td><td class="lo">577</td><td class="lo">18</td><td class="lo">13</td><td class="lo">102</td><td class="lo">2,020<b>*</b></td><td class="lo">1,986<b>*</b></td></tr>
+          <tr><td class="box">Res-6</td><td class="type">residential</td><td class="sc lo">18</td><td class="lo">290</td><td class="lo">581</td><td class="lo">17</td><td class="lo">13</td><td class="lo">102</td><td class="lo">2,018<b>*</b></td><td class="lo">2,018<b>*</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p style="font-size:.85rem;color:var(--ink-soft)"><b>*</b> capped disk — see below. Labels are anonymized; the numbers are the real measured values.</p>
+    <div class="callout tip">
+      <div class="ct">▲ What the numbers taught us</div>
+      Two things a spec sheet would never show: <strong>Res-1</strong> is the sleeper — a "masked" CPU that quietly tops the whole fleet on multicore and disk — while <strong>Res-4/5/6</strong> are pinned at a provider <strong>~2,000-IOPS disk cap</strong> (read ≈ write, identical across three different boxes). The cheap residential boxes are weak on compute, but that's irrelevant for their job: carrying a clean IP.
+    </div>
+
+    <p class="kicker" style="margin-top:2.5rem">The setup</p>
+    <h2 style="margin-top:.3em">How we built it</h2>
+    <p>Exactly the architecture this guide teaches. One datacenter box is the encrypted <strong>entry relay</strong> (Reality + Vision); it fans out to the residential boxes, each running a lightweight <span class="mono">gost</span> forward proxy as an <strong>exit</strong>. Every exit gets its own port on the relay plus a routing rule, and is firewalled to accept <em>only</em> the relay's address — nothing else can reach it.</p>
+    <div class="fig" style="padding:1.2rem 1rem">
+      <svg viewBox="0 0 820 224" style="width:100%;min-width:520px" role="img" aria-label="One datacenter relay fans out to several residential exits.">
+        <defs><marker id="ah3" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-soft)"/></marker></defs>
+        <rect class="dg-box a" x="20" y="80" width="190" height="66" rx="12"/>
+        <text class="dg-t" x="115" y="108" text-anchor="middle" font-size="14.5">Entry relay</text>
+        <text class="dg-s" x="115" y="126" text-anchor="middle" font-size="10">datacenter · Reality</text>
+        <line class="dg-arw" x1="210" y1="100" x2="561" y2="46"  marker-end="url(#ah3)"/>
+        <line class="dg-arw" x1="210" y1="113" x2="561" y2="113" marker-end="url(#ah3)"/>
+        <line class="dg-arw" x1="210" y1="126" x2="561" y2="180" marker-end="url(#ah3)"/>
+        <rect class="dg-box e" x="565" y="20"  width="200" height="52" rx="10"/><text class="dg-t" x="665" y="51" text-anchor="middle" font-size="13">Residential exit 1</text>
+        <rect class="dg-box e" x="565" y="87"  width="200" height="52" rx="10"/><text class="dg-t" x="665" y="118" text-anchor="middle" font-size="13">Residential exit 2</text>
+        <rect class="dg-box e" x="565" y="154" width="200" height="52" rx="10"/><text class="dg-t" x="665" y="185" text-anchor="middle" font-size="13">Residential exit …</text>
+      </svg>
+      <figcaption>The full step-by-step — Reality config, the gost exit, firewalling, and the operations that keep you from locking yourself out — is in <a href="build.html">Build a network</a>.</figcaption>
+    </div>
+
+    <p class="kicker" style="margin-top:2.5rem">In practice</p>
+    <h2 style="margin-top:.3em">How we use it</h2>
+    <p>Speed-sensitive and management traffic rides the datacenter relay directly — it's fast and always reachable. Anything that needs to look like a real home user egresses through a <strong>residential exit</strong>, so the destination sees a genuine consumer-ISP address, never a datacenter one. Picking an exit is just choosing which relay port to connect to, so rotating between them is trivial.</p>
+    <div class="callout do">
+      <div class="ct">✓ The point of the split</div>
+      The residential boxes are slow and disk-capped — and it doesn't matter. Their entire value is a clean, trusted IP on a real home line. Compute lives on the relay; trust lives on the exit. Buy each box for the one axis it's actually for.
+    </div>
+    <p>Want to measure your own candidates the same way? Use the <a href="tool.html">score tool</a>, and start from <a href="choose.html">choosing a VPS</a>.</p>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <div class="brand" style="font-size:1.05rem;margin-bottom:.5rem">Residential VPS Guide</div>
+      <p class="disc">An independent, vendor-neutral field guide. No affiliation with any provider, no affiliate links. Methods and anonymized findings only — never anyone's live infrastructure.</p>
+      <div class="social">
+        <a href="https://x.com/_cdcupt" target="_blank" rel="noopener me" aria-label="X — @_cdcupt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>@_cdcupt</a>
+        <a href="https://github.com/cdcupt" target="_blank" rel="noopener me" aria-label="GitHub — cdcupt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>cdcupt</a>
+      </div>
+    </div>
+    <nav aria-label="Footer">
+      <a href="index.html">Home</a> · <a href="choose.html">Choose a VPS</a> · <a href="build.html">Build a network</a> · <a href="deployment.html">Deployment</a> · <a href="tool.html">Score tool</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
