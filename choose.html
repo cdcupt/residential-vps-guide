@@ -142,8 +142,8 @@ curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
           Score each metric as a percentage of the best box you've tested, then average them. A single 0–100 rating makes "which VPS is better overall" a glance instead of an argument. The <a href="tool.html">score tool</a> does this for you.
         </div>
 
-        <h3 style="margin-top:2.2rem">Example: a real fleet, benchmarked</h3>
-        <p>The same uniform pass, run on a real fleet we operate — <strong>every number below is a real measured value</strong> (IPs and hostnames masked). The datacenter brand is named (<strong>BandwagonHost</strong>); the residential boxes are anonymized. Best per column tints blue, worst red.</p>
+        <h3 style="margin-top:2.2rem">Example: our real fleet, benchmarked</h3>
+        <p>The same uniform pass on the actual boxes we run — <strong>real providers, real measured numbers</strong> (only the IPs are withheld). Best per column tints blue, worst red.</p>
         <div class="tool-wrap">
           <table class="perf-ref">
             <thead><tr>
@@ -154,15 +154,15 @@ curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
               <th>Disk<small>IOPS</small></th>
             </tr></thead>
             <tbody>
-          <tr><td class="box">Residential A</td><td class="type">residential · clean line</td><td class="sc hi">88</td><td class="">1,323</td><td class="hi">5,344</td><td class="hi">109,775</td></tr>
-          <tr><td class="box">BandwagonHost</td><td class="type">datacenter · KVM (large)</td><td class="sc hi">83</td><td class="hi">1,377</td><td class="hi">5,352</td><td class="">57,318</td></tr>
-          <tr><td class="box">BandwagonHost</td><td class="type">datacenter · KVM (small)</td><td class="sc">75</td><td class="hi">1,376</td><td class="">4,206</td><td class="lo">55,499</td></tr>
-          <tr><td class="box">Residential B</td><td class="type">residential · typical</td><td class="sc lo">48</td><td class="lo">606</td><td class="lo">611</td><td class="hi">73,408</td></tr>
-          <tr><td class="box">Residential C</td><td class="type">residential · budget (capped)</td><td class="sc lo">18</td><td class="lo">290</td><td class="lo">581</td><td class="lo">2,018</td></tr>
+          <tr><td class="box">SolaDrive</td><td class="type">residential · clean line</td><td class="sc hi">88</td><td class="">1,323</td><td class="hi">5,344</td><td class="hi">109,775</td></tr>
+          <tr><td class="box">BandwagonHost</td><td class="type">datacenter · KVM (large)</td><td class="sc hi">83</td><td class="hi">1,377</td><td class="hi">5,352</td><td class="hi">57,318</td></tr>
+          <tr><td class="box">BandwagonHost</td><td class="type">datacenter · KVM (small)</td><td class="sc">75</td><td class="hi">1,376</td><td class="">4,206</td><td class="">55,499</td></tr>
+          <tr><td class="box">VirVM</td><td class="type">residential · mid-tier</td><td class="sc lo">38</td><td class="lo">431</td><td class="lo">1,722</td><td class="lo">38,813</td></tr>
+          <tr><td class="box">AaITR</td><td class="type">residential · budget (capped)</td><td class="sc lo">18</td><td class="lo">290</td><td class="lo">581</td><td class="lo">2,018</td></tr>
             </tbody>
           </table>
         </div>
-        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>Overall</strong> is the equal-weight 0&ndash;100 score across <em>all seven</em> measured axes (what the <a href="tool.html">score tool</a> computes; the three columns here are a sample, and the full per-box breakdown is on the <a href="deployment.html">Deployment page</a>). The lesson: a <strong>clean residential line can out-benchmark a datacenter box</strong>, while a budget one sits pinned at a <strong>~2,000-IOPS cap</strong> &mdash; five-fold apart on the same axes. Never trust the tier name; measure the actual box.</p>
+        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>Overall</strong> is the equal-weight 0&ndash;100 score across <em>all seven</em> measured axes (what the <a href="tool.html">score tool</a> computes; the three columns here are a sample, full breakdown on the <a href="deployment.html">Deployment page</a>). Two things a spec sheet never shows: <strong>SolaDrive</strong>, a residential line, tops the fleet on disk and rivals a datacenter box — while <strong>AaITR</strong>&#x27;s boxes sit pinned at a <strong>~2,000-IOPS provider cap</strong>. Cheap isn&#x27;t slow and residential isn&#x27;t weak; measure the actual box.</p>
       </section>
 
       <section id="flags">
