@@ -167,6 +167,27 @@ curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
           </table>
         </div>
         <p style="font-size:.9rem;color:var(--ink-soft)"><strong>Overall</strong> is the equal-weight 0&ndash;100 average of all seven columns, each scored against the best box (exactly what the <a href="tool.html">score tool</a> does). Now the score is explainable: <strong>SolaDrive</strong> — a residential line — wins outright on <em>disk</em> (110k IOPS) and holds its own on CPU, so it tops the fleet; <strong>AaITR</strong> is pinned near a <strong>~2,000-IOPS cap</strong> on both reads and writes and starved on network; <strong>BandwagonHost</strong> is the balanced datacenter pick (strong network + CPU). Cheap isn&#x27;t slow and residential isn&#x27;t weak — measure every axis on the actual box.</p>
+
+        <h3 style="margin-top:2.2rem">Network quality — routes to China</h3>
+        <p>Raw throughput isn&#x27;t the whole story for China access — the <strong>route</strong> is. Measured from each box (ping + <span class="mono">nexttrace</span>, 2026-07-02): the path class to China&#x27;s three networks and the round-trip latency + packet loss. Lower latency tints blue; loss is red.</p>
+        <div class="tool-wrap">
+          <table class="perf-ref">
+            <thead><tr>
+              <th>Provider</th><th>Route to China</th>
+              <th>电信 CT<small>ms</small></th>
+              <th>联通 CU<small>ms</small></th>
+              <th>移动 CM<small>ms</small></th>
+              <th>Loss<small>worst net</small></th>
+            </tr></thead>
+            <tbody>
+          <tr><td class="box">BandwagonHost</td><td class="type">CN2 · 59.43 backbone</td><td class="hi">129</td><td class="hi">156</td><td class="hi">154</td><td class="">0%</td></tr>
+          <tr><td class="box">SolaDrive</td><td class="type">163 · direct (AS4812)</td><td class="lo">175</td><td class="lo">199</td><td class="hi">195</td><td class="">0%</td></tr>
+          <tr><td class="box">VirVM</td><td class="type">163 · direct (AS4812)</td><td class="lo">158</td><td class="hi">166</td><td class="lo">201</td><td class="">0%</td></tr>
+          <tr><td class="box">AaITR</td><td class="type">163 · unstable</td><td class="hi">137</td><td class="lo">285</td><td class="lo">220</td><td class="lo">40–70%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>BandwagonHost rides CN2</strong> (the <span class="mono">59.43</span> backbone) — ~130&nbsp;ms and zero loss, the premium China route. The residential boxes take standard <strong>163</strong> peering: workable latency, and <strong>SolaDrive</strong>/<strong>VirVM</strong> hold 0% loss — but <strong>AaITR</strong> drops <strong>40–70% of packets</strong> to Unicom and Mobile. A cheap residential IP can have genuinely broken network quality, so a clean address isn&#x27;t enough — test the route and loss, not just bandwidth.</p>
       </section>
 
       <section id="flags">
