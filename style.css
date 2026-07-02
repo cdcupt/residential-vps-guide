@@ -84,17 +84,19 @@ h3{font-size:clamp(1.2rem, 1rem + .8vw, 1.55rem); margin:2.2em 0 .4em; letter-sp
 .nav-links a.cta{background:var(--ink); color:var(--paper)}
 .nav-links a.cta:hover{background:var(--accent-ink); color:#fff}
 .nl-short{display:none}
+/* below 820px: logo-only brand + short labels so all five sections fit the header */
+@media(max-width:820px){
+  .nl-full{display:none} .nl-short{display:inline}
+  .brand{font-size:0} .brand .mk{width:26px; height:26px}
+  .nav .wrap{gap:.5rem}
+  .nav-links{flex:none} .nav-links a{white-space:nowrap}
+}
 @media(max-width:640px){
   .nav-links a.cta{display:none}
-  .nav .wrap{gap:.5rem}
-  .nav-links{gap:0; flex:none}
-  .nav-links a{padding:.3rem .38rem; font-size:.8rem; white-space:nowrap}
-  .brand{font-size:.92rem; white-space:nowrap}
+  .nav-links{gap:0}
+  .nav-links a{padding:.35rem .42rem; font-size:.8rem}
 }
-/* phones: logo-only brand + short nav labels so all four sections fit the header */
-@media(max-width:560px){ .nl-full{display:none} .nl-short{display:inline} }
-@media(max-width:480px){ .brand{font-size:0} .brand .mk{width:26px; height:26px} .nav-links a{padding:.4rem .5rem} }
-@media(max-width:360px){ .nav-links a{font-size:.76rem; padding:.4rem .42rem} }
+@media(max-width:360px){ .nav-links a{font-size:.72rem; padding:.35rem .32rem} }
 
 /* ---------- buttons ---------- */
 .btn{display:inline-flex; align-items:center; gap:.5rem; font-weight:600; font-size:.95rem;

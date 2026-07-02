@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Config generator — Residential VPS Guide</title>
+<meta name="description" content="Generate ready-to-paste commands to build your VPS setup — a single-VPS all-in-one VPN, or a datacenter relay fronting a residential exit. Reality tunnel, gost proxy, firewall rules, and a client link.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380..600&family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .seg{display:inline-flex; background:var(--paper-2); border:1px solid var(--line-2); border-radius:999px; padding:4px; gap:2px; margin:.4rem 0 1.6rem}
+  .seg button{border:none; background:transparent; font:inherit; font-weight:600; font-size:.9rem; color:var(--ink-soft); padding:.5rem 1rem; border-radius:999px; cursor:pointer; white-space:nowrap; transition:.15s}
+  .seg button[aria-pressed="true"]{background:var(--card); color:var(--ink); box-shadow:var(--shadow-sm)}
+  @media(max-width:520px){ .seg{display:flex; flex-direction:column; width:100%; border-radius:var(--r-md)} .seg button{white-space:normal; width:100%; border-radius:calc(var(--r-md) - 3px)} }
+  .gen-form{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1rem 1.3rem; margin:0 0 2rem; max-width:760px}
+  .fld{display:flex; flex-direction:column; gap:.35rem}
+  .fld label{font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+  .fld .hint{font-size:.78rem; color:var(--ink-soft); line-height:1.4}
+  .in-row{display:flex; gap:.4rem}
+  .fld input{flex:1; min-width:0; font-family:var(--mono); font-size:.92rem; padding:.55rem .7rem; border:1px solid var(--line-2); border-radius:var(--r-sm); background:var(--card); color:var(--ink)}
+  .fld input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg)}
+  .dice{flex:none; border:1px solid var(--line-2); background:var(--card); border-radius:var(--r-sm); padding:0 .7rem; cursor:pointer; font-size:1rem; color:var(--ink-2)}
+  .dice:hover{border-color:var(--accent); color:var(--accent-ink); background:var(--accent-bg)}
+  .out{position:relative; margin:1.3rem 0}
+  .out h3{font-size:1.05rem; margin:0 0 .5rem}
+  .out .step{font-family:var(--mono); color:var(--accent-ink); font-weight:600; margin-right:.4rem}
+  .out pre{margin:.2rem 0 0; padding-right:5.2rem}
+  .copy{position:absolute; top:2.3rem; right:.6rem; z-index:2; border:1px solid oklch(40% .02 265); background:oklch(30% .02 265); color:oklch(90% .01 265); font:inherit; font-size:.72rem; font-weight:600; padding:.3rem .6rem; border-radius:6px; cursor:pointer}
+  .copy:hover{background:oklch(38% .05 264); border-color:var(--accent)}
+  .copy.done{color:oklch(80% .12 168); border-color:oklch(60% .12 168)}
+  .k{color:oklch(80% .13 90)}  /* placeholder highlight */
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg class="mk" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1.2" y="1.2" width="29.6" height="29.6" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+        <circle cx="9" cy="16" r="3" fill="var(--accent)"/><circle cx="23" cy="16" r="3" fill="var(--exit)"/>
+        <path d="M12 16 H20" stroke="var(--ink-2)" stroke-width="1.6" stroke-dasharray="2 2"/>
+      </svg>
+      Residential VPS<span class="g">&nbsp;Guide</span>
+    </a>
+    <div class="nav-links">
+      <a href="choose.html"><span class="nl-full">Choose a VPS</span><span class="nl-short">Choose</span></a>
+      <a href="build.html"><span class="nl-full">Build a network</span><span class="nl-short">Build</span></a>
+      <a href="setup.html" aria-current="page"><span class="nl-full">Config</span><span class="nl-short">Config</span></a>
+      <a href="deployment.html"><span class="nl-full">Deployment</span><span class="nl-short">Deploy</span></a>
+      <a href="tool.html"><span class="nl-full">Score tool</span><span class="nl-short">Score</span></a>
+    </div>
+  </div>
+</nav>
+
+<header class="guide-hero">
+  <div class="wrap">
+    <p class="eyebrow">Tool · Generator</p>
+    <h1>Generate your setup</h1>
+    <p class="lede">Fill a few fields and get the exact commands to paste — a simple <strong>single-VPS VPN</strong>, or a datacenter <strong>relay + residential exit</strong>. It builds the Reality config, the proxy, the firewall rules, and your client link. All in your browser; nothing is sent anywhere.</p>
+  </div>
+</header>
+
+<main class="wrap" style="padding-bottom:3rem">
+  <div class="prose">
+    <div class="seg" role="group" aria-label="Setup mode">
+      <button id="m-single" aria-pressed="true">① Single VPS (all-in-one VPN)</button>
+      <button id="m-relay" aria-pressed="false">② Relay + residential exit</button>
+    </div>
+  </div>
+
+  <div class="gen-form">
+    <div class="fld" data-mode="single"><label>VPS IP</label><input id="single-ip" type="text" placeholder="203.0.113.10" value="203.0.113.10"><span class="hint">the box that runs the VPN and egresses.</span></div>
+    <div class="fld" data-mode="relay"><label>Relay IP (datacenter)</label><input id="relay-ip" type="text" placeholder="203.0.113.10" value="203.0.113.10"><span class="hint">the public entry box clients connect to.</span></div>
+    <div class="fld" data-mode="relay"><label>Exit IP (residential)</label><input id="exit-ip" type="text" placeholder="198.51.100.7" value="198.51.100.7"><span class="hint">the home-ISP box that egresses.</span></div>
+    <div class="fld"><label>Reality port</label><div class="in-row"><input id="port" type="number" min="1" max="65535" value="8443"><button class="dice" id="port-rand" title="Random port" aria-label="Generate a random port">🎲</button></div><span class="hint">not sure? roll a random high port.</span></div>
+    <div class="fld"><label>Borrowed SNI</label><input id="sni" type="text" value="www.apple.com"><span class="hint">a real, popular HTTPS site (not yours). Strong default; leave it be if unsure.</span></div>
+    <div class="fld" data-mode="relay"><label>Exit proxy port</label><div class="in-row"><input id="pport" type="number" min="1" max="65535" value="8080"><button class="dice" id="pport-rand" title="Random port" aria-label="Generate a random proxy port">🎲</button></div><span class="hint">internal — relay → exit only.</span></div>
+  </div>
+
+  <div id="out"></div>
+
+  <div class="prose" style="margin-top:2.5rem">
+    <div class="callout tip">
+      <div class="ct">▲ Two things the generator can't do for you</div>
+      The <strong>Reality keypair</strong> must come from the box itself — the first command below prints it; paste the <em>private</em> key into the config and the <em>public</em> key into the client link (both marked <span class="mono" style="color:var(--warn-ink)">&lt;PASTE_…&gt;</span>). And the config assumes <strong>Xray</strong> is installed (or a panel like 3x-ui that wraps it).
+    </div>
+    <p>New to any of this? Read <a href="build.html">how to build a network</a> for the why behind every line, and <a href="choose.html">how to choose a VPS</a> before you buy.</p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <div class="brand" style="font-size:1.05rem;margin-bottom:.5rem">Residential VPS Guide</div>
+      <p class="disc">An independent, vendor-neutral field guide. No affiliation with any provider, no affiliate links. Methods and anonymized findings only — never anyone's live infrastructure.</p>
+      <div class="social">
+        <a href="https://x.com/_cdcupt" target="_blank" rel="noopener me" aria-label="X — @_cdcupt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>@_cdcupt</a>
+        <a href="https://github.com/cdcupt" target="_blank" rel="noopener me" aria-label="GitHub — cdcupt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>cdcupt</a>
+      </div>
+    </div>
+    <nav aria-label="Footer">
+      <a href="index.html">Home</a> · <a href="choose.html">Choose a VPS</a> · <a href="build.html">Build a network</a> · <a href="setup.html">Config</a> · <a href="deployment.html">Deployment</a> · <a href="tool.html">Score tool</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var mode = 'single';
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]; }); }
+  function randPort(){ return 10000 + Math.floor(cryptoRand()*50000); }
+  function cryptoRand(){ var a=new Uint32Array(1); crypto.getRandomValues(a); return a[0]/4294967296; }
+  function hex(n){ var a=new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a).map(function(b){return b.toString(16).padStart(2,'0');}).join(''); }
+
+  // stable per-session identifiers
+  var UUID = (crypto.randomUUID ? crypto.randomUUID() : hex(16).replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/,'$1-$2-$3-$4-$5'));
+  var SID = hex(8);
+
+  function realityInbound(port, sni, tag){
+    return '    {\n' +
+      '      "listen": "0.0.0.0",\n' +
+      '      "port": ' + port + ',\n' +
+      '      "protocol": "vless",\n' +
+      '      "settings": {\n' +
+      '        "clients": [{ "id": "' + UUID + '", "flow": "xtls-rprx-vision" }],\n' +
+      '        "decryption": "none"\n' +
+      '      },\n' +
+      '      "streamSettings": {\n' +
+      '        "network": "tcp",\n' +
+      '        "security": "reality",\n' +
+      '        "realitySettings": {\n' +
+      '          "dest": "' + sni + ':443",\n' +
+      '          "serverNames": ["' + sni + '"],\n' +
+      '          "privateKey": "<PASTE_PRIVATE_KEY>",\n' +
+      '          "shortIds": ["' + SID + '"]\n' +
+      '        }\n' +
+      '      }' + (tag ? ',\n      "tag": "' + tag + '"' : '') + '\n    }';
+  }
+  function clientLink(ip, port, sni){
+    return 'vless://' + UUID + '@' + ip + ':' + port +
+      '?security=reality&encryption=none&flow=xtls-rprx-vision&type=tcp&sni=' + encodeURIComponent(sni) +
+      '&fp=chrome&pbk=<PASTE_PUBLIC_KEY>&sid=' + SID + '&spx=%2F#my-vpn';
+  }
+  function block(n, title, body){
+    return '<div class="out"><h3><span class="step">' + n + '</span>' + title + '</h3>' +
+      '<button class="copy" type="button">Copy</button>' +
+      '<pre>' + body + '</pre></div>';
+  }
+  function hl(s){ return s.replace(/&lt;PASTE_[A-Z_]+&gt;/g, function(m){ return '<span class="k">'+m+'</span>'; }); }
+
+  function render(){
+    var port = parseInt($('port').value,10) || 8443;
+    var sni  = ($('sni').value || 'www.apple.com').trim();
+    var out = '', n = 1;
+
+    if (mode === 'single'){
+      var ip = ($('single-ip').value||'YOUR_VPS_IP').trim();
+      out += block(n++, 'Get a Reality keypair (run on the VPS)',
+        '<span class="c"># Private key → config below · Public key → client link</span>\nxray x25519');
+      out += block(n++, 'Xray config — <span style="font-family:var(--sans);font-weight:400">one box, terminates the tunnel & egresses itself</span>',
+        esc('{\n  "inbounds": [\n') + hl(esc(realityInbound(port, sni))) + esc('\n  ],\n  "outbounds": [{ "protocol": "freedom" }]\n}'));
+      out += block(n++, 'Firewall',
+        'ufw allow OpenSSH\nufw allow ' + port + '/tcp\nufw --force enable   <span class="c"># allow SSH FIRST</span>');
+      out += block(n++, 'Client link <span style="font-family:var(--sans);font-weight:400">(import into Shadowrocket / v2rayN / …)</span>',
+        hl(esc(clientLink(ip, port, sni))));
+    } else {
+      var rip = ($('relay-ip').value||'RELAY_IP').trim();
+      var eip = ($('exit-ip').value||'EXIT_IP').trim();
+      var pport = parseInt($('pport').value,10) || 8080;
+      out += block(n++, 'Get a Reality keypair (run on the RELAY)',
+        '<span class="c"># Private key → relay config · Public key → client link</span>\nxray x25519');
+      out += block(n++, 'Relay — Xray config <span style="font-family:var(--sans);font-weight:400">(Reality in → routed out to the exit)</span>',
+        esc('{\n  "inbounds": [\n') + hl(esc(realityInbound(port, sni, 'in'))) + esc('\n  ],\n  "outbounds": [\n') +
+        esc('    { "tag": "exit", "protocol": "http", "settings": { "servers": [{ "address": "' + eip + '", "port": ' + pport + ' }] } },\n') +
+        esc('    { "tag": "direct", "protocol": "freedom" }\n  ],\n') +
+        esc('  "routing": { "rules": [{ "type": "field", "inboundTag": ["in"], "outboundTag": "exit" }] }\n}'));
+      out += block(n++, 'Exit — <span style="font-family:var(--sans);font-weight:400">lightweight proxy on the residential box</span>',
+        '<span class="c"># install gost, then run it (a supervisor/systemd unit keeps it alive):</span>\ngost -L "http://0.0.0.0:' + pport + '"');
+      out += block(n++, 'Exit firewall <span style="font-family:var(--sans);font-weight:400">(admit ONLY the relay)</span>',
+        'ufw allow OpenSSH\nufw allow from ' + rip + ' to any port ' + pport + ' proto tcp\nufw --force enable');
+      out += block(n++, 'Relay firewall',
+        'ufw allow OpenSSH\nufw allow ' + port + '/tcp\nufw --force enable');
+      out += block(n++, 'Client link <span style="font-family:var(--sans);font-weight:400">(connects to the relay)</span>',
+        hl(esc(clientLink(rip, port, sni))));
+    }
+    $('out').innerHTML = out;
+  }
+
+  function setMode(m){
+    mode = m;
+    $('m-single').setAttribute('aria-pressed', m==='single');
+    $('m-relay').setAttribute('aria-pressed', m==='relay');
+    document.querySelectorAll('.fld[data-mode]').forEach(function(f){
+      f.style.display = (f.getAttribute('data-mode')===m) ? '' : 'none';
+    });
+    render();
+  }
+
+  document.querySelectorAll('.gen-form input').forEach(function(i){ i.addEventListener('input', render); });
+  $('port-rand').addEventListener('click', function(){ $('port').value = randPort(); render(); });
+  $('pport-rand').addEventListener('click', function(){ $('pport').value = randPort(); render(); });
+  $('m-single').addEventListener('click', function(){ setMode('single'); });
+  $('m-relay').addEventListener('click', function(){ setMode('relay'); });
+  document.getElementById('out').addEventListener('click', function(e){
+    var btn = e.target.closest('.copy'); if(!btn) return;
+    var pre = btn.parentElement.querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent).then(function(){
+      btn.textContent = 'Copied'; btn.classList.add('done');
+      setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('done'); }, 1400);
+    });
+  });
+  setMode('single');
+})();
+</script>
+</body>
+</html>
