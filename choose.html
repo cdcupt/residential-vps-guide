@@ -141,6 +141,29 @@ curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
           <div class="ct">✓ Turn it into one number</div>
           Score each metric as a percentage of the best box you've tested, then average them. A single 0–100 rating makes "which VPS is better overall" a glance instead of an argument. The <a href="tool.html">score tool</a> does this for you.
         </div>
+
+        <h3 style="margin-top:2.2rem">Example: the spread across real brands</h3>
+        <p>The same uniform pass on a handful of providers. Only <strong>BandwagonHost</strong> is our measured run; the rest are <strong>representative published figures</strong> to show the range — the point is the gap, not the decimals. Best per column tints blue, worst red.</p>
+        <div class="tool-wrap">
+          <table class="perf-ref">
+            <thead><tr>
+              <th>Provider</th><th>Tier</th>
+              <th>Overall<small>/100</small></th>
+              <th>CPU 1-core<small>eps</small></th>
+              <th>CPU all-core<small>eps</small></th>
+              <th>Disk<small>IOPS</small></th>
+            </tr></thead>
+            <tbody>
+          <tr><td class="box">Vultr HF</td><td class="type">datacenter · premium</td><td class="sc hi">94</td><td class="hi">1,650</td><td class="hi">6,200</td><td class="hi">90,000</td></tr>
+          <tr><td class="box">Residential A</td><td class="type">residential · clean line</td><td class="sc hi">89</td><td class="lo">1,320</td><td class="lo">5,340</td><td class="hi">110,000</td></tr>
+          <tr><td class="box">Hetzner</td><td class="type">datacenter · value</td><td class="sc hi">86</td><td class="hi">1,450</td><td class="hi">5,800</td><td class="hi">85,000</td></tr>
+          <tr><td class="box">BandwagonHost <span style="font-family:var(--sans);font-weight:400;font-size:.72rem;color:var(--exit-ink)">measured</span></td><td class="type">datacenter · budget KVM</td><td class="sc lo">75</td><td class="hi">1,410</td><td class="hi">5,352</td><td class="lo">57,000</td></tr>
+          <tr><td class="box">Budget KVM</td><td class="type">datacenter · oversold</td><td class="sc lo">22</td><td class="lo">480</td><td class="lo">1,900</td><td class="lo">6,000</td></tr>
+          <tr><td class="box">Residential B</td><td class="type">residential · budget</td><td class="sc lo">10</td><td class="lo">300</td><td class="lo">580</td><td class="lo">2,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>94 vs 10 on the same axes</strong> — a premium box and an oversold one aren&#x27;t a little apart, they&#x27;re an order of magnitude. A clean residential line can out-disk a datacenter box, while a budget one sits pinned at a ~2,000-IOPS cap. <em>Residential rows are anonymized</em> (a different job — a clean IP, not raw power). Never buy on the tier name; run the ten-minute method on the actual box, then <a href="tool.html">score it</a>.</p>
       </section>
 
       <section id="flags">
