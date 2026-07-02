@@ -3,34 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Config generator — Residential VPS Guide</title>
-<meta name="description" content="Generate ready-to-paste commands to build your VPS setup — a single-VPS all-in-one VPN, or a datacenter relay fronting a residential exit. Reality tunnel, gost proxy, firewall rules, and a client link.">
+<title>Deploy skill — Residential VPS Guide</title>
+<meta name="description" content="An agent skill (SKILL.md) you drop into Claude Code or Codex to build your VPS VPN network for you — single-VPS or relay+residential-exit. Reviewed for lockout-safety and correctness.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380..600&family=Inter:wght@400..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .seg{display:inline-flex; background:var(--paper-2); border:1px solid var(--line-2); border-radius:999px; padding:4px; gap:2px; margin:.4rem 0 1.6rem}
-  .seg button{border:none; background:transparent; font:inherit; font-weight:600; font-size:.9rem; color:var(--ink-soft); padding:.5rem 1rem; border-radius:999px; cursor:pointer; white-space:nowrap; transition:.15s}
-  .seg button[aria-pressed="true"]{background:var(--card); color:var(--ink); box-shadow:var(--shadow-sm)}
-  @media(max-width:520px){ .seg{display:flex; flex-direction:column; width:100%; border-radius:var(--r-md)} .seg button{white-space:normal; width:100%; border-radius:calc(var(--r-md) - 3px)} }
-  .gen-form{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1rem 1.3rem; margin:0 0 2rem; max-width:760px}
-  .fld{display:flex; flex-direction:column; gap:.35rem}
-  .fld label{font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
-  .fld .hint{font-size:.78rem; color:var(--ink-soft); line-height:1.4}
-  .in-row{display:flex; gap:.4rem}
-  .fld input{flex:1; min-width:0; font-family:var(--mono); font-size:.92rem; padding:.55rem .7rem; border:1px solid var(--line-2); border-radius:var(--r-sm); background:var(--card); color:var(--ink)}
-  .fld input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg)}
-  .dice{flex:none; border:1px solid var(--line-2); background:var(--card); border-radius:var(--r-sm); padding:0 .7rem; cursor:pointer; font-size:1rem; color:var(--ink-2)}
-  .dice:hover{border-color:var(--accent); color:var(--accent-ink); background:var(--accent-bg)}
-  .out{position:relative; margin:1.3rem 0}
-  .out h3{font-size:1.05rem; margin:0 0 .5rem}
-  .out .step{font-family:var(--mono); color:var(--accent-ink); font-weight:600; margin-right:.4rem}
-  .out pre{margin:.2rem 0 0; padding-right:5.2rem}
-  .copy{position:absolute; top:2.3rem; right:.6rem; z-index:2; border:1px solid oklch(40% .02 265); background:oklch(30% .02 265); color:oklch(90% .01 265); font:inherit; font-size:.72rem; font-weight:600; padding:.3rem .6rem; border-radius:6px; cursor:pointer}
-  .copy:hover{background:oklch(38% .05 264); border-color:var(--accent)}
-  .copy.done{color:oklch(80% .12 168); border-color:oklch(60% .12 168)}
-  .k{color:oklch(80% .13 90)}  /* placeholder highlight */
+  .skill-card{border:1px solid var(--line); border-radius:var(--r-md); background:var(--card); box-shadow:var(--shadow-sm); overflow:hidden; margin:1.6rem 0}
+  .skill-head{display:flex; flex-wrap:wrap; align-items:center; gap:.6rem; padding:.7rem .9rem; border-bottom:1px solid var(--line); background:var(--paper-2)}
+  .skill-head .fn{font-family:var(--mono); font-size:.82rem; color:var(--ink-2); font-weight:600}
+  .skill-head .meta{font-family:var(--mono); font-size:.72rem; color:var(--ink-soft)}
+  .skill-head .sp{flex:1}
+  .skill-head .btn{padding:.4rem .8rem; font-size:.8rem}
+  .skill-body{max-height:60vh; overflow:auto; margin:0}
+  .skill-body pre{margin:0; border:none; border-radius:0; box-shadow:none; font-size:.8rem; line-height:1.55}
+  .use-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.2rem; margin:1.4rem 0}
+  .use-card{border:1px solid var(--line); border-radius:var(--r-md); padding:1.1rem 1.2rem; background:var(--card)}
+  .use-card h3{margin:.1rem 0 .5rem; font-size:1.05rem}
+  .use-card pre{font-size:.78rem; margin:.6rem 0 0}
+  .copybtn.done{background:var(--exit); border-color:var(--exit); color:#fff}
 </style>
 </head>
 <body>
@@ -48,7 +40,7 @@
     <div class="nav-links">
       <a href="choose.html"><span class="nl-full">Choose a VPS</span><span class="nl-short">Choose</span></a>
       <a href="build.html"><span class="nl-full">Build a network</span><span class="nl-short">Build</span></a>
-      <a href="setup.html" aria-current="page"><span class="nl-full">Config</span><span class="nl-short">Config</span></a>
+      <a href="setup.html" aria-current="page"><span class="nl-full">Skill</span><span class="nl-short">Skill</span></a>
       <a href="deployment.html"><span class="nl-full">Deployment</span><span class="nl-short">Deploy</span></a>
       <a href="tool.html"><span class="nl-full">Score tool</span><span class="nl-short">Score</span></a>
     </div>
@@ -57,37 +49,368 @@
 
 <header class="guide-hero">
   <div class="wrap">
-    <p class="eyebrow">Tool · Generator</p>
-    <h1>Generate your setup</h1>
-    <p class="lede">Fill a few fields and get the exact commands to paste — a simple <strong>single-VPS VPN</strong>, or a datacenter <strong>relay + residential exit</strong>. It builds the Reality config, the proxy, the firewall rules, and your client link. All in your browser; nothing is sent anywhere.</p>
+    <p class="eyebrow">Skill</p>
+    <h1>Deploy it with your AI agent</h1>
+    <p class="lede">Don't copy-paste commands. Hand this <strong>skill</strong> to your coding agent — Claude Code or Codex — point it at your servers, and it builds the whole thing: installs Xray, writes the Reality config, locks the firewall <em>without locking you out</em>, and hands back a client link. One <code>SKILL.md</code>, two topologies.</p>
   </div>
 </header>
 
 <main class="wrap" style="padding-bottom:3rem">
   <div class="prose">
-    <div class="seg" role="group" aria-label="Setup mode">
-      <button id="m-single" aria-pressed="true">① Single VPS (all-in-one VPN)</button>
-      <button id="m-relay" aria-pressed="false">② Relay + residential exit</button>
+    <p>It handles both shapes from <a href="build.html">the build guide</a>: a <strong>single VPS</strong> all-in-one VPN, or a datacenter <strong>relay + residential exit</strong>. It runs over SSH on <strong>your own boxes only</strong>, and it was hardened by an adversarial review pass — lockout-safe firewalling (SSH port first, verify, reconnect-test), captured-and-validated Reality keys, exit locked to the relay before the proxy starts, and a real rollback.</p>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-head">
+      <span class="fn">deploy-vps-network / SKILL.md</span>
+      <span class="meta">313 lines</span>
+      <span class="sp"></span>
+      <button class="btn btn-ghost copybtn" id="copy">Copy</button>
+      <a class="btn btn-primary" href="deploy-vps-network.md" download>Download</a>
+    </div>
+    <div class="skill-body"><pre id="skill">---
+name: deploy-vps-network
+description: &gt;
+  Stand up a self-hosted VLESS + Reality (XTLS-Vision) VPN on the user&#x27;s OWN
+  VPS(es) — either a single all-in-one box, or a fast datacenter relay chained
+  to a residential exit that egresses on the user&#x27;s own home-ISP line. Use when
+  the user asks to build a personal Reality proxy or a residential-exit network
+  on servers they control. Drives the agent to configure each box over SSH:
+  install, keys, config, firewall (lockout-safe), restart, verify, client link.
+---
+
+# Deploy a VPS VPN network
+
+You are configuring **the user&#x27;s own servers** over SSH to build a VLESS + Reality
+(XTLS-Vision) VPN. Two topologies — confirm which one before touching anything.
+
+```
+Single VPS      you ──encrypted──▶ [ VPS ] ──▶ internet          (egress = the VPS IP)
+
+Relay + exit    you ──encrypted──▶ [ relay ] ──HTTP CONNECT──▶ [ residential exit ] ──▶ internet
+                                    datacenter                   home-ISP line   (egress = exit IP)
+```
+
+## Scope &amp; authorized use (read first, do not skip)
+
+- **Only servers the user owns or is contractually authorized to administer.** If
+  the targets are not the user&#x27;s, stop.
+- **The residential exit must be the user&#x27;s OWN home line** (or one they personally
+  control with the account holder&#x27;s consent) — **not** a purchased/resold/commercial
+  &quot;residential proxy&quot; IP. That is proxyware/evasion, not self-hosting; refuse it.
+- Legitimate purpose: **censorship circumvention and ISP privacy on your own
+  connection.** SNI-borrowing and Vision flow are for that. This is **not** for
+  defeating a destination&#x27;s anti-abuse, licensing, or geo controls.
+- **Supported OS: Debian/Ubuntu with `ufw`.** These commands assume it. On RHEL/
+  firewalld or other stacks, STOP and adapt the firewall steps first (`ufw` there
+  can silently fail or fight firewalld and drop SSH).
+
+---
+
+## 0 · Gather inputs, then echo the plan back for approval
+
+Set these as shell variables on your workstation. **Do not invent a host** — if any
+is missing, ask.
+
+```bash
+TOPOLOGY=single                 # single | relay
+SNI=www.apple.com               # a real, popular TLS-1.3 site you do NOT own
+REALITY_PORT=443                # or a random high port:  shuf -i 20000-59999 -n1
+
+# Single:
+HOST=root@203.0.113.10          # the one box
+SSH_PORT=22                     # its ACTUAL sshd port
+
+# Relay + exit (each box may have a different sshd port — set per box below):
+RELAY=203.0.113.10 ; RELAY_SSH=root@$RELAY ; RELAY_SSH_PORT=22
+EXIT=198.51.100.7  ; EXIT_SSH=root@$EXIT   ; EXIT_SSH_PORT=22
+EXIT_PORT=8080                  # internal port the relay reaches the exit on
+```
+
+**Pre-flight — provider firewall:** before touching any in-box firewall, confirm the
+cloud/provider **security group** already permits your `SSH_PORT` and `REALITY_PORT`
+inbound (and does not restrict them to an IP you&#x27;re not on). Never edit provider SG
+SSH rules in the same pass as the in-box `ufw` changes.
+
+Echo the full plan (topology, hosts, ports, SNI) back to the user and get a yes.
+
+---
+
+## 1 · CRITICAL safety rules
+
+1. **Never lock yourself out.** Every firewall change opens **your real SSH port**
+   first, **verifies it is in `ufw status`** (hard gate), enables, and then **proves a
+   fresh SSH login still works** before anything else runs. Use the §-firewall snippet
+   verbatim; never hand-roll `ufw --force enable` without the gate + reconnect test.
+2. **Back up before overwrite.** The config-write recipe copies any existing
+   `config.json` to a timestamped `.bak` first, and **aborts if the box already has a
+   different multi-inbound config** — ask the user before clobbering it.
+3. **Verify each hop before the next.** Exit up and reachable before you touch the
+   relay; egress verified before you hand out a client link.
+4. **Least privilege on the exit.** The exit&#x27;s proxy port accepts **only the relay&#x27;s
+   IP** — never `0.0.0.0/0` — and the firewall is locked **before** the proxy starts.
+5. **Fail closed.** Any error or failed check → STOP and report the exact output.
+   Never blind-retry a destructive step.
+6. Keys/UUIDs are secrets. Print the client link once; don&#x27;t scatter private keys.
+
+---
+
+## 2 · Canonical order (top-to-bottom runnable, per box)
+
+`install xray → generate keys/uuid on the box → write config (+backup) → validate
+config → lock firewall (SSH-safe) → restart → verify`. Do the **exit fully first** in
+relay+exit mode.
+
+### Reusable snippet — SAFE firewall enable
+Run as ONE remote script so the gate and enable can&#x27;t be separated. Order is
+allow-SSH → allow-services → **enable** → gate (rules are only visible once ufw is
+active) → capture the remote exit code → prove a fresh login. Extra args are literal
+`ufw` rule strings, e.g. `&quot;allow 443/tcp&quot;`:
+
+```bash
+safe_ufw () {  # usage: safe_ufw &lt;ssh_target&gt; &lt;ssh_port&gt; &quot;allow 443/tcp&quot; [&quot;allow from X to any port Y proto tcp&quot; ...]
+  local T=$1 P=$2; shift 2
+  ssh -p &quot;$P&quot; &quot;$T&quot; &quot;bash -s&quot; &lt;&lt;EOF
+set -e
+ufw allow ${P}/tcp
+$(for r in &quot;$@&quot;; do echo &quot;ufw $r&quot;; done)
+ufw --force enable
+ufw status verbose | grep -qw &quot;${P}/tcp&quot; || { echo &quot;ABORT: ssh port not active after enable&quot;; exit 1; }
+EOF
+  local rc=$?
+  [ &quot;$rc&quot; -eq 0 ] || { echo &quot;safe_ufw FAILED on $T (rc=$rc) — firewall NOT trusted, aborting&quot;; return 1; }
+  ssh -p &quot;$P&quot; &quot;$T&quot; true || { echo &quot;LOCKED OUT on $T — use provider console&quot;; return 1; }
+  echo &quot;FIREWALL ACTIVE + RECONNECT OK ($T)&quot;
+}
+```
+**Every caller gates on its success with `&amp;&amp;`** — if `safe_ufw` returns non-zero, do
+NOT start any service (a half-configured firewall must never leave a port world-open).
+
+---
+
+## 3 · Topology: SINGLE VPS
+
+```bash
+# 3.1 install xray (official installer; sets up the `xray` systemd service)
+ssh -p $SSH_PORT $HOST &#x27;bash -c &quot;$(curl -fsSL https://github.com/XTLS/Xray-install/raw/main/install-release.sh)&quot; @ install&#x27;
+ssh -p $SSH_PORT $HOST &#x27;command -v xray &amp;&amp; systemctl cat xray &gt;/dev/null&#x27; || { echo &quot;xray install failed&quot;; exit 1; }
+
+# 3.2 generate identifiers ON the box; capture into LOCAL vars
+UUID=$(ssh -p $SSH_PORT $HOST &#x27;xray uuid&#x27;)
+SID=$(openssl rand -hex 8)                       # even-length hex, &lt;=16 chars; client sid must equal this
+KEYS=$(ssh -p $SSH_PORT $HOST &#x27;xray x25519&#x27;)
+PRIVATE_KEY=$(awk &#x27;/[Pp]rivate/{print $NF}&#x27; &lt;&lt;&lt;&quot;$KEYS&quot;)
+PUBLIC_KEY=$(awk &#x27;/[Pp]ublic|Password/{print $NF}&#x27; &lt;&lt;&lt;&quot;$KEYS&quot;)
+[ ${#PRIVATE_KEY} -ge 43 ] &amp;&amp; [ ${#PUBLIC_KEY} -ge 43 ] || { echo &quot;keypair parse failed&quot;; exit 1; }
+
+# 3.3 GUARD: abort LOCALLY if a different (non-reality) config already exists
+ssh -p $SSH_PORT $HOST &#x27;f=/usr/local/etc/xray/config.json; [ -s &quot;$f&quot; ] &amp;&amp; grep -q &quot;\&quot;inbounds\&quot;&quot; &quot;$f&quot; &amp;&amp; ! grep -q reality &quot;$f&quot; &amp;&amp; exit 3; exit 0&#x27; \
+  || { echo &quot;STOP: existing non-reality config on this box — ask the user before overwriting&quot;; exit 1; }
+# 3.3 backup any existing config, then write (unquoted heredoc → vars expand locally, then piped to the box)
+ssh -p $SSH_PORT $HOST &#x27;f=/usr/local/etc/xray/config.json; [ -s &quot;$f&quot; ] &amp;&amp; cp &quot;$f&quot; &quot;$f.bak.$(date +%s)&quot;; :&#x27;
+ssh -p $SSH_PORT $HOST &#x27;cat &gt; /usr/local/etc/xray/config.json&#x27; &lt;&lt;EOF
+{
+  &quot;inbounds&quot;: [{
+    &quot;listen&quot;: &quot;0.0.0.0&quot;,
+    &quot;port&quot;: ${REALITY_PORT},
+    &quot;protocol&quot;: &quot;vless&quot;,
+    &quot;settings&quot;: { &quot;clients&quot;: [{ &quot;id&quot;: &quot;${UUID}&quot;, &quot;flow&quot;: &quot;xtls-rprx-vision&quot; }], &quot;decryption&quot;: &quot;none&quot; },
+    &quot;streamSettings&quot;: {
+      &quot;network&quot;: &quot;tcp&quot;,
+      &quot;security&quot;: &quot;reality&quot;,
+      &quot;realitySettings&quot;: {
+        &quot;show&quot;: false,
+        &quot;dest&quot;: &quot;${SNI}:443&quot;,
+        &quot;xver&quot;: 0,
+        &quot;serverNames&quot;: [&quot;${SNI}&quot;],
+        &quot;privateKey&quot;: &quot;${PRIVATE_KEY}&quot;,
+        &quot;shortIds&quot;: [&quot;${SID}&quot;]
+      }
+    }
+  }],
+  &quot;outbounds&quot;: [{ &quot;protocol&quot;: &quot;freedom&quot; }]
+}
+EOF
+
+# 3.4 validate config BEFORE restart (hard stop on non-zero)
+ssh -p $SSH_PORT $HOST &#x27;xray run -test -c /usr/local/etc/xray/config.json&#x27; || { echo &quot;config invalid&quot;; exit 1; }
+
+# 3.5 lock firewall (SSH-safe); ONLY restart xray if the firewall is confirmed
+safe_ufw &quot;$HOST&quot; &quot;$SSH_PORT&quot; &quot;allow ${REALITY_PORT}/tcp&quot; \
+  &amp;&amp; ssh -p $SSH_PORT $HOST &#x27;systemctl restart xray &amp;&amp; systemctl enable xray&#x27; \
+  || { echo &quot;firewall not confirmed — xray NOT restarted&quot;; exit 1; }
+
+# 3.6 verify
+ssh -p $SSH_PORT $HOST &quot;ss -tlnp | grep -q :${REALITY_PORT} &amp;&amp; echo LISTENING || echo NOT-LISTENING&quot;
+ssh -p $SSH_PORT $HOST &#x27;journalctl -u xray -n20 --no-pager | grep -qiE &quot;err|fail&quot; &amp;&amp; echo CHECK-LOG || echo CLEAN&#x27;
+```
+`HOST_IP` for the client link = the VPS public IP. Go to §5.
+
+---
+
+## 4 · Topology: RELAY + RESIDENTIAL EXIT
+
+### 4A · The EXIT first (residential box)
+
+```bash
+# install gost v3, capture its absolute path
+ssh -p $EXIT_SSH_PORT $EXIT_SSH &#x27;curl -fsSL https://github.com/go-gost/gost/raw/master/install.sh | bash&#x27;
+GOST=$(ssh -p $EXIT_SSH_PORT $EXIT_SSH &#x27;command -v gost&#x27;) ; [ -n &quot;$GOST&quot; ] || { echo &quot;gost missing&quot;; exit 1; }
+
+# write a REAL systemd unit (absolute path; binds 0.0.0.0 — the firewall is the control)
+ssh -p $EXIT_SSH_PORT $EXIT_SSH &quot;cat &gt; /etc/systemd/system/gost.service&quot; &lt;&lt;EOF
+[Unit]
+Description=gost exit proxy
+After=network-online.target
+Wants=network-online.target
+[Service]
+ExecStart=${GOST} -L &quot;http://0.0.0.0:${EXIT_PORT}&quot;
+Restart=on-failure
+RestartSec=3
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# LOCK THE FIREWALL BEFORE STARTING THE PROXY — and ONLY start gost if the lock is confirmed
+# (a failed/inactive firewall must never leave a 0.0.0.0 proxy world-open)
+safe_ufw &quot;$EXIT_SSH&quot; &quot;$EXIT_SSH_PORT&quot; &quot;allow from ${RELAY} to any port ${EXIT_PORT} proto tcp&quot; \
+  &amp;&amp; ssh -p $EXIT_SSH_PORT $EXIT_SSH &#x27;systemctl daemon-reload &amp;&amp; systemctl enable --now gost &amp;&amp; systemctl is-active --quiet gost &amp;&amp; echo GOST-UP&#x27; \
+  || { echo &quot;exit firewall not confirmed — gost NOT started (would be world-open)&quot;; exit 1; }
+```
+
+**Verify the exit — this test MUST be run FROM THE RELAY** (its source IP is the one
+allow-listed; your workstation is not):
+```bash
+ssh -p $RELAY_SSH_PORT $RELAY_SSH &quot;curl -s --max-time 15 -x http://${EXIT}:${EXIT_PORT} https://api.ipify.org&quot;   # → the EXIT&#x27;s IP
+ssh -p $RELAY_SSH_PORT $RELAY_SSH &quot;curl -s --max-time 15 -x http://${EXIT}:${EXIT_PORT} https://ipinfo.io/org&quot;   # → the exit&#x27;s ISP/ASN
+```
+Connection-refused here almost always means gost isn&#x27;t `0.0.0.0`-bound or the
+allow-from-relay rule is missing. **Do not continue until the exit returns its own IP.**
+
+### 4B · The RELAY (datacenter box)
+
+Install xray and generate keys exactly as §3.1–3.2, but over `$RELAY_SSH` /
+`$RELAY_SSH_PORT`. Then write the relay config (Reality in → routed out to the exit):
+
+```bash
+# GUARD (same as §3.3): abort locally if the relay already has a different config
+ssh -p $RELAY_SSH_PORT $RELAY_SSH &#x27;f=/usr/local/etc/xray/config.json; [ -s &quot;$f&quot; ] &amp;&amp; grep -q &quot;\&quot;inbounds\&quot;&quot; &quot;$f&quot; &amp;&amp; ! grep -q reality &quot;$f&quot; &amp;&amp; exit 3; exit 0&#x27; \
+  || { echo &quot;STOP: existing non-reality config on the relay — ask the user before overwriting&quot;; exit 1; }
+ssh -p $RELAY_SSH_PORT $RELAY_SSH &#x27;f=/usr/local/etc/xray/config.json; [ -s &quot;$f&quot; ] &amp;&amp; cp &quot;$f&quot; &quot;$f.bak.$(date +%s)&quot;; :&#x27;
+ssh -p $RELAY_SSH_PORT $RELAY_SSH &#x27;cat &gt; /usr/local/etc/xray/config.json&#x27; &lt;&lt;EOF
+{
+  &quot;inbounds&quot;: [{
+    &quot;listen&quot;: &quot;0.0.0.0&quot;, &quot;port&quot;: ${REALITY_PORT}, &quot;protocol&quot;: &quot;vless&quot;, &quot;tag&quot;: &quot;in&quot;,
+    &quot;settings&quot;: { &quot;clients&quot;: [{ &quot;id&quot;: &quot;${UUID}&quot;, &quot;flow&quot;: &quot;xtls-rprx-vision&quot; }], &quot;decryption&quot;: &quot;none&quot; },
+    &quot;streamSettings&quot;: { &quot;network&quot;: &quot;tcp&quot;, &quot;security&quot;: &quot;reality&quot;,
+      &quot;realitySettings&quot;: { &quot;show&quot;: false, &quot;dest&quot;: &quot;${SNI}:443&quot;, &quot;xver&quot;: 0,
+        &quot;serverNames&quot;: [&quot;${SNI}&quot;], &quot;privateKey&quot;: &quot;${PRIVATE_KEY}&quot;, &quot;shortIds&quot;: [&quot;${SID}&quot;] } }
+  }],
+  &quot;outbounds&quot;: [
+    { &quot;tag&quot;: &quot;exit&quot;, &quot;protocol&quot;: &quot;http&quot;, &quot;settings&quot;: { &quot;servers&quot;: [{ &quot;address&quot;: &quot;${EXIT}&quot;, &quot;port&quot;: ${EXIT_PORT} }] } },
+    { &quot;tag&quot;: &quot;direct&quot;, &quot;protocol&quot;: &quot;freedom&quot; }
+  ],
+  &quot;routing&quot;: { &quot;rules&quot;: [{ &quot;type&quot;: &quot;field&quot;, &quot;inboundTag&quot;: [&quot;in&quot;], &quot;outboundTag&quot;: &quot;exit&quot; }] }
+}
+EOF
+ssh -p $RELAY_SSH_PORT $RELAY_SSH &#x27;xray run -test -c /usr/local/etc/xray/config.json&#x27; || { echo &quot;relay config invalid&quot;; exit 1; }
+safe_ufw &quot;$RELAY_SSH&quot; &quot;$RELAY_SSH_PORT&quot; &quot;allow ${REALITY_PORT}/tcp&quot; \
+  &amp;&amp; ssh -p $RELAY_SSH_PORT $RELAY_SSH &#x27;systemctl restart xray &amp;&amp; systemctl enable xray&#x27; \
+  || { echo &quot;relay firewall not confirmed — xray NOT restarted&quot;; exit 1; }
+```
+`HOST_IP` for the client link = the **relay** IP.
+
+&gt; Optional hardening for the relay→exit hop (plaintext HTTP CONNECT, ufw is the primary
+&gt; control): add proxy creds — listener `${GOST} -L &quot;http://user:pass@0.0.0.0:${EXIT_PORT}&quot;`
+&gt; and relay outbound `&quot;users&quot;:[{&quot;user&quot;:&quot;user&quot;,&quot;pass&quot;:&quot;pass&quot;}]` inside the `exit` server.
+
+---
+
+## 5 · Client link
+
+```bash
+LINK=&quot;vless://${UUID}@HOST_IP:${REALITY_PORT}?security=reality&amp;encryption=none&amp;flow=xtls-rprx-vision&amp;type=tcp&amp;sni=${SNI}&amp;fp=chrome&amp;pbk=${PUBLIC_KEY}&amp;sid=${SID}&amp;spx=%2F#my-vpn&quot;
+echo &quot;$LINK&quot;
+```
+Replace `HOST_IP` with the single-VPS IP or the **relay** IP. Import into Shadowrocket /
+v2rayN / Nekoray / sing-box. `sid` must exactly equal the server&#x27;s `shortIds` entry.
+
+---
+
+## 6 · Verify end-to-end
+
+1. **Listening:** `ss -tlnp | grep :${REALITY_PORT}` on each xray box.
+2. **Connect** a client with the link.
+3. **Egress (from the client, tunnel on):** `curl https://api.ipify.org`
+   - single → the VPS IP.
+   - relay+exit → the **exit&#x27;s** IP (a consumer-ISP address), **not** the relay&#x27;s. If it
+     returns the relay IP, the routing rule isn&#x27;t matching — recheck inbound `tag:&quot;in&quot;`
+     and the rule&#x27;s `inboundTag`.
+4. **Handshake:** `journalctl -u xray -n50 --no-pager` shows no Reality/TLS errors.
+
+---
+
+## 7 · Troubleshooting &amp; rollback
+
+- **No connect:** port open end-to-end? (`ufw status`, provider SG). `dest` host and
+  `serverNames` must match: **`dest` is `host:443`, `serverNames` is the bare host, no
+  port.** The SNI must serve TLS 1.3 (`www.apple.com` is a safe default).
+- **Egress = relay IP:** routing rule not matching (see §6.3).
+- **Exit refused from relay:** exit firewall must `allow from $RELAY`; `systemctl
+  is-active gost` must be true; gost must bind `0.0.0.0`.
+- **Rollback a box (by spec, never by index):**
+  ```bash
+  ssh -p $SSH_PORT $HOST &#x27;systemctl stop xray 2&gt;/dev/null; f=/usr/local/etc/xray/config.json; ls -t $f.bak.* 2&gt;/dev/null | head -1 | xargs -r -I{} cp {} $f&#x27;
+  ssh -p $SSH_PORT $HOST &quot;ufw delete allow ${REALITY_PORT}/tcp&quot;      # NEVER delete the ssh allow rule
+  # exit:  ssh ... &quot;systemctl disable --now gost; ufw delete allow from ${RELAY} to any port ${EXIT_PORT} proto tcp&quot;
+  ```
+  If ever locked out, use the provider console/VNC to fix `ufw`.
+
+---
+
+## Notes
+
+- **SNI choice matters.** A weak/edge SNI can get a fresh IP&#x27;s Reality handshake
+  throttled or blocked. Prefer a strong, ubiquitous TLS-1.3 site; keep `dest` host and
+  `serverNames` identical.
+- **Vision scope.** `xtls-rprx-vision` hardens the **client↔relay** hop only; the
+  relay→exit leg is plain HTTP CONNECT (ufw-gated) and doesn&#x27;t get Vision&#x27;s zero-copy path.
+- **shortId:** even-length hex, ≤16 chars (`openssl rand -hex 8` = 16 = the max).
+- **More exits:** give each its own relay port + `shortId` + `exit` outbound + routing
+  rule; a client picks an exit by which relay port it connects to.
+- **Ports:** if a port behaves badly on a fresh IP, try another high port before blaming
+  the backend.
+</pre></div>
+  </div>
+
+  <div class="prose"><h2 style="margin-top:2rem">Use it in your agent</h2></div>
+  <div class="use-grid">
+    <div class="use-card">
+      <h3>Claude Code</h3>
+      <p style="margin:0;color:var(--ink-soft);font-size:.9rem">Drop it in as a skill, then just ask.</p>
+      <pre>mkdir -p ~/.claude/skills/deploy-vps-network
+# save the file there as SKILL.md
+# then, in Claude Code:
+"deploy a single-VPS VPN on
+ root@203.0.113.10"</pre>
+    </div>
+    <div class="use-card">
+      <h3>Codex / any agent</h3>
+      <p style="margin:0;color:var(--ink-soft);font-size:.9rem">Save it as an <code>AGENTS.md</code> (or paste it), then ask.</p>
+      <pre>cp deploy-vps-network.md AGENTS.md
+# or paste the markdown into the chat,
+# then:
+"follow this to build a relay + exit
+ across my two servers"</pre>
     </div>
   </div>
 
-  <div class="gen-form">
-    <div class="fld" data-mode="single"><label>VPS IP</label><input id="single-ip" type="text" placeholder="203.0.113.10" value="203.0.113.10"><span class="hint">the box that runs the VPN and egresses.</span></div>
-    <div class="fld" data-mode="relay"><label>Relay IP (datacenter)</label><input id="relay-ip" type="text" placeholder="203.0.113.10" value="203.0.113.10"><span class="hint">the public entry box clients connect to.</span></div>
-    <div class="fld" data-mode="relay"><label>Exit IP (residential)</label><input id="exit-ip" type="text" placeholder="198.51.100.7" value="198.51.100.7"><span class="hint">the home-ISP box that egresses.</span></div>
-    <div class="fld"><label>Reality port</label><div class="in-row"><input id="port" type="number" min="1" max="65535" value="8443"><button class="dice" id="port-rand" title="Random port" aria-label="Generate a random port">🎲</button></div><span class="hint">not sure? roll a random high port.</span></div>
-    <div class="fld"><label>Borrowed SNI</label><input id="sni" type="text" value="www.apple.com"><span class="hint">a real, popular HTTPS site (not yours). Strong default; leave it be if unsure.</span></div>
-    <div class="fld" data-mode="relay"><label>Exit proxy port</label><div class="in-row"><input id="pport" type="number" min="1" max="65535" value="8080"><button class="dice" id="pport-rand" title="Random port" aria-label="Generate a random proxy port">🎲</button></div><span class="hint">internal — relay → exit only.</span></div>
-  </div>
-
-  <div id="out"></div>
-
-  <div class="prose" style="margin-top:2.5rem">
-    <div class="callout tip">
-      <div class="ct">▲ Two things the generator can't do for you</div>
-      The <strong>Reality keypair</strong> must come from the box itself — the first command below prints it; paste the <em>private</em> key into the config and the <em>public</em> key into the client link (both marked <span class="mono" style="color:var(--warn-ink)">&lt;PASTE_…&gt;</span>). And the config assumes <strong>Xray</strong> is installed (or a panel like 3x-ui that wraps it).
+  <div class="prose">
+    <div class="callout dont">
+      <div class="ct">✕ Your servers only</div>
+      The skill runs privileged commands over SSH. Point it only at hosts you own or are authorized to administer — and the residential exit must be <strong>your own home line</strong>, never a resold/commercial "residential proxy" IP.
     </div>
-    <p>New to any of this? Read <a href="build.html">how to build a network</a> for the why behind every line, and <a href="choose.html">how to choose a VPS</a> before you buy.</p>
+    <p>Source + issues on <a href="https://github.com/cdcupt/residential-vps-guide" target="_blank" rel="noopener">GitHub</a>. New to the architecture? Start with <a href="build.html">building a network</a>.</p>
   </div>
 </main>
 
@@ -102,119 +425,17 @@
       </div>
     </div>
     <nav aria-label="Footer">
-      <a href="index.html">Home</a> · <a href="choose.html">Choose a VPS</a> · <a href="build.html">Build a network</a> · <a href="setup.html">Config</a> · <a href="deployment.html">Deployment</a> · <a href="tool.html">Score tool</a>
+      <a href="index.html">Home</a> · <a href="choose.html">Choose a VPS</a> · <a href="build.html">Build a network</a> · <a href="setup.html">Skill</a> · <a href="deployment.html">Deployment</a> · <a href="tool.html">Score tool</a>
     </nav>
   </div>
 </footer>
 
 <script>
-(function(){
-  var mode = 'single';
-  var $ = function(id){ return document.getElementById(id); };
-  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]; }); }
-  function randPort(){ return 10000 + Math.floor(cryptoRand()*50000); }
-  function cryptoRand(){ var a=new Uint32Array(1); crypto.getRandomValues(a); return a[0]/4294967296; }
-  function hex(n){ var a=new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a).map(function(b){return b.toString(16).padStart(2,'0');}).join(''); }
-
-  // stable per-session identifiers
-  var UUID = (crypto.randomUUID ? crypto.randomUUID() : hex(16).replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/,'$1-$2-$3-$4-$5'));
-  var SID = hex(8);
-
-  function realityInbound(port, sni, tag){
-    return '    {\n' +
-      '      "listen": "0.0.0.0",\n' +
-      '      "port": ' + port + ',\n' +
-      '      "protocol": "vless",\n' +
-      '      "settings": {\n' +
-      '        "clients": [{ "id": "' + UUID + '", "flow": "xtls-rprx-vision" }],\n' +
-      '        "decryption": "none"\n' +
-      '      },\n' +
-      '      "streamSettings": {\n' +
-      '        "network": "tcp",\n' +
-      '        "security": "reality",\n' +
-      '        "realitySettings": {\n' +
-      '          "dest": "' + sni + ':443",\n' +
-      '          "serverNames": ["' + sni + '"],\n' +
-      '          "privateKey": "<PASTE_PRIVATE_KEY>",\n' +
-      '          "shortIds": ["' + SID + '"]\n' +
-      '        }\n' +
-      '      }' + (tag ? ',\n      "tag": "' + tag + '"' : '') + '\n    }';
-  }
-  function clientLink(ip, port, sni){
-    return 'vless://' + UUID + '@' + ip + ':' + port +
-      '?security=reality&encryption=none&flow=xtls-rprx-vision&type=tcp&sni=' + encodeURIComponent(sni) +
-      '&fp=chrome&pbk=<PASTE_PUBLIC_KEY>&sid=' + SID + '&spx=%2F#my-vpn';
-  }
-  function block(n, title, body){
-    return '<div class="out"><h3><span class="step">' + n + '</span>' + title + '</h3>' +
-      '<button class="copy" type="button">Copy</button>' +
-      '<pre>' + body + '</pre></div>';
-  }
-  function hl(s){ return s.replace(/&lt;PASTE_[A-Z_]+&gt;/g, function(m){ return '<span class="k">'+m+'</span>'; }); }
-
-  function render(){
-    var port = parseInt($('port').value,10) || 8443;
-    var sni  = ($('sni').value || 'www.apple.com').trim();
-    var out = '', n = 1;
-
-    if (mode === 'single'){
-      var ip = ($('single-ip').value||'YOUR_VPS_IP').trim();
-      out += block(n++, 'Get a Reality keypair (run on the VPS)',
-        '<span class="c"># Private key → config below · Public key → client link</span>\nxray x25519');
-      out += block(n++, 'Xray config — <span style="font-family:var(--sans);font-weight:400">one box, terminates the tunnel & egresses itself</span>',
-        esc('{\n  "inbounds": [\n') + hl(esc(realityInbound(port, sni))) + esc('\n  ],\n  "outbounds": [{ "protocol": "freedom" }]\n}'));
-      out += block(n++, 'Firewall',
-        'ufw allow OpenSSH\nufw allow ' + port + '/tcp\nufw --force enable   <span class="c"># allow SSH FIRST</span>');
-      out += block(n++, 'Client link <span style="font-family:var(--sans);font-weight:400">(import into Shadowrocket / v2rayN / …)</span>',
-        hl(esc(clientLink(ip, port, sni))));
-    } else {
-      var rip = ($('relay-ip').value||'RELAY_IP').trim();
-      var eip = ($('exit-ip').value||'EXIT_IP').trim();
-      var pport = parseInt($('pport').value,10) || 8080;
-      out += block(n++, 'Get a Reality keypair (run on the RELAY)',
-        '<span class="c"># Private key → relay config · Public key → client link</span>\nxray x25519');
-      out += block(n++, 'Relay — Xray config <span style="font-family:var(--sans);font-weight:400">(Reality in → routed out to the exit)</span>',
-        esc('{\n  "inbounds": [\n') + hl(esc(realityInbound(port, sni, 'in'))) + esc('\n  ],\n  "outbounds": [\n') +
-        esc('    { "tag": "exit", "protocol": "http", "settings": { "servers": [{ "address": "' + eip + '", "port": ' + pport + ' }] } },\n') +
-        esc('    { "tag": "direct", "protocol": "freedom" }\n  ],\n') +
-        esc('  "routing": { "rules": [{ "type": "field", "inboundTag": ["in"], "outboundTag": "exit" }] }\n}'));
-      out += block(n++, 'Exit — <span style="font-family:var(--sans);font-weight:400">lightweight proxy on the residential box</span>',
-        '<span class="c"># install gost, then run it (a supervisor/systemd unit keeps it alive):</span>\ngost -L "http://0.0.0.0:' + pport + '"');
-      out += block(n++, 'Exit firewall <span style="font-family:var(--sans);font-weight:400">(admit ONLY the relay)</span>',
-        'ufw allow OpenSSH\nufw allow from ' + rip + ' to any port ' + pport + ' proto tcp\nufw --force enable');
-      out += block(n++, 'Relay firewall',
-        'ufw allow OpenSSH\nufw allow ' + port + '/tcp\nufw --force enable');
-      out += block(n++, 'Client link <span style="font-family:var(--sans);font-weight:400">(connects to the relay)</span>',
-        hl(esc(clientLink(rip, port, sni))));
-    }
-    $('out').innerHTML = out;
-  }
-
-  function setMode(m){
-    mode = m;
-    $('m-single').setAttribute('aria-pressed', m==='single');
-    $('m-relay').setAttribute('aria-pressed', m==='relay');
-    document.querySelectorAll('.fld[data-mode]').forEach(function(f){
-      f.style.display = (f.getAttribute('data-mode')===m) ? '' : 'none';
-    });
-    render();
-  }
-
-  document.querySelectorAll('.gen-form input').forEach(function(i){ i.addEventListener('input', render); });
-  $('port-rand').addEventListener('click', function(){ $('port').value = randPort(); render(); });
-  $('pport-rand').addEventListener('click', function(){ $('pport').value = randPort(); render(); });
-  $('m-single').addEventListener('click', function(){ setMode('single'); });
-  $('m-relay').addEventListener('click', function(){ setMode('relay'); });
-  document.getElementById('out').addEventListener('click', function(e){
-    var btn = e.target.closest('.copy'); if(!btn) return;
-    var pre = btn.parentElement.querySelector('pre');
-    navigator.clipboard.writeText(pre.textContent).then(function(){
-      btn.textContent = 'Copied'; btn.classList.add('done');
-      setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('done'); }, 1400);
+  document.getElementById('copy').addEventListener('click', function(){
+    var b=this; navigator.clipboard.writeText(document.getElementById('skill').textContent).then(function(){
+      b.textContent='Copied'; b.classList.add('done'); setTimeout(function(){ b.textContent='Copy'; b.classList.remove('done'); },1500);
     });
   });
-  setMode('single');
-})();
 </script>
 </body>
 </html>
