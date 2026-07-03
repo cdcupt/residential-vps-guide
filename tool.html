@@ -136,11 +136,12 @@
     {k:'st',l:'CPU single-core'}, {k:'mt',l:'CPU all-core'}, {k:'memr',l:'memory read'}, {k:'memw',l:'memory write'},
     {k:'net',l:'network download'}, {k:'dr',l:'disk read'}, {k:'dw',l:'disk write'}
   ];
-  // illustrative starter data (generic — NOT any real host)
+  // starter data = our own measured fleet (overwrite with your own boxes)
   var EXAMPLES = [
-    {name:'Box A · datacenter',      v:[1400, 3000, 42, 24, 2000, 65000, 58000]},
-    {name:'Box B · residential',     v:[600,  5300, 44, 26, 570,  100000,100000]},
-    {name:'Box C · budget resi',     v:[300,  600,  18, 13, 100,  2000,  2000]}
+    {name:'SolaDrive · residential',    v:[1323, 5344, 44, 26, 569,  109775, 113304]},
+    {name:'BandwagonHost · datacenter', v:[1377, 5352, 43, 24, 2280, 57318,  48246]},
+    {name:'VirVM · residential',        v:[431,  1722, 23, 19, 94,   38813,  46692]},
+    {name:'AaITR · residential',        v:[290,  581,  17, 13, 102,  2018,   2018]}
   ];
   var rowsEl = document.getElementById('rows');
 
