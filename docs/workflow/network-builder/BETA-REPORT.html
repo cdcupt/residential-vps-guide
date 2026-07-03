@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beta Report — VPS Network Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380..600&family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1d23; --ink-2:#3a4150; --muted:#6b7280; --line:#e6e8ec; --line-2:#cfd3da;
+    --paper:#fbfbf9; --paper-2:#f4f5f2; --card:#fff;
+    --accent:#3a53d0; --accent-bg:#eef1fd; --accent-ink:#2b40b0;
+    --exit:#149d72; --exit-bg:#e7f6f0; --exit-ink:#0c7050;
+    --warn:#cf5330; --warn-bg:#fbeae2; --warn-ink:#a23c1c;
+    --amber:#b5820b; --amber-bg:#fbf3dd; --amber-ink:#7e5a06;
+    --crit:#a01722; --crit-bg:#fbe3e5; --crit-ink:#7d0f18;
+    --r:14px; --r-sm:8px;
+    --serif:'Fraunces','Iowan Old Style',Georgia,serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:'Inter',-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.62;
+    font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:clamp(1.1rem,3.5vw,2.75rem)}
+  a{color:var(--accent-ink)}
+  header.doc{border-bottom:1px solid var(--line);padding-bottom:1.2rem;margin-bottom:1.4rem}
+  .tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.8rem,1.3rem+2vw,2.7rem);line-height:1.05;letter-spacing:-.02em;margin:.4rem 0 .5rem}
+  .sub{color:var(--ink-2);max-width:70ch;margin:0}
+  .lede{font-family:var(--serif);font-weight:380;font-size:1.12rem;color:var(--ink-2);max-width:68ch}
+  .meta{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-top:.7rem;overflow-wrap:anywhere}
+  h2{font-family:var(--serif);font-weight:560;font-size:clamp(1.4rem,1.15rem+1vw,1.9rem);letter-spacing:-.015em;margin:2.6rem 0 .3rem;padding-top:.5rem}
+  h2 .n{font-family:var(--mono);color:var(--accent);font-size:.6em;margin-right:.55rem;font-weight:400;vertical-align:middle}
+  h3{font-family:var(--serif);font-weight:560;font-size:1.16rem;margin:1.5rem 0 .3rem}
+  p{margin:.55rem 0} ul,ol{margin:.4rem 0;padding-left:1.2rem} li{margin:.3rem 0}
+  strong,b{font-weight:650}
+  code,.mono{font-family:var(--mono);font-size:.85em;overflow-wrap:anywhere}
+  /* ---- figure / table primitives ---- */
+  .fig{margin:1.3rem 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:0 1px 2px rgba(20,23,28,.05);padding:1.2rem 1rem .9rem;overflow-x:auto}
+  .fig svg{display:block;margin:0 auto;height:auto;max-width:100%;min-width:0}
+  .fig figcaption{margin:.85rem auto 0;max-width:74ch;text-align:center;color:var(--muted);font-size:.82rem;line-height:1.45}
+  .glance{border:1.5px solid var(--accent);background:linear-gradient(180deg,#fff,var(--accent-bg))}
+  table{width:100%;border-collapse:collapse;font-size:.86rem;margin:0;background:var(--card)}
+  th,td{text-align:left;padding:.52rem .72rem;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--paper-2);font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-family:var(--mono);position:sticky;top:0}
+  tr:last-child td{border-bottom:none}
+  td.c,th.c{text-align:center;white-space:nowrap}
+  .tw{overflow-x:auto;margin:.9rem 0;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--r)}
+  .tw table{border-radius:var(--r);overflow:hidden}
+  /* ---- pills / badges ---- */
+  .pill{display:inline-block;font-family:var(--mono);font-size:.66rem;padding:.06rem .5rem;border-radius:99px;border:1px solid var(--line-2);color:var(--ink-2);white-space:nowrap;font-weight:600}
+  .st{display:inline-block;font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:.03em;padding:.1rem .5rem;border-radius:99px;white-space:nowrap}
+  .st.pass{background:var(--exit-bg);color:var(--exit-ink);border:1px solid var(--exit)}
+  .st.fail{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn)}
+  .st.blocked{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
+  .sev{display:inline-block;font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.1rem .5rem;border-radius:99px;white-space:nowrap}
+  .sev.blocker{background:var(--crit-bg);color:var(--crit-ink);border:1px solid var(--crit)}
+  .sev.high{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn)}
+  .sev.med{background:var(--amber-bg);color:var(--amber-ink);border:1px solid var(--amber)}
+  .sev.low{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
+  /* ---- callouts ---- */
+  .callout{border:1px solid var(--line-2);border-left:3px solid var(--accent);background:var(--card);
+    border-radius:10px;padding:.8rem 1rem;margin:1rem 0;font-size:.92rem}
+  .callout.warn{border-left-color:var(--warn);background:var(--warn-bg)}
+  .callout.ok{border-left-color:var(--exit);background:var(--exit-bg)}
+  .callout.amber{border-left-color:var(--amber);background:var(--amber-bg)}
+  .callout .ct{font-weight:700;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);margin-bottom:.2rem}
+  .callout.warn .ct{color:var(--warn-ink)} .callout.ok .ct{color:var(--exit-ink)} .callout.amber .ct{color:var(--amber-ink)}
+  /* ---- scorecard band ---- */
+  .band{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin:1.1rem 0}
+  @media(max-width:560px){ .band{grid-template-columns:repeat(2,1fr)} }
+  .stat{background:var(--card);padding:.9rem 1rem;text-align:center}
+  .stat .num{font-family:var(--serif);font-weight:600;font-size:2rem;line-height:1;letter-spacing:-.02em}
+  .stat .lab{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:.35rem}
+  .stat.good .num{color:var(--exit-ink)} .stat.bad .num{color:var(--warn-ink)} .stat.warnn .num{color:var(--amber-ink)}
+  /* ---- issue cards ---- */
+  .issue{border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);box-shadow:0 1px 2px rgba(20,23,28,.05);
+    padding:1rem 1.15rem 1.15rem;margin:1.1rem 0;overflow:hidden}
+  .issue.high{border-left:4px solid var(--warn)} .issue.med{border-left:4px solid var(--amber)} .issue.low{border-left:4px solid var(--line-2)}
+  .issue .ihead{display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline}
+  .issue .id{font-family:var(--mono);font-size:.72rem;font-weight:700;color:var(--muted)}
+  .issue h3{margin:.15rem 0 .25rem}
+  .issue .src{font-family:var(--mono);font-size:.66rem;color:var(--muted)}
+  .kv{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin:.35rem 0}
+  ol.repro{counter-reset:step;list-style:none;padding-left:0;margin:.5rem 0}
+  ol.repro li{position:relative;padding-left:1.9rem;margin:.35rem 0;font-size:.9rem}
+  ol.repro li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:0;
+    width:1.35rem;height:1.35rem;border-radius:50%;background:var(--paper-2);border:1px solid var(--line-2);
+    font-family:var(--mono);font-size:.66rem;font-weight:700;color:var(--ink-2);display:flex;align-items:center;justify-content:center}
+  /* ---- evidence shot ---- */
+  .shot{margin:.9rem 0;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--paper-2);overflow:hidden}
+  .shot .cap{font-family:var(--mono);font-size:.66rem;color:var(--muted);padding:.4rem .7rem;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+  .shot .cap .fn{overflow-wrap:anywhere}
+  .shot .frame{max-height:560px;overflow:auto;background:#fff}
+  .shot img{display:block;width:100%;height:auto;min-width:0}
+  .shotgrid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+  @media(max-width:720px){ .shotgrid{grid-template-columns:1fr} }
+  .shotgrid .shot{margin:0}
+  /* ---- toc ---- */
+  .toc{font-size:.9rem;columns:2;column-gap:2rem;margin:.4rem 0 0;padding-left:1rem}
+  @media(max-width:560px){ .toc{columns:1} }
+  .verdict{border:1.5px solid var(--warn);background:linear-gradient(180deg,#fff,var(--warn-bg))}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <div class="tag">Beta Report · SDD Workflow · Quality Pass · Gate 3 candidate</div>
+  <h1>VPS Network Builder — Beta Test Report</h1>
+  <p class="sub lede">A four-tester beta pass on the <b>“Build your network”</b> board (<code>tool.html</code>) and the <b>cost-performance Value column</b> (<code>choose.html</code>), driven headless with Playwright against the PRD / DESIGN / TECH specs. Every feature verified, every ground-truth checkpoint reproduced — with one <b>HIGH</b> coherence defect and two <b>MEDIUM</b> honesty/pricing defects standing between here and Gate&nbsp;3.</p>
+  <p class="meta">Synthesised from 4 testers · feature-coverage + power lens + a11y lens + QA · verified 1440 / 390 / 320 · 2026-07-03</p>
+</header>
+
+<nav aria-label="Contents">
+  <div class="tag" style="color:var(--muted)">On this page</div>
+  <div class="toc">
+    <a href="#glance">★ At a glance — coverage matrix</a> ·
+    <a href="#issues">1 · Prioritized issues</a> ·
+    <a href="#high1">1.1 · HIGH — orphaned exits</a> ·
+    <a href="#med1">1.2 · MED — $0.00 metered jump</a> ·
+    <a href="#med2">1.3 · MED — reference badge</a> ·
+    <a href="#lows">1.4 · LOW &amp; notes</a> ·
+    <a href="#pass">2 · Verified-good evidence</a> ·
+    <a href="#verdict">3 · Verdict &amp; readiness</a>
+  </div>
+</nav>
+
+<!-- ============================ AT A GLANCE ============================ -->
+<h2 id="glance">★ At a glance</h2>
+
+<div class="band">
+  <div class="stat good"><div class="num">21 / 21</div><div class="lab">Features PASS</div></div>
+  <div class="stat"><div class="num">0</div><div class="lab">Fail · Blocked</div></div>
+  <div class="stat bad"><div class="num">1</div><div class="lab">High open</div></div>
+  <div class="stat warnn"><div class="num">2</div><div class="lab">Medium open</div></div>
+</div>
+
+<div class="fig glance">
+  <svg viewBox="0 0 960 168" role="img" aria-label="Scorecard: 21 of 21 features pass; open issue tally is 0 blocker, 1 high, 2 medium, 2 low; verdict is conditional pass, not yet ready for Gate 3.">
+    <text x="20" y="28" class="t" font-family="Fraunces,serif" font-weight="600" font-size="15" fill="#1a1d23">Feature coverage — 21 / 21 PASS</text>
+    <rect x="20" y="42" width="620" height="20" rx="6" fill="#e7f6f0" stroke="#149d72"/>
+    <rect x="20" y="42" width="620" height="20" rx="6" fill="#149d72" opacity="0.22"/>
+    <text x="330" y="57" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11" font-weight="700" fill="#0c7050">100% verified · 0 FAIL · 0 BLOCKED</text>
+
+    <text x="20" y="98" class="t" font-family="Fraunces,serif" font-weight="600" font-size="15" fill="#1a1d23">Open issues by severity</text>
+    <!-- severity chips -->
+    <g font-family="ui-monospace,monospace" font-size="11" font-weight="700">
+      <rect x="20"  y="112" width="150" height="34" rx="8" fill="#fbe3e5" stroke="#a01722"/><text x="95"  y="134" text-anchor="middle" fill="#7d0f18">0 · BLOCKER</text>
+      <rect x="182" y="112" width="150" height="34" rx="8" fill="#fbeae2" stroke="#cf5330"/><text x="257" y="134" text-anchor="middle" fill="#a23c1c">1 · HIGH</text>
+      <rect x="344" y="112" width="150" height="34" rx="8" fill="#fbf3dd" stroke="#b5820b"/><text x="419" y="134" text-anchor="middle" fill="#7e5a06">2 · MEDIUM</text>
+      <rect x="506" y="112" width="150" height="34" rx="8" fill="#f4f5f2" stroke="#cfd3da"/><text x="581" y="134" text-anchor="middle" fill="#3a4150">2 · LOW</text>
+      <rect x="700" y="106" width="240" height="46" rx="10" fill="#fff" stroke="#cf5330" stroke-width="1.6"/>
+      <text x="820" y="126" text-anchor="middle" font-family="Fraunces,serif" font-size="13" font-weight="600" fill="#a23c1c">CONDITIONAL PASS</text>
+      <text x="820" y="143" text-anchor="middle" font-size="9.5" fill="#6b7280">not yet ready for Gate 3</text>
+    </g>
+  </svg>
+  <figcaption>The build is functionally complete and honest on the happy path; the gate to Gate&nbsp;3 is the single HIGH state-coherence bug plus two MEDIUM pricing/honesty defects, all in edge sequences (jump removed / metered-or-reference box as the jump).</figcaption>
+</div>
+
+<h3>Feature-coverage matrix</h3>
+<p class="sub">All 21 features exercised headless against <code>tool.html</code> and <code>choose.html</code>. One documented deviation (VMISS pricing, feature&nbsp;16) is escalated as issue <a href="#med2">MED-2</a>.</p>
+<div class="tw">
+<table>
+  <thead><tr><th class="c">#</th><th>Feature</th><th class="c">Status</th><th>Evidence / note</th></tr></thead>
+  <tbody>
+    <tr><td class="c">1</td><td>Palette: data-driven cards + role badges (JUMP / EXIT / JUMP+EXIT) + benchmarked / reference / out-of-stock badges</td><td class="c"><span class="st pass">PASS</span></td><td>8 cards from <code>PROVIDERS</code>; roles &amp; bench/ref/CN2-GIA/163/metered badges all correct; out-of-stock as sub-text + badge on placed nodes.</td></tr>
+    <tr><td class="c">2</td><td>Drag a jump card onto the jump slot</td><td class="c"><span class="st pass">PASS</span></td><td>Faithful HTML5 DnD (dragstart→dragover→drop) places it; Playwright synthetic drag flaky but real handlers work.</td></tr>
+    <tr><td class="c">3</td><td>Tap a card places it into the correct slot</td><td class="c"><span class="st pass">PASS</span></td><td>Tap DMIT→jump replaced; tap SolaDrive→exit appended (2→3). Routes by card <code>data-role</code>.</td></tr>
+    <tr><td class="c">4</td><td>Keyboard: focus+Enter places; Delete/Backspace removes</td><td class="c"><span class="st pass">PASS</span></td><td>Enter appends exit; Delete/Backspace removes; focus moves to placed node; each fires aria-live.</td></tr>
+    <tr><td class="c">5</td><td>Jump slot rejects exit-only card with visible + announced feedback</td><td class="c"><span class="st pass">PASS</span></td><td>Exit-only SolaDrive on jump slot → not placed, <code>.slot.jump.reject</code> red, live “SolaDrive can’t be a jump host.”</td></tr>
+    <tr><td class="c">6</td><td>Multi-exit fan-out: add / remove, 3+ exits recompute</td><td class="c"><span class="st pass">PASS</span></td><td>Add via tap/drag/keyboard; per-exit ✕ + Delete; 3 exits = $113.76; price/edges/route recompute live.</td></tr>
+    <tr><td class="c">7</td><td>Region + plan configurator on multi-region jump (BWH) updates price + specs live</td><td class="c"><span class="st pass">PASS</span></td><td>plan→bwh-prod $100.75; region→Hong Kong resets plan, $133.75, “NOT BENCHMARKED”, HK options enumerated.</td></tr>
+    <tr><td class="c">8</td><td>Traffic package + billing cycle on metered exit (VirVM) folds effective $/mo</td><td class="c"><span class="st pass">PASS</span></td><td>1000GB@1mo→$48.00 eff; 300GB@6mo−10%→$16.20 eff. Discount + USD fold-in correct; ⚑ph propagated.</td></tr>
+    <tr><td class="c">9</td><td>Price = shared jump once + Σ exits; default 1 BWH + 2 AaITR = $73.76</td><td class="c"><span class="st pass">PASS</span></td><td>$30.00 + $21.88 + $21.88 = $73.76/mo, labelled “(jump ×1 + exits)”. Exact ground-truth match.</td></tr>
+    <tr><td class="c">10</td><td>Estimate shows all 5 metrics (price, latency range, I/O, bandwidth min-hop, route)</td><td class="c"><span class="st pass">PASS</span></td><td>$73.76/mo · 129~210 ms · 2,018 capped IOPS · 102M min hop · 2× AT&amp;T (#1). All five numerically correct.</td></tr>
+    <tr><td class="c">11</td><td>Per-edge readouts: one entry edge + one per exit, each with own metrics</td><td class="c"><span class="st pass">PASS</span></td><td>“you → BWH 129–156 ms · CN2 GIA ✓” + 2 link edges w/ latency·route·bw·I/O; single-host renders a tail edge.</td></tr>
+    <tr><td class="c">12</td><td>Currency conversion (VMISS CAD, AaITR native) reflected in USD total</td><td class="c"><span class="st pass">PASS</span></td><td>AaITR $21.88 (¥149); VMISS jump $4.38 (CA$6 × 0.73) → total $48.14. Correct.</td></tr>
+    <tr><td class="c">13</td><td>China guardrail: geo auto-detect stamp + working override toggle</td><td class="c"><span class="st pass">PASS</span></td><td><code>detectGeo()</code> ipapi→ipwho w/ 1.5s abort; blocked → “location unknown — toggle manually”; toggle flips + announces.</td></tr>
+    <tr><td class="c">14</td><td>Gated-red: China ON + non-CN2-GIA entry (VirVM-163) → red connector + “pick a CN2 GIA box” notice</td><td class="c"><span class="st pass">PASS</span></td><td>Entry <code>conn red</code>, notice + “163 · NON-GIA ENTRY” badge + gated edge row. CN2-GIA (BWH) entry stays “conn ok”.</td></tr>
+    <tr><td class="c">15</td><td>Honesty: ESTIMATED labels, benchmarked vs reference badged, out-of-stock badged, ⚑ph where PM-pending</td><td class="c"><span class="st pass">PASS</span></td><td>“all values estimated” + “ESTIMATED not a quote”; bench/ref badges; OUT OF STOCK badges; ⚑ph placeholders. No fabricated numbers.</td></tr>
+    <tr><td class="c">16</td><td>Reference / out-of-stock boxes excluded from the price sum</td><td class="c"><span class="st pass">PASS<sup>*</sup></span></td><td><b>*Deviation:</b> QQ.pw, DMIT, metered VirVM-jump correctly excluded — but VMISS (reference/out-of-stock badge) is modelled flat CAD and <b>adds $4.38</b> when placed as jump. Escalated → <a href="#med2">MED-2</a>.</td></tr>
+    <tr><td class="c">17</td><td>Responsive 320–1440: no horizontal page overflow; fan-out branches wrap on mobile</td><td class="c"><span class="st pass">PASS</span></td><td>scrollWidth ≤ innerWidth at 320/375/390/768/1024/1440; 320 → 1-col, branches stack.</td></tr>
+    <tr><td class="c">18</td><td>A11y: aria-live narrates; focus follows placement; ≥40px targets; visible focus ring; reduced-motion</td><td class="c"><span class="st pass">PASS</span></td><td><code>#nbx-live</code> narrates every change; focus follows/returns; targets ≥40px; 2px focus ring; RM kills transitions.</td></tr>
+    <tr><td class="c">19</td><td>choose.html: Price + Value (pt/$) cells per fleet row with correct math</td><td class="c"><span class="st pass">PASS</span></td><td>SolaDrive 2.20 · BWH 4C/4GB 1.46 · BWH 3C/2GB 2.50 · AaITR 0.82 · VirVM (metered) “—”. Match ground truth.</td></tr>
+    <tr><td class="c">20</td><td>choose.html: best-value ★ on BWH 3C/2GB (2.50); sort-by-Value works; static numbers with JS off</td><td class="c"><span class="st pass">PASS</span></td><td>Static ★ BEST VALUE w/ JS off; JS sort toggles desc/asc, updates aria-sort; no-value VirVM sorts last both ways.</td></tr>
+    <tr><td class="c">21</td><td>Regression: the “Score a VPS” tool below the builder still works</td><td class="c"><span class="st pass">PASS</span></td><td>Auto-computes on load; Add/Compute/Reset work; independent of builder IIFE; no JS errors bar the 2 blocked geo fetches.</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="meta">Source: feature-coverage tester (headless Playwright). Ground truth reproduced exactly on the default board and both surfaces.</p>
+
+<!-- ============================ ISSUES ============================ -->
+<h2 id="issues"><span class="n">1</span>Prioritized issues — merged &amp; de-duplicated</h2>
+<p class="sub">Findings from all four testers, folded together. The power-lens and coverage testers independently reported the same VMISS pricing defect (<a href="#med2">MED-2</a>). The QA tester returned no findings; the a11y lens returned a diagnostic-only run (its single entry is a placeholder, not a real defect) — its coverage is carried by feature&nbsp;18 above and note&nbsp;<a href="#lows">N-2</a>.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th class="c">Sev</th><th>ID</th><th>Title</th><th>Area</th><th>Reported by</th></tr></thead>
+  <tbody>
+    <tr><td class="c"><span class="sev high">High</span></td><td class="mono">HIGH-1</td><td><a href="#high1">Removing the jump orphans exits — phantom billed network</a></td><td>state / pricing coherence</td><td class="mono">power lens</td></tr>
+    <tr><td class="c"><span class="sev med">Med</span></td><td class="mono">MED-1</td><td><a href="#med1">Metered VirVM as jump prices at $0.00/mo</a></td><td>pricing honesty</td><td class="mono">power lens</td></tr>
+    <tr><td class="c"><span class="sev med">Med</span></td><td class="mono">MED-2</td><td><a href="#med2">“reference” badge is not a reliable cost signal (DMIT excluded, VMISS summed)</a></td><td>honesty signal</td><td class="mono">power lens + coverage</td></tr>
+    <tr><td class="c"><span class="sev low">Low</span></td><td class="mono">LOW-1</td><td><a href="#lows">Breakdown label “(jump ×1 + exits)” inaccurate when jump = $0 / absent</a></td><td>labeling</td><td class="mono">power lens</td></tr>
+    <tr><td class="c"><span class="sev low">Low</span></td><td class="mono">LOW-2</td><td><a href="#lows">China toggle hit-target is a visually-hidden input (label works)</a></td><td>a11y / testability</td><td class="mono">power lens (note)</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ---- HIGH-1 ---- -->
+<div class="issue high" id="high1">
+  <div class="ihead"><span class="sev high">High</span><span class="id">HIGH-1</span></div>
+  <h3>Removing the jump host orphans the exits — canvas says “no network” while the estimate keeps billing a phantom multi-exit network</h3>
+  <p class="src">Reported by: power lens · Files: <code>tool.html</code> — <code>remove()</code> ~850–858, <code>paintCanvas()</code> ~751–765, <code>estimate()</code> ~537–629</p>
+  <p><b>Root cause.</b> <code>remove('jump')</code> sets <code>state.jump=null</code> but never touches <code>state.exits</code>. <code>paintCanvas()</code> renders the exits only inside <code>if(jump)</code>, so they vanish and the notice switches to “Start by connecting a jump host” — yet <code>estimate()</code>/<code>computePrice()</code> still fold the leftover exits into the total, and the engine’s else-branch emits link edges with <code>from='—'</code> and <b>no entry edge</b>. The canvas, notice, estimate panel and per-edge list all disagree: the user is shown an empty, jump-required board but simultaneously quoted a full priced network for boxes they can no longer see or reach.</p>
+  <p><b>Why it matters.</b> It compounds — with no jump you can keep tapping exit palette cards and they silently append (invisible on the canvas), driving the quoted price up while the aria-live region announces the phantom total. This breaks the PRD/TECH state model (edges must be pre-ordered <code>[entry, link×N]</code>; here there is no entry edge yet the breakdown still claims “(jump ×1 + exits)”).</p>
+  <p class="kv">Repro</p>
+  <ol class="repro">
+    <li>Open <code>tool.html</code> (default = 1 BWH jump + 2 AaITR exits).</li>
+    <li>Click the ✕ on the jump slot — <i>or</i> focus the jump slot and press Delete (both paths reproduce).</li>
+    <li>Canvas collapses to “you → [empty Jump host slot]”, notice reads “Start by connecting a jump host” — but the Estimate panel still shows ① $43.76/mo, ② 137~285 ms, ③ 2,018 capped, ④ 102M, and per-edge rows “— → AaITR → IP 1 / IP 2”.</li>
+    <li>Now click SolaDrive in the Residential-exits palette (still no jump): it silently appends (invisible), price climbs to $83.76/mo, live region announces “Added SolaDrive as exit 3. Estimated $83.76 per month.”</li>
+  </ol>
+  <div class="callout warn"><div class="ct">Fix direction</div>When the jump is removed, either (a) also clear/park <code>state.exits</code> and zero the estimate, or (b) keep the exits visible as an explicit “disconnected — needs a jump” state that is <b>excluded from the total</b> until a jump is reconnected. Either way the canvas, notice, estimate and edge list must agree, and adding an exit with no jump must not raise the price.</div>
+  <div class="shotgrid">
+    <div class="shot">
+      <div class="cap"><span>Orphaned exits still priced ($43.76, no entry edge)</span><span class="fn">02_removejump_exits_orphaned.png</span></div>
+      <div class="frame"><img src="file:///private/tmp/claude-501/-Users-erik/28917611-0f3f-47aa-8009-be292caf78d3/scratchpad/beta/02_removejump_exits_orphaned.png" alt="Jump removed: canvas shows only an empty jump slot but the estimate panel still bills $43.76/mo for two orphaned AaITR exits." width="1440" height="3633" loading="lazy"></div>
+    </div>
+    <div class="shot">
+      <div class="cap"><span>Exit added with no jump → price climbs to $83.76</span><span class="fn">03_addexit_nojump.png</span></div>
+      <div class="frame"><img src="file:///private/tmp/claude-501/-Users-erik/28917611-0f3f-47aa-8009-be292caf78d3/scratchpad/beta/03_addexit_nojump.png" alt="With no jump host, adding a SolaDrive exit silently raises the quoted price to $83.76/mo for an invisible network." width="1440" height="3633" loading="lazy"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ---- MED-1 ---- -->
+<div class="issue med" id="med1">
+  <div class="ihead"><span class="sev med">Med</span><span class="id">MED-1</span></div>
+  <h3>Metered provider (VirVM) placed as the jump host prices at $0.00/mo and shows “connect a box” although a paid box is placed</h3>
+  <p class="src">Reported by: power lens · Files: <code>tool.html</code> — <code>computePrice()</code>, <code>trafficUI</code> (exit-only render)</p>
+  <p><b>Root cause.</b> <code>computePrice()</code> pushes a metered (or reference) jump into <code>references[]</code> and never sums it, and the traffic package/cycle configurator (<code>trafficUI</code>) is rendered only on <b>exit</b> slots — never on the jump slot. So a VirVM jump can never be priced at all: the headline reads “$0.00/mo + ref” and the breakdown reads “connect a box” (the empty-state text) even though VirVM <i>is</i> connected. This is the exact single-relay case a mainland-China user hits (VirVM + 专线GIA as one box) — and they are told it costs $0.00, violating the “never fabricate price / honest-estimate” intent.</p>
+  <p class="kv">Repro</p>
+  <ol class="repro">
+    <li>Open <code>tool.html</code>; click VirVM in the Jump-hosts palette (replaces BWH).</li>
+    <li>Remove the two default AaITR exits (✕ on each).</li>
+    <li>Estimate panel: ① Price “$0.00/mo + ref”; breakdown text “connect a box”; “reference (not summed): VirVM (jump · 专线GIA metered) (priced as exit — not summed)”.</li>
+    <li>No traffic-package UI appears on the jump slot, so the price cannot be corrected.</li>
+  </ol>
+  <div class="callout amber"><div class="ct">Fix direction</div>Render the traffic-package + billing-cycle configurator on a metered <b>jump</b> slot too (reuse the exit path), and sum its effective $/mo into the total. A connected paid box must never headline as $0.00.</div>
+  <div class="shot">
+    <div class="cap"><span>VirVM jump, exits removed → “$0.00/mo + ref”, breakdown “connect a box”</span><span class="fn">04_virvm_jump_gatingoff.png</span></div>
+    <div class="frame"><img src="file:///private/tmp/claude-501/-Users-erik/28917611-0f3f-47aa-8009-be292caf78d3/scratchpad/beta/04_virvm_jump_gatingoff.png" alt="VirVM placed as jump with exits removed: the estimate headlines $0.00/mo and the breakdown reads 'connect a box' despite a paid box being connected." width="1440" height="3633" loading="lazy"></div>
+  </div>
+</div>
+
+<!-- ---- MED-2 ---- -->
+<div class="issue med" id="med2">
+  <div class="ihead"><span class="sev med">Med</span><span class="id">MED-2</span></div>
+  <h3>The “reference” badge is not a reliable cost signal — DMIT (reference) is excluded from the total, but VMISS (same “reference / out of stock” badge) IS summed</h3>
+  <p class="src">Reported by: power lens + feature-coverage (feature 16 deviation) · Contradicts TECH §1.2 &amp; §1.7</p>
+  <p><b>Root cause.</b> Two providers wear the identical “REFERENCE” palette badge and “NOT BENCHMARKED · OUT OF STOCK” slot label, yet behave oppositely in the cost math. DMIT is modelled <code>pricing.type 'reference'</code> → excluded and shown under “reference (not summed)”. VMISS is modelled <code>pricing.type 'flat'</code> (CAD) → its price is summed straight into the total. The badge is derived from the <code>bench</code> flag, not from whether the box counts toward cost, so the honesty signal users rely on (“this box is priced-only, not part of my bill”) is unreliable. TECH §1.2 / §1.7 explicitly list VMISS under the <code>reference</code> type (“no — listed separately, not summed”).</p>
+  <p class="kv">Repro</p>
+  <ol class="repro">
+    <li>Open <code>tool.html</code>. Place DMIT as jump → panel shows “reference (not summed): DMIT (jump) (from $10.90)”, DMIT adds $0 (total stays $43.76 from the 2 AaITR exits).</li>
+    <li>Reload and place VMISS as jump → breakdown line “VMISS (shared jump) — $4.38 (CA$6)” is summed into total $48.14/mo — while the VMISS card is badged “REFERENCE” and the slot reads “CN2 GIA · NOT BENCHMARKED · OUT OF STOCK”.</li>
+  </ol>
+  <div class="callout amber"><div class="ct">Fix direction (PM decision)</div>Either (a) drive the badge from the cost-inclusion flag, not the bench flag, so a summed box never wears “reference”; or (b) reclassify VMISS as <code>reference</code> per TECH §1.2 and list it not-summed. Coverage tester notes VMISS has exact list prices (not a “from $X” range), so a summed model is defensible — but then the badge must change. PM to pick.</div>
+  <div class="shot">
+    <div class="cap"><span>DMIT reference jump — excluded (total unchanged); contrast with VMISS which is summed</span><span class="fn">13_dmit_ref_jump.png</span></div>
+    <div class="frame"><img src="file:///private/tmp/claude-501/-Users-erik/28917611-0f3f-47aa-8009-be292caf78d3/scratchpad/beta/13_dmit_ref_jump.png" alt="DMIT placed as a reference jump is listed 'reference (not summed)' and does not change the total, unlike VMISS which carries the same badge but is summed." width="1440" height="3633" loading="lazy"></div>
+  </div>
+</div>
+
+<!-- ---- LOWS + NOTES ---- -->
+<h3 id="lows">1.4 · Low-severity &amp; notes</h3>
+
+<div class="issue low">
+  <div class="ihead"><span class="sev low">Low</span><span class="id">LOW-1</span></div>
+  <h3>Price-breakdown label “= $X/mo (jump ×1 + exits)” is inaccurate when the jump contributes $0 or is absent</h3>
+  <p class="src">Reported by: power lens · Reinforces HIGH-1 confusion</p>
+  <p>The multi-line breakdown footer always reads “= $X/mo (jump ×1 + exits)” whenever more than one line item exists. With a reference jump (DMIT) or metered jump (VirVM) the jump contributes $0, so “jump ×1” overstates what is counted; in the orphaned-exits state (no jump) the same text appears with no jump present at all. Cosmetic/labeling, but it reinforces the phantom-jump confusion of HIGH-1.</p>
+  <p class="kv">Repro — place DMIT (or VirVM) as jump with exits present: “= $43.76/mo (jump ×1 + exits)” though the jump added $0. Or trigger the orphan state (remove jump with exits present): still “(jump ×1 + exits)”. See <code>02_removejump_exits_orphaned.png</code> (above).</p>
+</div>
+
+<div class="callout"><div class="ct">Note N-2 · LOW-2 — a11y hit target</div>The China guardrail toggle is a visually-hidden native <code>&lt;input id=nbx-toggle&gt;</code> inside <code>label.switch</code>. Real users click the label (works, and feature&nbsp;18 confirms aria-live + focus ring + reduced-motion all hold). Playwright element-level clicks on the input itself fail (“not visible”) — worth a quick confirmation that the label remains the intended, sized hit target. Testability nit, not a user-facing defect.</div>
+
+<div class="callout"><div class="ct">Note N-3 · testers with no findings</div><b>QA tester:</b> returned no findings. <b>A11y lens:</b> returned a diagnostic-only run — its single entry is a placeholder (title/detail/repro = “t / d / r”), not a substantive defect; it is <i>not</i> counted as an issue. Accessibility is covered by feature&nbsp;18 (PASS) and note N-2. <b>Environment note (not a bug):</b> under <code>file://</code> the geo-IP fetch is CORS-blocked (origin null) and degrades gracefully to gating-off + “location unknown — toggle manually”, as designed.</div>
+
+<!-- ============================ PASS EVIDENCE ============================ -->
+<h2 id="pass"><span class="n">2</span>Verified-good — ground-truth checkpoints reproduced</h2>
+<p class="sub">The happy path is solid. Every checkpoint below reproduced exactly across the power-lens and coverage testers.</p>
+<div class="tw">
+<table>
+  <thead><tr><th>Checkpoint</th><th>Expected</th><th class="c">Result</th></tr></thead>
+  <tbody>
+    <tr><td>Default board</td><td>1 BWH bwh-vpn jump + 2× AaITR = <b>$73.76/mo</b>, 2 exit IPs, 129~210 ms, 102M min hop, route “2× AT&amp;T (#1)”</td><td class="c"><span class="st pass">EXACT</span></td></tr>
+    <tr><td>China gating — CN2-GIA entry</td><td>BWH jump + gating ON → entry connector green “conn ok”, no notice</td><td class="c"><span class="st pass">PASS</span></td></tr>
+    <tr><td>China gating — non-GIA entry</td><td>VirVM-163 jump + gating ON → red connector + “pick a CN2 GIA box … or add 专线GIA” notice; toggle-off clears red</td><td class="c"><span class="st pass">PASS</span></td></tr>
+    <tr><td>Metered VirVM-<b>exit</b> math</td><td>300GB/12mo −20% → $14.40 eff; 1000GB/1mo → $48; network totals $44.40 / $68.40 / $78.00</td><td class="c"><span class="st pass">EXACT</span></td></tr>
+    <tr><td>Currency conversion</td><td>¥149 → $21.88; CA$6 → $4.38</td><td class="c"><span class="st pass">EXACT</span></td></tr>
+    <tr><td>Region churn honesty</td><td>BWH→Osaka $49.99 + 2× AaITR = $93.75, sub “CN2 GIA · NOT BENCHMARKED”</td><td class="c"><span class="st pass">PASS</span></td></tr>
+    <tr><td>8-exit fan-out</td><td>Sums to <b>$313.76</b>; remove-all returns to single-host $30</td><td class="c"><span class="st pass">EXACT</span></td></tr>
+    <tr><td>choose.html Value column</td><td>SolaDrive 2.20 · BWH 4C/4GB 1.46 · BWH 3C/2GB 2.50 ★ · VirVM — · AaITR 0.82; sort + aria-sort + best-highlight</td><td class="c"><span class="st pass">EXACT</span></td></tr>
+    <tr><td>Responsive</td><td>Zero horizontal overflow at 320 / 375 / 390 / 768 / 1024 / 1440</td><td class="c"><span class="st pass">PASS</span></td></tr>
+  </tbody>
+</table>
+</div>
+<div class="shotgrid">
+  <div class="shot">
+    <div class="cap"><span>Default board = $73.76/mo (ground truth)</span><span class="fn">01_default_1440.png</span></div>
+    <div class="frame"><img src="file:///private/tmp/claude-501/-Users-erik/28917611-0f3f-47aa-8009-be292caf78d3/scratchpad/beta/01_default_1440.png" alt="Default network board: 1 BandwagonHost jump plus 2 AaITR exits totalling $73.76 per month with the full five-metric estimate." width="1440" height="3633" loading="lazy"></div>
+  </div>
+  <div class="shot">
+    <div class="cap"><span>China ON + VirVM-163 jump → red entry + notice</span><span class="fn">07_virvm_china_on_red.png</span></div>
+    <div class="frame"><img src="file:///private/tmp/claude-501/-Users-erik/28917611-0f3f-47aa-8009-be292caf78d3/scratchpad/beta/07_virvm_china_on_red.png" alt="China gating on with VirVM as jump over 163: the entry connector turns red and a 'pick a CN2 GIA box' notice appears." width="1440" height="3633" loading="lazy"></div>
+  </div>
+</div>
+<div class="shot">
+  <div class="cap"><span>choose.html cost-performance Value column (2.20 / 1.46 / 2.50★ / — / 0.82)</span><span class="fn">11_choose_value.png</span></div>
+  <div class="frame"><img src="file:///private/tmp/claude-501/-Users-erik/28917611-0f3f-47aa-8009-be292caf78d3/scratchpad/beta/11_choose_value.png" alt="choose.html fleet table Value column with BandwagonHost 3C/2GB flagged best value at 2.50 points per dollar." width="1440" height="1000" loading="lazy"></div>
+</div>
+
+<!-- ============================ VERDICT ============================ -->
+<h2 id="verdict"><span class="n">3</span>Verdict &amp; readiness</h2>
+<div class="fig verdict">
+  <div style="padding:.2rem .3rem">
+    <p style="margin:.2rem 0 .6rem"><span class="sev high" style="font-size:.7rem">Verdict</span> &nbsp;<b>Conditional pass — functionally complete, one HIGH bug blocks Gate&nbsp;3.</b></p>
+    <p style="margin:.3rem 0">All 21 features PASS and every ground-truth checkpoint (default $73.76 board, China guardrail, metered/currency math, 8-exit fan-out, the choose.html Value column) reproduced exactly, with no horizontal overflow 320–1440 and a11y holding. But the builder is <b>not yet ready for Gate&nbsp;3</b>: removing the jump host leaves a phantom, invisible network that is still billed (<a href="#high1">HIGH-1</a>), and two MEDIUM honesty defects remain — a metered jump prices at $0.00 (<a href="#med1">MED-1</a>) and the “reference” badge is an unreliable cost signal (<a href="#med2">MED-2</a>).</p>
+    <p style="margin:.3rem 0"><b>Recommendation:</b> fix HIGH-1 and MED-1, take a PM decision on MED-2 (badge vs model), then re-run the beta pass on those edge sequences before Gate&nbsp;3. LOW-1/LOW-2 are cosmetic/testability and can ride along.</p>
+  </div>
+</div>
+<p class="meta">readyForGate3 = false (1 HIGH open) · features 21 PASS / 0 FAIL / 0 BLOCKED · open: 0 blocker · 1 high · 2 medium · 2 low</p>
+
+<p class="meta">Beta artifact · SDD Workflow quality pass · builder = <code>tool.html</code>, value column = <code>choose.html §04</code> · screenshots under the run scratchpad <code>/private/tmp/&hellip;/beta/</code>.</p>
+
+</div><!-- /wrap -->
+</body>
+</html>
