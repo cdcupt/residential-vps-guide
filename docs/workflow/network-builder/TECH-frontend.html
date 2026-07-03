@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tech Document — Client architecture · VPS Network Builder</title>
+<style>
+  :root{
+    --ink:#1a1d23; --ink-2:#3a4150; --muted:#6b7280; --line:#e6e8ec; --line-2:#cfd3da;
+    --paper:#fbfbf9; --paper-2:#f4f5f2; --card:#fff;
+    --accent:#3a53d0; --accent-bg:#eef1fd; --accent-ink:#2b40b0;
+    --exit:#149d72; --exit-bg:#e7f6f0; --exit-ink:#0c7050;
+    --warn:#cf5330; --warn-bg:#fbeae2; --warn-ink:#a23c1c;
+    --r:14px; --r-sm:8px;
+    --serif:'Fraunces','Iowan Old Style',Georgia,serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:'Inter',-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.62;
+    font-size:16px;-webkit-font-smoothing:antialiased;overflow-wrap:break-word}
+  .wrap{max-width:1120px;margin:0 auto;padding:clamp(1.1rem,3.5vw,2.75rem)}
+  a{color:var(--accent-ink)}
+  header.doc{border-bottom:1px solid var(--line);padding-bottom:1.2rem;margin-bottom:1.4rem}
+  .tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.8rem,1.3rem+2vw,2.7rem);line-height:1.05;letter-spacing:-.02em;margin:.4rem 0 .5rem}
+  .sub{color:var(--ink-2);max-width:70ch;margin:0}
+  .lede{font-family:var(--serif);font-weight:380;font-size:1.1rem;color:var(--ink-2);max-width:66ch}
+  .meta{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-top:.7rem}
+  h2{font-family:var(--serif);font-weight:560;font-size:clamp(1.4rem,1.15rem+1vw,1.9rem);letter-spacing:-.015em;margin:2.6rem 0 .3rem;padding-top:.5rem}
+  h2 .n{font-family:var(--mono);color:var(--accent);font-size:.6em;margin-right:.55rem;font-weight:400;vertical-align:middle}
+  h3{font-family:var(--serif);font-weight:560;font-size:1.1rem;margin:1.5rem 0 .3rem}
+  p{margin:.55rem 0} ul,ol{margin:.4rem 0;padding-left:1.2rem} li{margin:.25rem 0}
+  strong{font-weight:650}
+  code,.mono{font-family:var(--mono);font-size:.85em;overflow-wrap:anywhere}
+  .fig{margin:1.3rem 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:0 1px 2px rgba(20,23,28,.05);padding:1.2rem 1rem .8rem;overflow-x:auto}
+  .fig svg{display:block;margin:0 auto;height:auto;max-width:100%;min-width:0}
+  .fig figcaption{margin:.85rem auto 0;max-width:72ch;text-align:center;color:var(--muted);font-size:.82rem;line-height:1.45}
+  .glance{border:1.5px solid var(--accent);background:linear-gradient(180deg,#fff,var(--accent-bg))}
+  table{width:100%;border-collapse:collapse;font-size:.87rem;margin:.9rem 0;background:var(--card);
+    border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  th,td{text-align:left;padding:.55rem .75rem;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--paper-2);font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-family:var(--mono)}
+  tr:last-child td{border-bottom:none}
+  .tw{overflow-x:auto;margin:.9rem 0;-webkit-overflow-scrolling:touch;border-radius:var(--r)} .tw table{margin:0}
+  .pill{display:inline-block;font-family:var(--mono);font-size:.64rem;padding:.06rem .5rem;border-radius:99px;border:1px solid var(--line-2);color:var(--ink-2);white-space:nowrap}
+  .pill.in{background:var(--exit-bg);border-color:var(--exit);color:var(--exit-ink)}
+  .pill.out{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-ink)}
+  .pill.data{background:var(--warn-bg);border-color:var(--warn);color:var(--warn-ink)}
+  .callout{border:1px solid var(--line-2);border-left:3px solid var(--accent);background:var(--card);
+    border-radius:10px;padding:.8rem 1rem;margin:1rem 0;font-size:.92rem}
+  .callout.data{border-left-color:var(--warn);background:var(--warn-bg)}
+  .callout.ok{border-left-color:var(--exit);background:var(--exit-bg)}
+  .callout .ct{font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);margin-bottom:.2rem}
+  .callout.data .ct{color:var(--warn-ink)} .callout.ok .ct{color:var(--exit-ink)}
+  pre{background:#1c2027;color:#e7e9ee;border-radius:var(--r);padding:1rem 1.1rem;overflow-x:auto;
+    font-family:var(--mono);font-size:.79rem;line-height:1.62;margin:1rem 0;max-width:100%}
+  pre .c{color:#7f8ba0} pre .k{color:#9db4ff} pre .s2{color:#8fd6b4} pre .t2{color:#e6c07b}
+  .toc{font-size:.9rem;columns:2;column-gap:2rem;margin:.4rem 0 0;padding-left:1rem}
+  @media(max-width:560px){ .toc{columns:1} }
+  /* diagram primitives (mirror site tokens) */
+  .b{fill:var(--card);stroke:var(--line-2);stroke-width:1.4}
+  .b.a{fill:var(--accent-bg);stroke:var(--accent)} .b.e{fill:var(--exit-bg);stroke:var(--exit)}
+  .b.w{fill:var(--warn-bg);stroke:var(--warn)} .b.d{fill:var(--paper-2);stroke:var(--line-2);stroke-dasharray:5 4}
+  .t{font-family:var(--sans);font-weight:650;fill:var(--ink)} .s{font-family:var(--sans);fill:var(--muted)}
+  .m{font-family:var(--mono);fill:var(--accent-ink)} .me{font-family:var(--mono);fill:var(--exit-ink)}
+  .arw{stroke:var(--ink-2);stroke-width:1.6;fill:none}
+  .arw.w{stroke:var(--warn);stroke-width:2.4} .arw.e{stroke:var(--exit);stroke-width:2} .arw.a{stroke:var(--accent);stroke-width:2}
+  .lbl{font-family:var(--mono);font-size:10px;fill:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <div class="tag">TECH DOC · Client architecture · SDD Artifact 3 of 5 · Frontend section</div>
+  <h1>Network Builder — client architecture</h1>
+  <p class="sub lede">The board is a small <b>vanilla-JS state machine</b>: state in, board out. <code>render = f(state, estimate(state))</code>. This section owns the <b>view</b> — palette, fan-out canvas, five-metric panel, configurators, guardrail bar — the <b>one-affordance / three-input</b> place model, and how it mounts into <code>tool.html</code> and adds a Value column to <code>choose.html</code>. It <b>consumes</b> the estimate engine (defined in §5) that the Backend section implements.</p>
+  <p class="meta">no framework · evolves the approved DESIGN v3 prototype into production · verified 1440 / 390 / 320 · zero backend</p>
+</header>
+
+<nav aria-label="Contents">
+  <div class="tag" style="color:var(--muted)">On this page</div>
+  <div class="toc">
+    <a href="#glance">★ At a glance — the architecture</a> ·
+    <a href="#tree">1 · Component tree</a> ·
+    <a href="#state">2 · State &amp; render loop</a> ·
+    <a href="#states">3 · State machine diagram</a> ·
+    <a href="#inputs">4 · Three inputs, one place() + a11y</a> ·
+    <a href="#engine">5 · The estimate engine interface (assumed)</a> ·
+    <a href="#mount">6 · tool.html integration map</a> ·
+    <a href="#choose">7 · choose.html Value column</a> ·
+    <a href="#responsive">8 · Responsive &amp; honesty</a> ·
+    <a href="#open">9 · Assumptions to reconcile</a>
+  </div>
+</nav>
+
+<!-- ============================ AT A GLANCE ============================ -->
+<div class="fig glance" id="glance">
+  <svg viewBox="0 0 980 470" role="img" aria-label="Client architecture: a shared data+engine layer (roster, estimate, geo) feeds a view layer of five modules driven by a state store, mounted into tool.html and reused by choose.html.">
+    <text x="20" y="26" class="t" font-size="15">★ Client architecture — one state store, a pure engine, five view modules</text>
+
+    <!-- shared data + engine layer -->
+    <rect class="b a" x="16" y="42" width="948" height="92" rx="12"/>
+    <text x="32" y="64" class="t" font-size="12.5">DATA + ENGINE layer <tspan class="s" font-size="10">· pure, no IO · SHARED with the Backend section (§5)</tspan></text>
+    <rect class="b" x="32" y="74" width="230" height="48" rx="8"/><text x="147" y="93" class="t" font-size="10.5" text-anchor="middle">roster.js</text><text x="147" y="110" class="s" font-size="8.5" text-anchor="middle">provider model + CYCLES (the palette source)</text>
+    <rect class="b" x="272" y="74" width="230" height="48" rx="8"/><text x="387" y="93" class="t" font-size="10.5" text-anchor="middle">estimate(state, roster)</text><text x="387" y="110" class="s" font-size="8.5" text-anchor="middle">pure fn → 5 metrics + perEdge[]</text>
+    <rect class="b" x="512" y="74" width="200" height="48" rx="8"/><text x="612" y="93" class="t" font-size="10.5" text-anchor="middle">detectGeo()</text><text x="612" y="110" class="s" font-size="8.5" text-anchor="middle">async · graceful fallback</text>
+    <rect class="b d" x="722" y="74" width="226" height="48" rx="8"/><text x="835" y="93" class="s" font-size="9" text-anchor="middle">Backend owns the numbers;</text><text x="835" y="110" class="s" font-size="9" text-anchor="middle">Frontend reads the shapes.</text>
+
+    <!-- store -->
+    <rect class="b w" x="360" y="146" width="260" height="40" rx="9"/>
+    <text x="490" y="164" class="t" font-size="11" text-anchor="middle">store · S = BuilderState</text>
+    <text x="490" y="178" class="m" font-size="8.5" text-anchor="middle">{ geo, gatingOn, jump, exits[] }</text>
+    <line class="arw a" x1="387" y1="122" x2="470" y2="144" marker-end="url(#a)"/>
+    <line class="arw" x1="490" y1="186" x2="490" y2="214" marker-end="url(#a)"/><text x="500" y="204" class="lbl">render = f(S)</text>
+
+    <!-- view layer: 5 modules -->
+    <rect class="b" x="16" y="216" width="948" height="176" rx="12"/>
+    <text x="32" y="238" class="t" font-size="12.5">VIEW layer <tspan class="s" font-size="10">· this section · vanilla JS, event-delegated, re-renders from state</tspan></text>
+
+    <rect class="b w" x="32" y="248" width="900" height="30" rx="7"/>
+    <text x="44" y="267" class="s" font-size="10">⑤ GuardrailBar — geo stamp + “Building from mainland China?” toggle → sets S.gatingOn</text>
+
+    <rect class="b" x="32" y="286" width="220" height="96" rx="9"/>
+    <text x="142" y="305" class="t" font-size="10.5" text-anchor="middle">① Palette</text>
+    <text x="142" y="322" class="s" font-size="8.5" text-anchor="middle">data-driven from roster</text>
+    <text x="142" y="337" class="s" font-size="8.5" text-anchor="middle">card = &lt;button draggable&gt;</text>
+    <text x="142" y="354" class="s" font-size="8.5" text-anchor="middle">grouped by role</text>
+    <text x="142" y="371" class="m" font-size="8" text-anchor="middle">→ place(provider, role)</text>
+
+    <rect class="b e" x="262" y="286" width="330" height="96" rx="9"/>
+    <text x="427" y="305" class="t" font-size="10.5" text-anchor="middle">② Canvas — fan-out</text>
+    <text x="427" y="322" class="s" font-size="8.5" text-anchor="middle">you → JumpSlot ⇉ Branch[] → EgressIP</text>
+    <text x="427" y="337" class="s" font-size="8.5" text-anchor="middle">connectors (entry red when gated) · AddExitTarget</text>
+    <text x="427" y="354" class="s" font-size="8.5" text-anchor="middle">Configurators: RegionPlanSelect · TrafficConfig</text>
+    <text x="427" y="371" class="m" font-size="8" text-anchor="middle">reads est.perEdge[] for connector state</text>
+
+    <rect class="b a" x="602" y="286" width="330" height="96" rx="9"/>
+    <text x="767" y="305" class="t" font-size="10.5" text-anchor="middle">③ EstimatePanel + ④ EdgeList</text>
+    <text x="767" y="322" class="s" font-size="8.5" text-anchor="middle">renders est: 5 metric rows + breakdown</text>
+    <text x="767" y="337" class="s" font-size="8.5" text-anchor="middle">egress: N exit IPs · per-edge readouts</text>
+    <text x="767" y="354" class="s" font-size="8.5" text-anchor="middle">honesty badges: estimated · bench/ref · ⚑ph</text>
+    <text x="767" y="371" class="me" font-size="8" text-anchor="middle">+ LiveRegion (aria-live) announces every change</text>
+
+    <line class="arw" x1="252" y1="334" x2="262" y2="334" marker-end="url(#a)"/>
+    <line class="arw" x1="592" y1="334" x2="602" y2="334" marker-end="url(#a)"/>
+
+    <defs>
+      <marker id="a" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>Two layers. A <b>shared, pure data+engine layer</b> (roster, <code>estimate</code>, <code>detectGeo</code>) is co-owned with the Backend section — it holds the numbers and the shapes. This section owns the <b>view</b>: five modules that are a pure function of one small <code>BuilderState</code>. Every mutation flows through <code>place / remove / configure / toggle</code>, re-runs <code>estimate</code>, and re-renders. No framework, no build step.</figcaption>
+</div>
+
+<!-- ============================ 1 COMPONENT TREE ============================ -->
+<h2 id="tree"><span class="n">1</span>Component tree</h2>
+<p>Modules, not classes — each is a render function plus its wiring. The tree mirrors the DESIGN prototype's DOM (<code>#path</code> / <code>#edges</code> / <code>#estimate</code> / <code>.china</code>) so the approved markup evolves in place rather than restarting.</p>
+<div class="fig">
+  <svg viewBox="0 0 900 430" role="img" aria-label="Component tree: NetworkBuilder root over GuardrailBar, Palette with PaletteCards, Canvas with JumpSlot, Branch list, AddExitTarget and configurators, EstimatePanel with EdgeList, and a LiveRegion.">
+    <rect class="b w" x="330" y="16" width="240" height="40" rx="9"/><text x="450" y="35" class="t" font-size="11" text-anchor="middle">NetworkBuilder (root)</text><text x="450" y="49" class="m" font-size="8" text-anchor="middle">owns store S + render()</text>
+
+    <line class="arw" x1="450" y1="56" x2="450" y2="72" marker-end="url(#t)"/>
+    <line class="arw" x1="450" y1="72" x2="110" y2="92" marker-end="url(#t)"/>
+    <line class="arw" x1="450" y1="72" x2="330" y2="92" marker-end="url(#t)"/>
+    <line class="arw" x1="450" y1="72" x2="620" y2="92" marker-end="url(#t)"/>
+    <line class="arw" x1="450" y1="72" x2="820" y2="92" marker-end="url(#t)"/>
+
+    <!-- GuardrailBar -->
+    <rect class="b" x="34" y="92" width="152" height="46" rx="8"/><text x="110" y="111" class="t" font-size="9.5" text-anchor="middle">GuardrailBar</text><text x="110" y="126" class="s" font-size="8" text-anchor="middle">geo stamp · toggle</text>
+
+    <!-- Palette -->
+    <rect class="b" x="256" y="92" width="150" height="46" rx="8"/><text x="331" y="111" class="t" font-size="9.5" text-anchor="middle">Palette</text><text x="331" y="126" class="s" font-size="8" text-anchor="middle">jump[] · exit[]</text>
+    <line class="arw" x1="331" y1="138" x2="331" y2="158" marker-end="url(#t)"/>
+    <rect class="b a" x="250" y="158" width="162" height="44" rx="8"/><text x="331" y="176" class="t" font-size="9" text-anchor="middle">PaletteCard ×N</text><text x="331" y="190" class="s" font-size="7.5" text-anchor="middle">&lt;button draggable&gt; per (provider,role)</text>
+
+    <!-- Canvas -->
+    <rect class="b e" x="470" y="92" width="300" height="46" rx="8"/><text x="620" y="111" class="t" font-size="9.5" text-anchor="middle">Canvas (fan-out)</text><text x="620" y="126" class="s" font-size="8" text-anchor="middle">reads est.perEdge for connector colour</text>
+    <line class="arw" x1="540" y1="138" x2="540" y2="156" marker-end="url(#t)"/>
+    <line class="arw" x1="620" y1="138" x2="620" y2="156" marker-end="url(#t)"/>
+    <line class="arw" x1="700" y1="138" x2="700" y2="156" marker-end="url(#t)"/>
+    <rect class="b" x="470" y="156" width="120" height="48" rx="7"/><text x="530" y="174" class="t" font-size="8.5" text-anchor="middle">JumpSlot</text><text x="530" y="188" class="s" font-size="7" text-anchor="middle">empty|filled +✕</text><text x="530" y="199" class="s" font-size="7" text-anchor="middle">+ RegionPlanSelect</text>
+    <rect class="b" x="598" y="156" width="120" height="48" rx="7"/><text x="658" y="174" class="t" font-size="8.5" text-anchor="middle">Branch ×N</text><text x="658" y="188" class="s" font-size="7" text-anchor="middle">ExitSlot+conn+IP</text><text x="658" y="199" class="s" font-size="7" text-anchor="middle">+ TrafficConfig</text>
+    <rect class="b d" x="726" y="156" width="120" height="48" rx="7"/><text x="786" y="177" class="s" font-size="8" text-anchor="middle">AddExitTarget</text><text x="786" y="191" class="s" font-size="7" text-anchor="middle">persistent append</text>
+    <line class="arw e" x1="658" y1="204" x2="658" y2="222" marker-end="url(#te)"/>
+    <rect class="b e" x="590" y="222" width="136" height="40" rx="7"/><text x="658" y="240" class="t" font-size="8.5" text-anchor="middle">ExitSlot</text><text x="658" y="253" class="s" font-size="7" text-anchor="middle">filled +✕ · metered→TrafficConfig</text>
+
+    <!-- EstimatePanel -->
+    <rect class="b a" x="792" y="92" width="120" height="46" rx="8"/><text x="852" y="108" class="t" font-size="9" text-anchor="middle">EstimatePanel</text><text x="852" y="122" class="s" font-size="7.5" text-anchor="middle">5 metric rows</text>
+    <line class="arw" x1="852" y1="138" x2="852" y2="158" marker-end="url(#t)"/>
+    <rect class="b" x="792" y="158" width="120" height="42" rx="7"/><text x="852" y="176" class="t" font-size="8.5" text-anchor="middle">EdgeList</text><text x="852" y="190" class="s" font-size="7.5" text-anchor="middle">one row / edge</text>
+
+    <!-- config + live region row -->
+    <rect class="b" x="34" y="300" width="360" height="58" rx="9"/>
+    <text x="214" y="320" class="t" font-size="10" text-anchor="middle">Configurators (inline, no dialog)</text>
+    <text x="214" y="337" class="s" font-size="8.5" text-anchor="middle">RegionPlanSelect — on a placed multi-region jump (BWH/DMIT/VMISS)</text>
+    <text x="214" y="351" class="s" font-size="8.5" text-anchor="middle">TrafficConfig — pkg chips + cycle select on a metered exit (VirVM)</text>
+
+    <rect class="b w" x="470" y="300" width="396" height="58" rx="9"/>
+    <text x="668" y="320" class="t" font-size="10" text-anchor="middle">LiveRegion — &lt;div class="sr" aria-live="polite"&gt;</text>
+    <text x="668" y="337" class="s" font-size="8.5" text-anchor="middle">announce() on every place / append / remove / toggle / price change</text>
+    <text x="668" y="351" class="s" font-size="8.5" text-anchor="middle">cross-cutting: consumed by all input paths, never rendered visibly</text>
+
+    <text x="450" y="390" class="lbl" text-anchor="middle">every box below the root is a pure render(state)+wiring; the root re-renders on any store mutation</text>
+    <defs>
+      <marker id="t" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="te" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>Root <code>NetworkBuilder</code> owns the store and the render loop; children are stateless render functions. <b>Palette</b> is generated from the roster (never hand-listed). <b>Canvas</b> renders the fan-out and colours connectors from <code>est.perEdge</code>. <b>Configurators</b> are inline (region/plan on a jump; traffic pkg+cycle on a metered exit). <b>LiveRegion</b> is a cross-cutting a11y sink.</figcaption>
+</div>
+
+<!-- ============================ 2 STATE + RENDER ============================ -->
+<h2 id="state"><span class="n">2</span>State shape &amp; the render loop</h2>
+<p>The entire board is derived from one small object. <code>jump</code> carries <code>region</code>/<code>plan</code> so multi-region providers resolve to a concrete priced variant; <code>exits</code> is an <b>array</b> (fan-out, duplicates allowed — the "1 BWH → 2 AaITR" case); <code>traffic</code> exists only on metered exits.</p>
+<pre><span class="c">// the single source of truth — everything renders from this</span>
+interface BuilderState {
+  geo: <span class="s2">'CN'</span> | <span class="s2">'ROW'</span> | <span class="k">null</span>;            <span class="c">// detectGeo() result; null = unknown / lookup failed</span>
+  gatingOn: <span class="k">boolean</span>;                 <span class="c">// China guardrail; auto from geo==='CN', user-overridable</span>
+  jump: { provider: <span class="k">string</span>; region?: <span class="k">string</span>; plan?: <span class="k">string</span> } | <span class="k">null</span>;
+  exits: <span class="t2">Array</span>&lt;{ provider: <span class="k">string</span>; traffic?: { pkg: <span class="t2">100</span>|<span class="t2">300</span>|<span class="t2">500</span>|<span class="t2">1000</span>; cycle: <span class="t2">1</span>|<span class="t2">3</span>|<span class="t2">6</span>|<span class="t2">12</span>|<span class="t2">24</span> } }&gt;;
+}
+
+<span class="c">// render is a pure projection of state; no other source drives the DOM</span>
+<span class="k">function</span> render() {
+  <span class="k">const</span> est = <span class="m">estimate</span>(S, roster);        <span class="c">// §5 — pure, synchronous</span>
+  paint(<span class="s2">'#path'</span>,     Canvas(S, est));   <span class="c">// fan-out + connectors from est.perEdge</span>
+  paint(<span class="s2">'#canvasNotice'</span>, Notice(S));
+  paint(<span class="s2">'#edges'</span>,    EdgeList(est));
+  paint(<span class="s2">'#estimate'</span>, EstimatePanel(est));
+  syncGuardrail(S);                       <span class="c">// toggle + geo stamp</span>
+}</pre>
+<div class="callout"><div class="ct">▸ One improvement over the prototype: delegate, don't re-wire</div>
+The DESIGN prototype re-binds listeners after every <code>innerHTML</code> swap. Production attaches <b>one delegated listener</b> per stable container (<code>#board</code> for click/keydown, the palette for dragstart, slots for drag/drop) that reads <code>data-*</code> off the event target. Re-rendering then only rewrites HTML — no re-binding, no leaked handlers. After a <code>place()</code>, <b>focus moves to the just-placed node</b> (or the AddExitTarget for an appended exit) so keyboard flow is unbroken.</div>
+<p>Actions are the only mutators — each mutates <code>S</code>, then calls <code>render()</code> and <code>announce()</code>:</p>
+<div class="tw"><table>
+  <tr><th>Action</th><th>Signature</th><th>Effect on state</th></tr>
+  <tr><td><b>place</b></td><td><code>place(provider, role)</code></td><td>role-checked; <code>jump</code> = set (replace), <code>exit</code> = <b>append</b> to <code>exits</code>. Incompatible → reject + announce, no mutation.</td></tr>
+  <tr><td><b>remove</b></td><td><code>remove(role, idx)</code></td><td><code>jump</code> → null; <code>exit</code> → splice one branch.</td></tr>
+  <tr><td><b>configure</b></td><td><code>setRegionPlan / setTraffic</code></td><td>writes <code>jump.region/plan</code> or <code>exits[idx].traffic</code>.</td></tr>
+  <tr><td><b>toggle</b></td><td><code>setGating(on)</code></td><td>sets <code>gatingOn</code> (orthogonal overlay; recolours entry edge only).</td></tr>
+</table></div>
+
+<!-- ============================ 3 STATE MACHINE ============================ -->
+<h2 id="states"><span class="n">3</span>State machine — empty → single → multi-exit → gated</h2>
+<div class="fig">
+  <svg viewBox="0 0 900 320" role="img" aria-label="State machine: Empty adds a jump to Single-host, adds an exit to Two-box, more exits to Multi-exit fan-out; China-on with a non-GIA jump overlays Gated-red; reference and traffic are orthogonal overlays.">
+    <rect class="b d" x="24" y="40" width="140" height="56" rx="10"/><text x="94" y="64" class="t" font-size="11" text-anchor="middle">① Empty</text><text x="94" y="82" class="s" font-size="8.5" text-anchor="middle">jump=null · exits=[]</text>
+    <line class="arw" x1="164" y1="68" x2="206" y2="68" marker-end="url(#s)"/><text x="185" y="59" class="lbl">place(jump)</text>
+    <rect class="b a" x="206" y="40" width="150" height="56" rx="10"/><text x="281" y="62" class="t" font-size="11" text-anchor="middle">② Single-host</text><text x="281" y="80" class="s" font-size="8.5" text-anchor="middle">you→jump→internet</text>
+    <line class="arw e" x1="356" y1="68" x2="398" y2="68" marker-end="url(#se)"/><text x="377" y="59" class="lbl">place(exit)</text>
+    <rect class="b e" x="398" y="40" width="150" height="56" rx="10"/><text x="473" y="62" class="t" font-size="11" text-anchor="middle">③ Two-box</text><text x="473" y="80" class="s" font-size="8.5" text-anchor="middle">jump→exit→home IP</text>
+    <path class="arw e" d="M473 96 C 473 116, 473 116, 473 132" marker-end="url(#se)"/><text x="530" y="116" class="lbl">place(exit) ↻ append</text>
+
+    <rect class="b e" x="378" y="132" width="196" height="86" rx="10"/><text x="476" y="152" class="t" font-size="11" text-anchor="middle">③′ Multi-exit fan-out</text>
+    <rect class="b a" x="392" y="160" width="42" height="24" rx="5"/><text x="413" y="176" class="s" font-size="7.5" text-anchor="middle">jump ×1</text>
+    <path class="arw e" d="M434 172 C 448 172, 448 164, 460 164" marker-end="url(#se)"/><rect class="b e" x="460" y="156" width="46" height="16" rx="4"/><text x="483" y="168" class="s" font-size="7" text-anchor="middle">exit1·IP1</text>
+    <path class="arw e" d="M434 172 C 448 172, 448 190, 460 190" marker-end="url(#se)"/><rect class="b e" x="460" y="182" width="46" height="16" rx="4"/><text x="483" y="194" class="s" font-size="7" text-anchor="middle">exit2·IP2</text>
+    <text x="476" y="212" class="s" font-size="8" text-anchor="middle">cost: jump ×1 + Σ exits · N IPs</text>
+
+    <!-- gated overlay -->
+    <line class="arw w" x1="281" y1="96" x2="281" y2="230" marker-end="url(#sw)"/><text x="292" y="150" class="lbl" fill="var(--warn-ink)">gatingOn &amp;&amp; !jump.gia</text>
+    <rect class="b w" x="182" y="230" width="200" height="60" rx="10"/><text x="282" y="253" class="t" font-size="11" text-anchor="middle" fill="var(--warn-ink)">④ Gated-red (overlay)</text><text x="282" y="270" class="s" font-size="8.5" text-anchor="middle">entry edge RED + notice</text><text x="282" y="283" class="s" font-size="8.5" text-anchor="middle">“pick a CN2 GIA box”</text>
+
+    <!-- orthogonal overlays -->
+    <line class="arw" x1="548" y1="68" x2="590" y2="68" marker-end="url(#s)"/>
+    <rect class="b d" x="590" y="40" width="150" height="56" rx="10"/><text x="665" y="62" class="t" font-size="11" text-anchor="middle">Reference</text><text x="665" y="80" class="s" font-size="8.5" text-anchor="middle">priced · not summed</text>
+    <line class="arw" x1="574" y1="175" x2="612" y2="175" marker-end="url(#s)"/>
+    <rect class="b w" x="612" y="148" width="150" height="58" rx="10"/><text x="687" y="170" class="t" font-size="11" text-anchor="middle">Traffic pkg</text><text x="687" y="187" class="s" font-size="8.5" text-anchor="middle">inline chips+cycle</text><text x="687" y="199" class="s" font-size="8.5" text-anchor="middle">folds into ① price</text>
+
+    <text x="450" y="308" class="s" font-size="9" text-anchor="middle">Gated-red, Reference and Traffic are <tspan font-weight="700">orthogonal overlays</tspan>, not linear states — every transition re-runs estimate() and repaints each edge. ✕ on any exit prunes one branch.</text>
+    <defs>
+      <marker id="s" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="se" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
+      <marker id="sw" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>The core path is <b>Empty → Single-host → Two-box → Multi-exit fan-out</b>. <b>Gated-red</b> is an overlay on any state whose jump isn't GIA while gating is on — it recolours the shared entry edge and prints a notice, never blocking. <b>Reference</b> (priced-only) and <b>Traffic</b> (metered pricing) are likewise overlays that fold into the estimate.</figcaption>
+</div>
+
+<!-- ============================ 4 INPUTS + A11Y ============================ -->
+<h2 id="inputs"><span class="n">4</span>Three inputs, one <code>place()</code> — the a11y contract</h2>
+<p>Each palette card is a native <code>&lt;button&gt;</code> that is <em>also</em> <code>draggable</code>. Button semantics are the baseline; drag is progressive enhancement. All three inputs converge on one guarded <code>place(provider, role)</code>; drop targets accept only role-compatible boxes; exits append.</p>
+<div class="fig">
+  <svg viewBox="0 0 900 220" role="img" aria-label="Pointer drag, touch tap and keyboard Enter all converge on a role-compatibility check then place(); incompatible drops flash reject and announce.">
+    <rect class="b a" x="24" y="30" width="210" height="46" rx="10"/><text x="129" y="51" class="t" font-size="10.5" text-anchor="middle">🖱 Pointer — dragstart/drop</text><text x="129" y="66" class="s" font-size="8.5" text-anchor="middle">dataTransfer = provider id</text>
+  <rect class="b e" x="24" y="86" width="210" height="46" rx="10"/><text x="129" y="107" class="t" font-size="10.5" text-anchor="middle">👆 Touch — click</text><text x="129" y="122" class="s" font-size="8.5" text-anchor="middle">tap card → place / append</text>
+    <rect class="b" x="24" y="142" width="210" height="46" rx="10"/><text x="129" y="163" class="t" font-size="10.5" text-anchor="middle">⌨ Keyboard — Enter/Space</text><text x="129" y="178" class="s" font-size="8.5" text-anchor="middle">focus card → activate</text>
+
+    <path class="arw" d="M234 53 C 300 53, 300 100, 360 104" marker-end="url(#i)"/>
+    <path class="arw" d="M234 109 L 360 108" marker-end="url(#i)"/>
+    <path class="arw" d="M234 165 C 300 165, 300 116, 360 112" marker-end="url(#i)"/>
+
+    <path class="b w" d="M360 84 L438 66 L516 84 L438 102 Z"/><text x="438" y="82" class="t" font-size="9.5" text-anchor="middle">roles.includes(role)?</text><text x="438" y="95" class="s" font-size="7.5" text-anchor="middle">compatibility gate</text>
+    <line class="arw w" x1="438" y1="102" x2="438" y2="140" marker-end="url(#iw)"/><text x="452" y="124" class="lbl">no</text>
+    <rect class="b w" x="356" y="140" width="164" height="34" rx="9"/><text x="438" y="161" class="s" font-size="9" text-anchor="middle" fill="var(--warn-ink)">reject flash + aria-live</text>
+    <line class="arw e" x1="516" y1="84" x2="572" y2="96" marker-end="url(#ie)"/><text x="548" y="80" class="lbl">yes</text>
+    <rect class="b" x="572" y="74" width="150" height="44" rx="11"/><text x="647" y="92" class="t" font-size="10" text-anchor="middle">place(provider, role)</text><text x="647" y="108" class="s" font-size="8" text-anchor="middle">jump=set · exit=append</text>
+    <line class="arw" x1="722" y1="96" x2="748" y2="96" marker-end="url(#i)"/>
+    <rect class="b e" x="600" y="140" width="278" height="40" rx="10"/><text x="739" y="158" class="t" font-size="9.5" text-anchor="middle">render() · focus → placed node · announce()</text><text x="739" y="172" class="s" font-size="8" text-anchor="middle">estimate re-runs · edges + panel repaint</text>
+    <defs>
+      <marker id="i" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="iw" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
+      <marker id="ie" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>All three inputs funnel through one role-guarded <code>place()</code>. Nothing is drag-only; drag is the enhancement on top of button + tap + keyboard.</figcaption>
+</div>
+<div class="callout ok"><div class="ct">✓ Accessibility contract (non-negotiable)</div>
+Palette card = native <code>&lt;button draggable&gt;</code> with a descriptive <code>aria-label</code> ("Add BandwagonHost as jump host"); all placement funnels through one role-checked <code>place()</code>; empty slots are <code>role="group"</code>/<code>role="button" tabindex="0"</code> accepting only compatible boxes (reject flash + announce on mismatch); filled slots take <kbd>Delete</kbd>/<kbd>Backspace</kbd> and expose a remove <code>&lt;button&gt;</code> "✕"; a polite <code>aria-live</code> region narrates every place / append / remove / toggle / package change; focus moves to the just-placed node; all targets ≥ 40px with a 2px <code>:focus-visible</code> ring; drag ghosts and slot-highlight transitions collapse under <code>prefers-reduced-motion</code>.</div>
+
+<!-- ============================ 5 ENGINE INTERFACE ============================ -->
+<h2 id="engine"><span class="n">5</span>The estimate engine interface — <span class="pill data">assumed · reconcile with Backend</span></h2>
+<p>The view calls <b>one pure, synchronous function</b>. This is the exact contract the Frontend assumes; the Backend section must implement <code>estimate</code> (and the roster + <code>detectGeo</code>) to these shapes. No promises inside <code>estimate</code> — geo is the only async, resolved once at boot.</p>
+<pre><span class="c">// ── the single call the view makes, every render ──────────────</span>
+<span class="k">function</span> <span class="m">estimate</span>(state: BuilderState, roster: Roster): Estimate
+
+interface Estimate {
+  price: {
+    monthlyUSD: <span class="k">number</span>;      <span class="c">// jump counted ×1 + Σ exits; metered folded to effective/mo; refs excluded</span>
+    native?: <span class="k">string</span>;        <span class="c">// optional "¥149 + …" native-currency echo</span>
+    lines:   <span class="k">string</span>[];      <span class="c">// one human breakdown line per counted hop</span>
+    metered: <span class="k">string</span>[];      <span class="c">// fold-in math per metered exit; PM-pending → carries a ⚑ph marker</span>
+    refs:    <span class="k">string</span>[];      <span class="c">// reference/priced-only hops, not summed</span>
+    hasRef:  <span class="k">boolean</span>;
+  };
+  latency:   { lo: <span class="k">number</span>; hi: <span class="k">number</span>; illustrative: <span class="k">boolean</span> } | <span class="k">null</span>;  <span class="c">// range across exits</span>
+  io:        { iops: <span class="k">number</span>; capped: <span class="k">boolean</span> } | <span class="k">null</span>;   <span class="c">// min across exits (bottleneck); null = not benchmarked</span>
+  bandwidth: { mbps: <span class="k">number</span>; pending: <span class="k">boolean</span> } | <span class="k">null</span>;  <span class="c">// min across ALL hops; pending → ⚑ph</span>
+  route: {
+    kind: <span class="s2">'datacenter'</span> | <span class="s2">'residential'</span>;
+    label: <span class="k">string</span>;          <span class="c">// e.g. "2× AT&amp;T (#1)" or joined per-exit ISPs</span>
+    purity: <span class="s2">'high'</span>|<span class="s2">'med'</span>|<span class="s2">'low'</span>|<span class="s2">'mixed'</span> | <span class="k">null</span>;
+    exitIPs: <span class="k">number</span>;         <span class="c">// N separate egress paths (0 = single-host)</span>
+    rankPending: <span class="k">boolean</span>;    <span class="c">// ISP #rank still PM-pending → ⚑ph</span>
+    benchmarked: <span class="k">boolean</span>;
+  } | <span class="k">null</span>;
+  perEdge: Edge[];             <span class="c">// render-ordered: [entry, link×N]  OR  [entry, tail] for single-host</span>
+}
+
+interface Edge {
+  kind: <span class="s2">'entry'</span> | <span class="s2">'link'</span> | <span class="s2">'tail'</span>;    <span class="c">// entry: you→jump · link: jump→exit · tail: jump→internet</span>
+  from: <span class="k">string</span>; to: <span class="k">string</span>;             <span class="c">// display names, ready to print</span>
+  gia?: <span class="k">boolean</span>;                     <span class="c">// entry only — is the entry CN2 GIA?</span>
+  gated?: <span class="k">boolean</span>;                   <span class="c">// entry only — state.gatingOn &amp;&amp; !gia  ⇒ view paints RED</span>
+  latency: { lo: <span class="k">number</span>; hi: <span class="k">number</span> } | <span class="k">null</span>;
+  bandwidthMbps: <span class="k">number</span> | <span class="k">null</span>;
+  io: { iops: <span class="k">number</span>; capped: <span class="k">boolean</span> } | <span class="k">null</span>;
+  route: { isp: <span class="k">string</span>; rank: <span class="k">number</span>; purity: <span class="k">string</span>; rankPending: <span class="k">boolean</span> } | <span class="k">null</span>;
+  benchmarked: <span class="k">boolean</span>;             <span class="c">// false → "not benchmarked" (reference hop)</span>
+  exitIndex: <span class="k">number</span> | <span class="k">null</span>;         <span class="c">// 0-based; egress-IP label = exitIndex + 1</span>
+}
+
+<span class="c">// ── geo boot (async, once) — the only IO on the whole surface ──</span>
+<span class="k">function</span> <span class="m">detectGeo</span>(): Promise&lt;{ country: <span class="k">string</span> | <span class="k">null</span>; gating: <span class="k">boolean</span> }&gt;
+<span class="c">// resolves fast; on failure → { country:null, gating:false } and the toggle stays visible</span></pre>
+<div class="callout data"><div class="ct">⚑ Frontend assumptions the Backend section must confirm (so we match)</div>
+<b>1</b> · <code>estimate</code> is <b>pure &amp; synchronous</b> over <code>(state, roster)</code> — no fetch, no await, safe to call every render. <b>2</b> · The <b>guardrail decision lives in the engine</b> (<code>edge.gated</code>), single-sourced; the view only reads it and paints. <b>3</b> · <b>Metered price</b> = <code>pkgBase(pkg) × (1 − cycleDiscount)</code>; <code>CYCLES</code> ships with the roster; PM-pending package prices set a <code>pending</code> flag so the panel stamps <span class="mono" style="color:var(--warn-ink)">⚑ph</span>. <b>4</b> · <b>Currency</b> (CAD/CNY → USD at snapshot rates) is normalized in the roster/price layer; <code>estimate</code> returns USD in <code>monthlyUSD</code>, native optional. <b>5</b> · <b>Multi-region</b> providers resolve <code>state.jump.{region,plan}</code> → a concrete row; if omitted, the provider's canonical benchmarked variant. <b>6</b> · <code>perEdge</code> comes back <b>already in render order</b>; <code>exitIPs === state.exits.length</code>. <b>7</b> · The <b>roster is the shared provider model</b> — same records feed the Palette (view) and <code>estimate</code> (engine); neither hand-maintains a second list.</div>
+
+<!-- ============================ 6 MOUNT MAP ============================ -->
+<h2 id="mount"><span class="n">6</span><code>tool.html</code> integration map</h2>
+<p>The board <b>replaces the radio "Build your network" section</b> and its driving script; the "Score a VPS" tool below it is untouched. The page already loads <code>style.css</code>, Fraunces + Inter, and uses <code>.tool-wrap</code> / <code>.callout</code> — the builder reuses those tokens and adds a scoped <code>&lt;style&gt;</code> block for board-only classes (evolving the DESIGN prototype's CSS, prefixed to avoid collision with the existing <code>.nb-*</code> radio styles, which are deleted).</p>
+<div class="fig">
+  <svg viewBox="0 0 900 340" role="img" aria-label="tool.html regions: nav and hero kept, the radio Build-your-network block and its script replaced by the board, the Score-a-VPS tool and its script kept.">
+    <rect class="b" x="30" y="24" width="840" height="30" rx="7"/><text x="450" y="43" class="s" font-size="10" text-anchor="middle">&lt;nav&gt; · &lt;header class="guide-hero"&gt; — KEPT (aria-current="page" stays on Score tool)</text>
+
+    <rect class="b w" x="30" y="64" width="840" height="120" rx="10"/>
+    <text x="50" y="86" class="t" font-size="11" fill="var(--warn-ink)">REPLACE — the radio builder</text>
+    <text x="50" y="104" class="s" font-size="9">out: &lt;h2&gt;Build your network&lt;/h2&gt; + &lt;div class="nb"&gt;#jhost #rexit #nbsum&lt;/div&gt;  (lines ~97–105)</text>
+    <text x="50" y="120" class="s" font-size="9">out: the 2nd &lt;script&gt; (JUMP/RES radios, lines ~249–297) · out: the .nb-* CSS rules</text>
+    <rect class="b a" x="50" y="130" width="800" height="44" rx="8"/>
+    <text x="450" y="150" class="t" font-size="10" text-anchor="middle">in: &lt;section class="nbx" aria-label="Build your network"&gt; · #nbx-guardrail #nbx-palette #nbx-canvas #nbx-estimate #nbx-live</text>
+    <text x="450" y="166" class="me" font-size="9" text-anchor="middle">in: one scoped &lt;style&gt; (board classes) + one &lt;script&gt; (roster + estimate + detectGeo + view) before &lt;/body&gt;</text>
+
+    <rect class="b e" x="30" y="194" width="840" height="70" rx="10"/>
+    <text x="50" y="216" class="t" font-size="11" fill="var(--exit-ink)">KEEP — Score a VPS tool (unchanged)</text>
+    <text x="50" y="234" class="s" font-size="9">&lt;h2&gt;Or score any VPS yourself&lt;/h2&gt; · table.io · #results · the 1st &lt;script&gt; (score compute)</text>
+    <text x="50" y="250" class="s" font-size="9">the board and the score tool share no state — independent scripts, independent DOM subtrees</text>
+
+    <rect class="b" x="30" y="274" width="840" height="40" rx="9"/>
+    <text x="450" y="292" class="s" font-size="9.5" text-anchor="middle">Where the JS lives: inline before &lt;/body&gt; (matches the site — no separate .js files exist).</text>
+    <text x="450" y="307" class="s" font-size="9" text-anchor="middle">roster + estimate + detectGeo are a self-contained IIFE; if a shared module is wanted later, extract to builder.js/roster.js without markup change.</text>
+    <defs></defs>
+  </svg>
+  <figcaption>Surgical swap: nav/hero and the whole Score tool are untouched; only the radio builder block + its script + the <code>.nb-*</code> CSS are removed, and the board section + one scoped style + one script take their place. The two tools stay fully independent.</figcaption>
+</div>
+
+<!-- ============================ 7 CHOOSE ============================ -->
+<h2 id="choose"><span class="n">7</span><code>choose.html</code> — the Value column</h2>
+<p>The fleet table in §04 ("our real fleet, every axis") gains a derived <b>Value = Overall ÷ $/mo</b> column, in points-per-dollar. It reuses <code>.perf-ref</code> tints so it reads as native. Two design decisions keep it honest and robust:</p>
+<ol>
+  <li><b>Values are pre-rendered in static HTML</b> — derived, not fetched — so they're correct with <b>zero JS</b> (the site's honesty + no-backend principle). The Value column is just two new cells per row (Price $/mo, Value pt/$), computed from the roster price and the Overall already in the row.</li>
+  <li><b>Sort + best-value highlight are progressive enhancement.</b> A ~30-line script marks <code>aria-sort</code> on the Value header, reorders <code>&lt;tbody&gt;</code> rows on click/Enter (default: Value descending), and tints the max-value row <code>.best</code> with a <code>★ best value</code> badge. Without JS the column is static but complete; the best row can also be statically pre-tinted.</li>
+</ol>
+<pre><span class="c">// derived, reuses the same price resolver as the builder</span>
+<span class="k">const</span> valueOf = (overall, monthlyUSD) =&gt;
+  monthlyUSD &gt; <span class="t2">0</span> ? +(overall / monthlyUSD).toFixed(<span class="t2">2</span>) : <span class="k">null</span>;   <span class="c">// metered/ref → null → "—"</span></pre>
+<div class="tw"><table>
+  <tr><th>Provider (fleet row)</th><th>Overall</th><th>$/mo</th><th>Value pt/$</th><th>Note</th></tr>
+  <tr><td>SolaDrive</td><td>88</td><td>40.00</td><td>2.20</td><td>flat</td></tr>
+  <tr><td>BandwagonHost · 4C·4GB</td><td>83</td><td>56.99</td><td>1.46</td><td>flat (bwh-prod)</td></tr>
+  <tr><td>BandwagonHost · 3C·2GB</td><td>75</td><td>30.00</td><td><b>2.50</b></td><td>flat (bwh-vpn) — best on honest per-row pricing</td></tr>
+  <tr><td>VirVM</td><td>38</td><td>metered*</td><td>—</td><td>resolves once a traffic pkg is chosen on the builder</td></tr>
+  <tr><td>AaITR</td><td>18</td><td>21.88</td><td>0.82</td><td>flat</td></tr>
+</table></div>
+<div class="callout data"><div class="ct">⚑ Reconciliation flag — which price pairs with each row</div>
+The DESIGN mock shows "BandwagonHost 2.77 ★best" by pairing <b>perf 83</b> (the 4C·4GB / $56.99 box) with <b>$30</b> (the 3C·2GB box). With <b>honest per-row pricing</b> those are two separate fleet rows and the best value is actually <b>BWH 3C·2GB at 2.50</b> (or SolaDrive 2.20 among single-listed boxes). The frontend computes <code>★ best value</code> as <code>max(value)</code> over whatever price is attached to each row — <b>the PM/Backend must confirm the canonical (region, plan → price) pairing</b> so the Value column and the builder's price agree. Same resolver, same numbers, both surfaces.</div>
+
+<!-- ============================ 8 RESPONSIVE ============================ -->
+<h2 id="responsive"><span class="n">8</span>Responsive layout &amp; honesty surfacing</h2>
+<div class="tw"><table>
+  <tr><th>Concern</th><th>Approach</th></tr>
+  <tr><td><b>Three-zone layout</b></td><td><code>display:grid; grid-template-columns: 236px minmax(0,1fr) 264px</code> (palette · canvas · estimate). Below 900px → single column, stacking guardrail → palette → canvas → estimate. <code>minmax(0,1fr)</code> on the middle column prevents blowout from long content.</td></tr>
+  <tr><td><b>No horizontal overflow 320–1440</b></td><td>Fan-out branches wrap (<code>flex-wrap</code>); the Choose table sits in <code>.tool-wrap</code> (<code>overflow-x:auto</code>); connectors have <code>min-width</code> and shrink; nodes are <code>flex:1 1 84px</code>. Verified at 1440 / 390 / 320 (headless Playwright).</td></tr>
+  <tr><td><b>Touch targets</b></td><td>Cards, slots, chips, remove-✕, toggle all ≥ 40px; chips + cycle wrap on narrow widths.</td></tr>
+  <tr><td><b>Honesty badging</b></td><td><code>estimated</code> tag on the panel; <code>benchmarked</code> vs <code>reference</code> per card; <code>⚑ph</code> stamp on any PM-pending number (traffic base, ISP rank, unmeasured bandwidth); reference hops shown apart and never summed. Driven entirely by engine flags (<code>pending</code>, <code>rankPending</code>, <code>benchmarked</code>) — the view never invents a number.</td></tr>
+  <tr><td><b>Reduced motion</b></td><td>Drag ghost + slot-highlight transitions gated behind <code>@media(prefers-reduced-motion:reduce)</code>, matching the site's global rule.</td></tr>
+</table></div>
+
+<!-- ============================ 9 OPEN ============================ -->
+<h2 id="open"><span class="n">9</span>Open questions &amp; assumptions to reconcile</h2>
+<ol>
+  <li><span class="pill data">engine</span> Confirm the <b>§5 <code>estimate</code> / <code>Edge</code> shapes</b> — especially that the guardrail (<code>edge.gated</code>) and currency normalization live in the engine, not the view.</li>
+  <li><span class="pill data">data</span> <b>Canonical (region, plan → price) pairing</b> per multi-region provider (BWH/DMIT/VMISS), so the Choose Value column and the builder agree and the <code>★ best value</code> is truthful (see §7 flag).</li>
+  <li><span class="pill out">decision</span> <b><code>detectGeo()</code> provider + fallback copy</b> — which client geo-IP endpoint, and the toggle label when it fails (gating defaults off).</li>
+  <li><span class="pill data">price</span> <b>Traffic-package base prices</b> (VirVM 100/300/500/1000 GB + base) and whether cycle discounts are provider-wide or per-package — until then the panel stamps <code>⚑ph</code>.</li>
+  <li><span class="pill in">ux</span> <b>Max-exits cap</b> for the fan-out (DESIGN left it unbounded, wraps cleanly) — confirm a sensible UI limit or keep unbounded.</li>
+  <li><span class="pill out">choose</span> Whether the Choose Value column is <b>static-pre-tinted</b> best row + JS sort (recommended), or fully JS-driven — confirm the no-JS baseline requirement.</li>
+</ol>
+
+<p class="meta">Frontend section of the Tech Document (SDD artifact 3/5). Pairs with the Backend section, which implements the roster provider model, <code>estimate(state)</code>, and <code>detectGeo()</code> to the §5 contract. On approval → build against the DESIGN v3 prototype evolved into <code>tool.html</code>, plus the Choose Value column.</p>
+
+</div><!-- /wrap -->
+</body>
+</html>
