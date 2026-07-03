@@ -9,6 +9,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380..600&family=Inter:wght@400..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* choose.html — Value column (cost-performance) additions, scoped to the fleet table */
+  #fleet-table td.best{position:relative}
+  #fleet-table .best-badge{display:inline-block; margin-left:.4rem; font-family:var(--sans);
+    font-size:.62rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+    color:var(--accent-ink); background:var(--card); border:1px solid var(--accent);
+    border-radius:99px; padding:.05rem .4rem; vertical-align:middle; white-space:nowrap}
+  #fleet-table th.val-th.sortable{cursor:pointer; user-select:none}
+  #fleet-table th.val-th.sortable:hover{color:var(--accent-ink)}
+  #fleet-table th.val-th .sort-ind{font-size:.7rem; opacity:.65; margin-left:.15rem}
+</style>
 </head>
 <body>
 
@@ -190,10 +201,12 @@ curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
         <h3 style="margin-top:2.2rem">Example: our real fleet, every axis</h3>
         <p>The same uniform pass on the actual boxes we run — <strong>CPU, memory, network and disk</strong>, one row per box, real measured numbers (only the IPs are withheld). Best per column tints blue, worst red; scroll the table sideways for every axis.</p>
         <div class="tool-wrap">
-          <table class="perf-ref">
+          <table class="perf-ref" id="fleet-table">
             <thead><tr>
               <th>Provider</th><th>Tier</th>
               <th>Overall<small>/100</small></th>
+              <th>Price<small>$/mo</small></th>
+              <th id="value-th" class="val-th">Value<small>pt/$</small></th>
               <th>CPU 1-core<small>eps</small></th>
               <th>CPU all-core<small>eps</small></th>
               <th>Mem read<small>GB/s</small></th>
@@ -203,15 +216,15 @@ curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
               <th>Disk write<small>IOPS</small></th>
             </tr></thead>
             <tbody>
-          <tr><td class="box">SolaDrive</td><td class="type">residential · 4C · 4GB</td><td class="sc hi">88</td><td class="">1,323</td><td class="hi">5,344</td><td class="hi">44</td><td class="hi">26</td><td class="">569</td><td class="hi">109,775</td><td class="hi">113,304</td></tr>
-          <tr><td class="box">BandwagonHost</td><td class="type">datacenter · 4C · 4GB</td><td class="sc hi">83</td><td class="hi">1,377</td><td class="hi">5,352</td><td class="hi">43</td><td class="hi">24</td><td class="hi">2,280</td><td class="hi">57,318</td><td class="">48,246</td></tr>
-          <tr><td class="box">BandwagonHost</td><td class="type">datacenter · 3C · 2GB</td><td class="sc ">75</td><td class="hi">1,376</td><td class="">4,206</td><td class="">41</td><td class="">22</td><td class="hi">1,774</td><td class="">55,499</td><td class="hi">51,469</td></tr>
-          <tr><td class="box">VirVM</td><td class="type">residential · 4C · 8GB</td><td class="sc lo">38</td><td class="lo">431</td><td class="lo">1,722</td><td class="lo">23</td><td class="lo">19</td><td class="lo">94</td><td class="lo">38,813</td><td class="lo">46,692</td></tr>
-          <tr><td class="box">AaITR</td><td class="type">residential · 2C · 2GB</td><td class="sc lo">18</td><td class="lo">290</td><td class="lo">581</td><td class="lo">17</td><td class="lo">13</td><td class="lo">102</td><td class="lo">2,018</td><td class="lo">2,018</td></tr>
+          <tr><td class="box">SolaDrive</td><td class="type">residential · 4C · 4GB</td><td class="sc hi">88</td><td>$40.00</td><td data-value="2.20">2.20</td><td class="">1,323</td><td class="hi">5,344</td><td class="hi">44</td><td class="hi">26</td><td class="">569</td><td class="hi">109,775</td><td class="hi">113,304</td></tr>
+          <tr><td class="box">BandwagonHost</td><td class="type">datacenter · 4C · 4GB</td><td class="sc hi">83</td><td>$56.99</td><td data-value="1.46">1.46</td><td class="hi">1,377</td><td class="hi">5,352</td><td class="hi">43</td><td class="hi">24</td><td class="hi">2,280</td><td class="hi">57,318</td><td class="">48,246</td></tr>
+          <tr><td class="box">BandwagonHost</td><td class="type">datacenter · 3C · 2GB</td><td class="sc ">75</td><td>$30.00</td><td class="hi best" data-value="2.50">2.50 <span class="best-badge">★ best value</span></td><td class="hi">1,376</td><td class="">4,206</td><td class="">41</td><td class="">22</td><td class="hi">1,774</td><td class="">55,499</td><td class="hi">51,469</td></tr>
+          <tr><td class="box">VirVM</td><td class="type">residential · 4C · 8GB</td><td class="sc lo">38</td><td>—</td><td data-value="">—</td><td class="lo">431</td><td class="lo">1,722</td><td class="lo">23</td><td class="lo">19</td><td class="lo">94</td><td class="lo">38,813</td><td class="lo">46,692</td></tr>
+          <tr><td class="box">AaITR</td><td class="type">residential · 2C · 2GB</td><td class="sc lo">18</td><td>$21.88</td><td class="lo" data-value="0.82">0.82</td><td class="lo">290</td><td class="lo">581</td><td class="lo">17</td><td class="lo">13</td><td class="lo">102</td><td class="lo">2,018</td><td class="lo">2,018</td></tr>
             </tbody>
           </table>
         </div>
-        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>Overall</strong> is the equal-weight 0&ndash;100 average of all seven columns, each scored against the best box (exactly what the <a href="tool.html">score tool</a> does). Now the score is explainable: <strong>SolaDrive</strong> — a residential line — wins outright on <em>disk</em> (110k IOPS) and holds its own on CPU, so it tops the fleet; <strong>AaITR</strong> is pinned near a <strong>~2,000-IOPS cap</strong> on both reads and writes and starved on network; <strong>BandwagonHost</strong> is the balanced datacenter pick (strong network + CPU). Cheap isn&#x27;t slow and residential isn&#x27;t weak — measure every axis on the actual box.</p>
+        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>Overall</strong> is the equal-weight 0&ndash;100 average of all seven columns, each scored against the best box (exactly what the <a href="tool.html">score tool</a> does). Now the score is explainable: <strong>SolaDrive</strong> — a residential line — wins outright on <em>disk</em> (110k IOPS) and holds its own on CPU, so it tops the fleet; <strong>AaITR</strong> is pinned near a <strong>~2,000-IOPS cap</strong> on both reads and writes and starved on network; <strong>BandwagonHost</strong> is the balanced datacenter pick (strong network + CPU). Cheap isn&#x27;t slow and residential isn&#x27;t weak — measure every axis on the actual box. <strong>Value = Overall &divide; official list $/mo</strong> (points per dollar) — each benchmarked box pairs with <em>its own plan&#x27;s</em> list price: SolaDrive $40, BWH 4C&middot;4GB $56.99, BWH 3C&middot;2GB $30, AaITR $21.88 (&asymp;&yen;149). <strong>BWH 3C&middot;2GB wins on cost-performance at 2.50 pt/$</strong>; <strong>VirVM</strong> is traffic-metered, so its price and value resolve once a package is chosen on the <a href="build.html">builder</a>.</p>
 
         <h3 style="margin-top:2.2rem">Network quality — routes to China</h3>
         <p>Raw throughput isn&#x27;t the whole story for China access — the <strong>route</strong> is. Measured from each box (ping + <span class="mono">nexttrace</span>, 2026-07-02): the path class to China&#x27;s three networks and the round-trip latency + packet loss. Lower latency tints blue; loss is red.</p>
@@ -296,6 +309,54 @@ curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
     </nav>
   </div>
 </footer>
+
+<script>
+/* Progressive enhancement: click/Enter the Value header to sort the fleet table by
+   cost-performance. Fully optional — with JS off the column is static and complete. */
+(function(){
+  var table = document.getElementById('fleet-table');
+  if(!table || !table.tBodies.length) return;
+  var th = document.getElementById('value-th');
+  var tbody = table.tBodies[0];
+  if(!th) return;
+  var VAL_COL = 4; /* Provider0 · Tier1 · Overall2 · Price3 · Value4 */
+  th.classList.add('sortable');
+  th.setAttribute('tabindex','0');
+  th.setAttribute('role','columnheader');
+  th.setAttribute('aria-sort','none');
+  var ind = document.createElement('span');
+  ind.className = 'sort-ind';
+  ind.setAttribute('aria-hidden','true');
+  th.appendChild(ind);
+  var dir = 0; /* 0 = none · 1 = descending · 2 = ascending */
+  function valOf(row){
+    var cell = row.cells[VAL_COL];
+    if(!cell) return null;
+    var n = parseFloat(cell.getAttribute('data-value'));
+    return isNaN(n) ? null : n;
+  }
+  function apply(){
+    if(dir === 0){ th.setAttribute('aria-sort','none'); ind.textContent = ''; return; }
+    var desc = dir === 1;
+    var rows = Array.prototype.slice.call(tbody.rows);
+    rows.sort(function(a, b){
+      var av = valOf(a), bv = valOf(b);
+      if(av === null && bv === null) return 0;
+      if(av === null) return 1;   /* metered/null always sinks to the bottom */
+      if(bv === null) return -1;
+      return desc ? bv - av : av - bv;
+    });
+    rows.forEach(function(r){ tbody.appendChild(r); });
+    th.setAttribute('aria-sort', desc ? 'descending' : 'ascending');
+    ind.textContent = desc ? ' ▼' : ' ▲';
+  }
+  function toggle(){ dir = (dir === 1) ? 2 : 1; apply(); }
+  th.addEventListener('click', toggle);
+  th.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){ e.preventDefault(); toggle(); }
+  });
+})();
+</script>
 
 </body>
 </html>
