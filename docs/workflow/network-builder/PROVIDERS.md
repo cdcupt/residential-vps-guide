@@ -56,6 +56,8 @@ Source: local dmit-watch panel (`localhost:7331/api/state`) for LAX; PM screensh
 | US.LA.CN2.Basic | 1C · 1GB · 10GB SSD | 200Mbps | 300GB | **$6 CAD** (~$4.40) | out |
 | US.LA.CN2.Core | 1C · 1GB · 15GB SSD | 200Mbps | 600GB | **$12 CAD** (~$8.80) | out |
 | US.LA.CN2.Pro | 1C · 2GB · 20GB SSD | 500Mbps | 1000GB | **$20 CAD** (~$14.60) | out |
+| US.LA.CN2.Elite | 2C · 4GB · 40GB SSD | 500Mbps | 1600GB | **$38 CAD** (~$27.70) | out |
+| US.LA.CN2.Ultra | 4C · 8GB · 80GB SSD | 1000Mbps | 2800GB | **$75 CAD** (~$54.75) | out |
 
 ### VirVM (as jump host) — benchmarked (163 line; 专线GIA is a paid upgrade)
 Our box: 4C/8GB, **perf 38**, 163 route (NOT CN2 GIA unless the 专线GIA upgrade is bought). Traffic-metered — see residential.
