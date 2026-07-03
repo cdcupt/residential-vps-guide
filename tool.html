@@ -53,6 +53,13 @@
   @media(max-width:900px){ .nbx-body{grid-template-columns:1fr} }
   .nbx-col{background:var(--card); padding:.9rem; min-width:0}
   .nbx-col h3{margin:.1rem 0 .6rem; font-family:var(--mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-soft); font-weight:700; line-height:1.3}
+  /* palette lane headers — two prominent, distinct lanes (jump=indigo, exit=teal) */
+  .nbx-col h3.pal-h{display:flex; align-items:center; gap:.45rem; margin:.1rem 0 .7rem;
+    padding:.3rem 0 .42rem .6rem; font-size:.82rem; font-weight:800; letter-spacing:.1em;
+    color:var(--ink); border-left:3px solid var(--accent); border-bottom:1px solid var(--line-2)}
+  .nbx-col h3.pal-h::before{content:""; width:.5rem; height:.5rem; border-radius:50%; background:var(--accent); flex:none}
+  .nbx-col h3.pal-h.exit{margin-top:1.15rem; border-left-color:var(--exit)}
+  .nbx-col h3.pal-h.exit::before{background:var(--exit)}
   .nbx-hint{font-size:.72rem; color:var(--ink-soft); margin:.7rem 0 0; line-height:1.4}
   .nbx kbd{font-family:var(--mono); font-size:.72em; background:var(--paper-2); border:1px solid var(--line-2); border-bottom-width:2px; border-radius:5px; padding:.05em .4em}
   /* palette cards */
@@ -173,7 +180,7 @@
       <a href="build.html"><span class="nl-full">Build a network</span><span class="nl-short">Build</span></a>
       <a href="setup.html"><span class="nl-full">Skill</span><span class="nl-short">Skill</span></a>
       <a href="deployment.html"><span class="nl-full">Deployment</span><span class="nl-short">Deploy</span></a>
-      <a href="tool.html" aria-current="page"><span class="nl-full">Score tool</span><span class="nl-short">Score</span></a>
+      <a href="tool.html" aria-current="page"><span class="nl-full">Network Builder</span><span class="nl-short">Builder</span></a>
     </div>
   </div>
 </nav>
@@ -203,9 +210,9 @@
     </div>
     <div class="nbx-body">
       <div class="nbx-col">
-        <h3>Jump hosts</h3>
+        <h3 class="pal-h jump">Jump hosts</h3>
         <div id="nbx-palette-jump" aria-label="Jump host providers"></div>
-        <h3 style="margin-top:.8rem">Residential exits</h3>
+        <h3 class="pal-h exit">Residential exits</h3>
         <div id="nbx-palette-exit" aria-label="Residential exit providers"></div>
         <p class="nbx-hint">Drag a card onto the canvas, tap it, or focus it and press <kbd>Enter</kbd>. Exits append to the fan-out; each has its own <kbd>Delete</kbd>. A box only drops into a slot it fits.</p>
       </div>
@@ -657,7 +664,7 @@
   var state = {
     geo: null, gatingOn: false,
     jump: { provider:'bwh', region:'us-la', plan:'bwh-vpn' },
-    exits: [ { provider:'aaitr', region:'us', plan:'aaitr-1' }, { provider:'aaitr', region:'us', plan:'aaitr-1' } ]
+    exits: [ { provider:'virvm', region:'us-la', plan:'virvm-1', tier:100 } ]
   };
   var els = {};
   var pendingFocus = null;
