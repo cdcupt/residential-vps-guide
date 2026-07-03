@@ -38,6 +38,28 @@
   .bar{height:7px; border-radius:99px; background:var(--line); overflow:hidden; min-width:60px}
   .bar>i{display:block; height:100%; background:var(--accent)}
   #results:empty{display:none}
+  /* network builder */
+  .nb-grp{margin:1.3rem 0}
+  .nb-grp>.gl{font-family:var(--mono); font-size:.7rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:.55rem}
+  .nb-opts{display:grid; gap:.5rem}
+  .nb-opt{display:flex; align-items:center; gap:.7rem; border:1px solid var(--line-2); border-radius:var(--r-sm); padding:.65rem .85rem; cursor:pointer; background:var(--card); transition:.12s; position:relative}
+  .nb-opt:hover{border-color:var(--accent)}
+  .nb-opt input{position:absolute; opacity:0; pointer-events:none}
+  .nb-opt.sel{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); background:var(--accent-bg)}
+  .nb-opt .nm{font-weight:650; white-space:nowrap}
+  .nb-opt .sp{flex:1; color:var(--ink-soft); font-size:.84rem; min-width:0}
+  .nb-opt .pr{font-family:var(--mono); font-weight:700; white-space:nowrap}
+  .nb-opt .ref{font-size:.62rem; color:var(--warn-ink); border:1px solid var(--warn); border-radius:99px; padding:.06rem .42rem; margin-left:.15rem; white-space:nowrap}
+  .nb-sum{margin-top:1.6rem; border:1px solid var(--line); border-radius:var(--r-md); background:var(--paper-2); padding:1.2rem 1.3rem; box-shadow:var(--shadow-sm)}
+  .nb-sum h3{margin:0 0 .5rem; font-size:1.1rem}
+  .nb-arch{font-family:var(--mono); font-size:.82rem; color:var(--accent-ink); margin:0 0 1rem; overflow-x:auto; white-space:nowrap; padding-bottom:.2rem}
+  .nb-rows{display:grid; gap:.55rem; font-size:.9rem; margin:0}
+  .nb-r{display:flex; justify-content:space-between; gap:1rem; border-bottom:1px solid var(--line); padding-bottom:.55rem}
+  .nb-r .k{color:var(--ink-soft); white-space:nowrap}
+  .nb-r .v{text-align:right}
+  .nb-total{display:flex; justify-content:space-between; align-items:baseline; margin-top:1rem; font-size:1.15rem; font-weight:800}
+  .nb-total .amt{font-family:var(--mono)}
+  @media(max-width:520px){ .nb-opt{flex-wrap:wrap} .nb-opt .sp{flex-basis:100%; order:3} }
 </style>
 </head>
 <body>
@@ -71,6 +93,18 @@
 </header>
 
 <main class="wrap" style="padding-bottom:3rem">
+
+  <div class="prose">
+    <h2 style="margin-top:.2rem">Build your network</h2>
+    <p>Pick a jump host — and optionally a residential exit — and see the assembled network's performance and total cost. Boxes <strong>we run</strong> are benchmarked; the rest are listed at their <strong>official price</strong> for comparison (<span class="ref" style="position:static">reference</span> — not benchmarked by us).</p>
+  </div>
+  <div class="nb">
+    <div class="nb-grp"><div class="gl">1 · Jump host — datacenter, CN2 GIA (required)</div><div class="nb-opts" id="jhost"></div></div>
+    <div class="nb-grp"><div class="gl">2 · Residential exit — optional</div><div class="nb-opts" id="rexit"></div></div>
+    <div class="nb-sum" id="nbsum"></div>
+  </div>
+
+  <div class="prose"><h2 style="margin-top:2.8rem">Or score any VPS yourself</h2></div>
   <p class="prose">Enter your boxes (there's example data to start — overwrite it). Get each box's <a href="choose.html#bench">benchmark numbers</a> from the ten-minute method, then hit <strong>Compute scores</strong>. Everything runs in your browser; nothing is sent anywhere.</p>
 
   <div class="tool-wrap">
@@ -209,6 +243,54 @@
   document.getElementById('compute').addEventListener('click', function(){ compute(true); });
   load(EXAMPLES);
   compute(false);
+})();
+</script>
+
+<script>
+(function(){
+  var JUMP=[
+    {id:'bwh44',nm:'BandwagonHost',sp:'4C · 4GB · CN2 GIA · 129 ms · 0% loss · perf 83',pr:30,ours:true},
+    {id:'bwh32',nm:'BandwagonHost',sp:'3C · 2GB · CN2 GIA · 129 ms · 0% loss · perf 75',pr:30,ours:true},
+    {id:'dmit', nm:'DMIT',         sp:'CN2 GIA · usually out of stock',pr:null,ours:false}
+  ];
+  var RES=[
+    {id:'none', nm:'None',      sp:'single host — run a service here (like a relay)',pr:0,ours:true,single:true},
+    {id:'sola', nm:'SolaDrive', sp:'4C · 4GB · clean IP · 175 ms · 0% loss · perf 88',pr:40,ours:true},
+    {id:'virvm',nm:'VirVM',     sp:'4C · 8GB · clean IP · 158 ms · 0% loss · perf 38',pr:65.99,ours:true},
+    {id:'aaitr',nm:'AaITR',     sp:'2C · 2GB · clean IP, but low I/O + 40–70% loss · perf 18',pr:21.88,ours:true},
+    {id:'qqpw', nm:'QQ.pw',     sp:'Hawaii · from 2C · 3GB · out of stock',pr:35,ours:false}
+  ];
+  var js='bwh44', rs='none';
+  function opt(o,grp){
+    var ref=o.ours?'':'<span class="ref">reference</span>';
+    var price = o.pr==null ? '<span class="pr" style="color:var(--ink-soft);font-weight:500">see site</span>'
+             : '<span class="pr">'+(o.pr===0?'—':'$'+o.pr.toFixed(2)+'<span style="font-weight:500;font-size:.72rem;color:var(--ink-soft)">/mo</span>')+'</span>';
+    return '<label class="nb-opt" data-id="'+o.id+'" data-grp="'+grp+'"><input type="radio" name="'+grp+'" value="'+o.id+'"><span class="nm">'+o.nm+'</span>'+ref+'<span class="sp">'+o.sp+'</span>'+price+'</label>';
+  }
+  document.getElementById('jhost').innerHTML=JUMP.map(function(o){return opt(o,'j')}).join('');
+  document.getElementById('rexit').innerHTML=RES.map(function(o){return opt(o,'r')}).join('');
+  function find(a,id){for(var i=0;i<a.length;i++){if(a[i].id===id)return a[i];}}
+  function render(){
+    document.querySelectorAll('.nb-opt').forEach(function(el){
+      el.classList.toggle('sel', (el.dataset.grp==='j'&&el.dataset.id===js)||(el.dataset.grp==='r'&&el.dataset.id===rs)); });
+    var J=find(JUMP,js), R=find(RES,rs);
+    var arch = R.single ? 'you → <b>'+J.nm+'</b> → internet'
+                        : 'you → <b>'+J.nm+'</b> → <b>'+R.nm+'</b> → internet (home IP)';
+    var rows='<div class="nb-r"><span class="k">Entry · '+J.nm+'</span><span class="v">'+J.sp+'</span></div>';
+    if(!R.single) rows+='<div class="nb-r"><span class="k">Exit · '+R.nm+'</span><span class="v">'+R.sp+'</span></div>';
+    var sum=0, refs=[];
+    [J,R].forEach(function(o){ if(o.single) return; if(o.pr==null) refs.push(o.nm); else sum+=o.pr; });
+    var total='$'+sum.toFixed(2)+' /mo'+(refs.length?' + '+refs.join(' & ')+' (see site)':'');
+    var verdict = R.single ? 'Single box — host a service directly; egress is the datacenter IP.'
+               : (R.id==='aaitr' ? 'Cheapest clean-IP exit — fine only if you don’t need throughput or a stable route.'
+               : 'Encrypted entry over CN2 GIA, egress on a clean residential IP.');
+    document.getElementById('nbsum').innerHTML='<h3>Your network</h3><p class="nb-arch">'+arch+'</p><div class="nb-rows">'+rows+'</div><div class="nb-total"><span>Total</span><span class="amt">'+total+'</span></div><p style="margin:.8rem 0 0;font-size:.85rem;color:var(--ink-soft)">'+verdict+'</p>';
+  }
+  document.getElementById('jhost').addEventListener('change',function(e){js=e.target.value;render();});
+  document.getElementById('rexit').addEventListener('change',function(e){rs=e.target.value;render();});
+  var j0=document.querySelector('.nb-opt[data-grp="j"][data-id="bwh44"] input'); if(j0)j0.checked=true;
+  var r0=document.querySelector('.nb-opt[data-grp="r"][data-id="none"] input'); if(r0)r0.checked=true;
+  render();
 })();
 </script>
 </body>
