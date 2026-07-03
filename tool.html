@@ -72,7 +72,6 @@
   .nbx .badge.bench{background:var(--exit-bg); color:var(--exit-ink); border:1px solid var(--exit)}
   .nbx .badge.ref{background:var(--card); color:var(--warn-ink); border:1px dashed var(--warn)}
   .nbx .badge.gia{background:var(--accent-bg); color:var(--accent-ink); border:1px solid var(--accent)}
-  .nbx .badge.mtr{background:var(--warn-bg); color:var(--warn-ink); border:1px solid var(--warn)}
   .nbx .badge.i163{background:var(--paper-2); color:var(--ink-2); border:1px solid var(--line-2)}
   .nbx .badge.out{background:var(--warn-bg); color:var(--warn-ink); border:1px solid var(--warn)}
   /* canvas + fan-out */
@@ -133,15 +132,14 @@
   .nbx .edgerow .emetrics{font-family:var(--mono); font-size:.7rem; color:var(--ink-2); margin-top:.25rem; line-height:1.55; overflow-wrap:anywhere}
   .nbx .edgerow.entry{border-left-color:var(--accent)} .nbx .edgerow.entry.red{border-left-color:var(--warn); background:var(--warn-bg)}
   .nbx .edgerow.link{border-left-color:var(--exit)}
-  /* traffic selector */
-  .nbx .traffic{margin-top:.55rem; border-top:1px dashed var(--warn); padding-top:.5rem}
-  .nbx .traffic .tl{font-family:var(--mono); font-size:.58rem; text-transform:uppercase; letter-spacing:.04em; color:var(--warn-ink); margin-bottom:.3rem; display:flex; flex-wrap:wrap; gap:.3rem; align-items:center}
+  /* bandwidth-tier selector (VirVM — flat, tiered, unlimited traffic) */
+  .nbx .bwsel{margin-top:.55rem; border-top:1px dashed var(--accent); padding-top:.5rem}
+  .nbx .bwsel .tl{font-family:var(--mono); font-size:.58rem; text-transform:uppercase; letter-spacing:.04em; color:var(--accent-ink); margin-bottom:.3rem; display:flex; flex-wrap:wrap; gap:.3rem; align-items:center}
   .nbx .chips{display:flex; flex-wrap:wrap; gap:.28rem}
   .nbx .chip{font-family:var(--mono); font-size:.68rem; border:1px solid var(--line-2); background:var(--card); color:var(--ink-2); border-radius:99px; padding:.18rem .6rem; min-height:40px; cursor:pointer; transition:.1s}
-  .nbx .chip:hover{border-color:var(--warn)}
-  .nbx .chip.on{background:var(--warn); color:#fff; border-color:var(--warn)}
+  .nbx .chip:hover{border-color:var(--accent)}
+  .nbx .chip.on{background:var(--accent); color:#fff; border-color:var(--accent)}
   .nbx .chip:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
-  .nbx .cyc{margin-top:.35rem; width:100%; font-family:var(--sans); font-size:.72rem; padding:.35rem .4rem; min-height:40px; border:1px solid var(--line-2); border-radius:6px; background:var(--card); color:var(--ink)}
   /* estimate panel */
   .nbx .est h3{margin-top:0}
   .nbx .est .row{display:flex; justify-content:space-between; align-items:baseline; gap:.5rem; padding:.5rem 0; border-bottom:1px solid var(--line)}
@@ -155,7 +153,6 @@
   .nbx .est .egress{font-family:var(--mono); font-size:.66rem; color:var(--exit-ink); background:var(--exit-bg); border:1px solid var(--exit); border-radius:6px; padding:.25rem .45rem; margin:.35rem 0 .1rem}
   .nbx .estlabel{display:inline-block; font-family:var(--mono); font-size:.55rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); border:1px dashed var(--line-2); border-radius:99px; padding:.02rem .38rem; margin-left:.3rem; vertical-align:middle}
   .nbx .ph{color:var(--warn-ink)} .nbx .ph::after{content:" ⚑ph"; font-size:.8em; opacity:.7}
-  .nbx .ph2{color:var(--warn-ink); font-weight:600}
   .nbx-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 </style>
 </head>
@@ -379,19 +376,12 @@
   /* ---------- module constants ---------- */
   var FX = { USD:1, CAD:0.73, CNY:0.147 };
   var CURSYM = { USD:'$', CAD:'CA$', CNY:'¥' };
-  var CYCLES = [
-    { months:1,  discount:0.00, label:'1 month' },
-    { months:3,  discount:0.05, label:'3 months −5%' },
-    { months:6,  discount:0.10, label:'6 months −10%' },
-    { months:12, discount:0.20, label:'1 year −20%' },
-    { months:24, discount:0.25, label:'2 years −25%' }
-  ];
 
   /* ---------- PROVIDERS dataset (provider -> region -> plan) ----------
      LIST-PRICE rule: perf pairs with its own plan's list price.
      BWH US-LA 3C/2GB (perf 75) -> $30 ; 4C/4GB (perf 83) -> $56.99.
      Benchmarked plans carry metrics; every other plan metrics=null.
-     Metered (VirVM) package $ are PM-pending placeholders. */
+     VirVM (residential) is flat by bandwidth tier: 50M $35.99 / 100M $65.99. */
   var PROVIDERS = [
     { id:'bwh', name:'BandwagonHost', roles:['jump'], regions:[
       { id:'us-la', name:'US-LA · GIA-E', network:'CN2 GIA', jumpGia:true, plans:[
@@ -442,9 +432,9 @@
     ]},
     { id:'virvm', name:'VirVM', roles:['jump','exit'], regions:[
       { id:'us-la', name:'US-LA', network:'163', exitNetwork:'专线GIA residential', jumpGia:false, plans:[
-        { id:'virvm-1', label:'4C · 8GB · metered', bench:true, stock:'in',
-          pricing:{ type:'metered', packages:{100:8,300:18,500:28,1000:48}, packagesPending:true, currency:'USD' },
-          metrics:{ perf:38, latencyMs:{lo:158,hi:201}, iops:38813, iopsCapped:false, bandwidthMbps:94, hopAddMs:50, route:{ isp:'AT&T', rank:2, rankPending:true, purity:'high' } } }
+        { id:'virvm-1', label:'4C · 8GB · 50GB · unlimited', bench:true, stock:'in',
+          pricing:{ type:'tiered', tiers:{50:35.99,100:65.99}, defaultTier:100, currency:'USD' },
+          metrics:{ perf:38, latencyMs:{lo:158,hi:201}, iops:38813, iopsCapped:false, bandwidthMbps:100, hopAddMs:50, route:{ isp:'AT&T', rank:2, rankPending:true, purity:'high' } } }
       ]}
     ]},
     { id:'sola', name:'SolaDrive', roles:['exit'], regions:[
@@ -481,12 +471,18 @@
   }
   function priceShort(pr){
     if(pr.type==='flat') return money(toUSD(pr.amount,pr.currency))+'/mo';
-    if(pr.type==='metered') return 'traffic pkg';
+    if(pr.type==='tiered') return money(toUSD(pr.tiers[pr.defaultTier],pr.currency))+'/mo';
     return 'from '+money(pr.from)+'/mo';
   }
   function benchPlan(region){ for(var i=0;i<region.plans.length;i++){ if(region.plans[i].bench) return region.plans[i]; } return region.plans[0]; }
   function providerBench(p){ return p.regions.some(function(r){ return r.plans.some(function(x){ return x.bench; }); }); }
-  function providerMetered(p){ return p.regions.some(function(r){ return r.plans.some(function(x){ return x.pricing.type==='metered'; }); }); }
+  // VirVM's bandwidth tier: node.tier if the user picked one, else the plan default.
+  function tierOf(node){ var pr=node.plan.pricing; return node.tier!=null ? node.tier : (pr.defaultTier!=null?pr.defaultTier:null); }
+  // Effective bandwidth metric for the min-hop bottleneck. A tiered node (VirVM)
+  // contributes its selected tier (50 or 100); everyone else their measured Mbps.
+  function bwOf(node){ var m=node.plan.metrics; if(!m) return null;
+    if(node.plan.pricing.type==='tiered') return tierOf(node);
+    return m.bandwidthMbps!=null ? m.bandwidthMbps : null; }
   function resolveNode(ref){
     if(!ref) return null;
     var p = findProvider(ref.provider); if(!p) return null;
@@ -496,42 +492,28 @@
     var pl = null;
     for(i=0;i<reg.plans.length;i++){ if(reg.plans[i].id===ref.plan){ pl=reg.plans[i]; break; } }
     if(!pl) pl = benchPlan(reg);
-    return { provider:p, region:reg, plan:pl, traffic:ref.traffic||null };
+    return { provider:p, region:reg, plan:pl, tier:(ref.tier!=null?ref.tier:null) };
   }
   function netOf(node, role){ var r=node.region; return role==='exit' ? (r.exitNetwork||r.network) : r.network; }
   function giaOf(node){ return !!node.region.jumpGia; }
-  function cycleObj(m){ for(var i=0;i<CYCLES.length;i++){ if(CYCLES[i].months===m) return CYCLES[i]; } return CYCLES[0]; }
-  function meteredMonthlyUSD(plan, pkgGB, cycleMonths){
-    var base = plan.pricing.packages[pkgGB];
-    var cyc = cycleObj(cycleMonths);
-    return toUSD(base, plan.pricing.currency) * (1 - cyc.discount);
-  }
 
   /* ---------- price fold-in ---------- */
   // Price string for a reference / out-of-stock line item (shown, never summed).
   function refPriceStr(pr){
     if(pr.type==='flat') return money(toUSD(pr.amount,pr.currency))+'/mo';
-    if(pr.type==='metered') return 'traffic-metered';
+    if(pr.type==='tiered') return money(toUSD(pr.tiers[pr.defaultTier],pr.currency))+'/mo';
     return 'from '+money(pr.from);
   }
-  // Effective metered $/mo line — shared by metered jump and metered exit (MED-1).
-  function meteredLine(pr, traffic, label){
-    var t = traffic || { pkgGB:300, cycle:12 };
-    var base = pr.packages[t.pkgGB], cyc = cycleObj(t.cycle), eff = toUSD(base,pr.currency)*(1-cyc.discount);
-    return { eff: eff, pending: !!pr.packagesPending,
-      line: { label: label+' · '+t.pkgGB+'GB '+cyc.label, usd:eff, native:null, metered:true,
-        detail: t.pkgGB+'GB base '+money(base)+' × '+cyc.months+'mo −'+Math.round(cyc.discount*100)+'% = '+money(eff)+'/mo eff' } };
-  }
   // Fold one node into the running total. Out-of-stock => reference only (shown,
-  // never summed), consistently, whatever its pricing.type (MED-2). Metered =>
-  // effective $/mo (works for jump and exit alike, MED-1).
+  // never summed), consistently, whatever its pricing.type (MED-2). Flat and
+  // tiered (VirVM's bandwidth tier) both sum their real monthly price.
   function foldNode(node, label, acc){
     var pr = node.plan.pricing;
     if(node.plan.stock==='out'){ acc.references.push({ label:label, note:refPriceStr(pr), out:true }); return; }
     if(pr.type==='flat'){ var u=toUSD(pr.amount,pr.currency); acc.total+=u;
       acc.lines.push({ label:label, usd:u, native:nativeStr(pr) }); }
-    else if(pr.type==='metered'){ var m=meteredLine(pr, node.traffic, label);
-      acc.total += m.eff; acc.pending = acc.pending || m.pending; acc.lines.push(m.line); }
+    else if(pr.type==='tiered'){ var tier=tierOf(node), tu=toUSD(pr.tiers[tier],pr.currency); acc.total+=tu;
+      acc.lines.push({ label:label+' · '+tier+'M', usd:tu, native:null }); }
     else { acc.references.push({ label:label, note:'from '+money(pr.from) }); }
   }
   function computePrice(jump, exits){
@@ -571,7 +553,7 @@
       var jm = jump.plan.metrics;
       edges.push({ kind:'entry', from:'you', to:jump.provider.name, gia:gia, gated:gated,
         latency: jm ? { lo:jm.latencyMs.lo, hi:jm.latencyMs.hi } : null,
-        bandwidthMbps: jm ? jm.bandwidthMbps : null,
+        bandwidthMbps: jm ? bwOf(jump) : null,
         io: jm ? { iops:jm.iops, capped:!!jm.iopsCapped } : null,
         route: null, benchmarked: !!jm, exitIndex:-1 });
     }
@@ -579,7 +561,7 @@
       var jm2 = jump.plan.metrics;
       edges.push({ kind:'tail', from:jump.provider.name, to:'internet',
         latency: jm2 ? { lo:jm2.latencyMs.lo, hi:jm2.latencyMs.hi } : null,
-        bandwidthMbps: jm2 ? jm2.bandwidthMbps : null,
+        bandwidthMbps: jm2 ? bwOf(jump) : null,
         io: jm2 ? { iops:jm2.iops, capped:!!jm2.iopsCapped } : null,
         route: null, benchmarked: !!jm2, exitIndex:-1 });
     } else {
@@ -589,7 +571,7 @@
                 : (em ? { lo:em.latencyMs.lo, hi:em.latencyMs.hi } : null);
         edges.push({ kind:'link', from: jump?jump.provider.name:'—', to: ex.provider.name,
           latency: lat,
-          bandwidthMbps: em ? em.bandwidthMbps : null,
+          bandwidthMbps: em ? bwOf(ex) : null,
           io: em ? { iops:em.iops, capped:!!em.iopsCapped } : null,
           route: (em && em.route) ? { isp:em.route.isp, rank:em.route.rank, purity:em.route.purity, rankPending:!!em.route.rankPending } : null,
           benchmarked: !!em, exitIndex:i });
@@ -620,8 +602,8 @@
 
     /* bandwidth: min across ALL hops (jump + every exit) */
     var bandwidth = null, bwVals = [], bwPending = false;
-    if(jump){ var jbm = jump.plan.metrics; if(jbm && jbm.bandwidthMbps!=null) bwVals.push(jbm.bandwidthMbps); else bwPending=true; }
-    exits.forEach(function(ex){ var em2=ex.plan.metrics; if(em2 && em2.bandwidthMbps!=null) bwVals.push(em2.bandwidthMbps); else bwPending=true; });
+    if(jump){ var jbw = bwOf(jump); if(jbw!=null) bwVals.push(jbw); else bwPending=true; }
+    exits.forEach(function(ex){ var ebw = bwOf(ex); if(ebw!=null) bwVals.push(ebw); else bwPending=true; });
     if(bwVals.length) bandwidth = { mbps: Math.min.apply(null,bwVals), pending: bwPending };
     else if(jump || exits.length) bandwidth = { mbps:null, pending:true };
 
@@ -689,12 +671,12 @@
     return p+'.';
   }
   function compatible(providerId, role){ var p=findProvider(providerId); return !!(p && p.roles.indexOf(role)>=0); }
-  // traffic scope: 'jump' for the jump host, or an exit index number.
+  // tier scope: 'jump' for the jump host, or an exit index number.
   function scopeVal(s){ return s==='jump' ? 'jump' : parseInt(s,10); }
   function defaultRef(providerId){
     var p = findProvider(providerId), reg = p.regions[0], pl = benchPlan(reg);
     var ref = { provider:providerId, region:reg.id, plan:pl.id };
-    if(pl.pricing.type==='metered') ref.traffic = { pkgGB:300, cycle:12 };
+    if(pl.pricing.type==='tiered') ref.tier = pl.pricing.defaultTier;
     return ref;
   }
 
@@ -707,7 +689,6 @@
     var roleTag = '<span class="role '+(both?'both':(role==='exit'?'ex':''))+'">'+(both?'JUMP + EXIT':(role==='jump'?'JUMP':'EXIT'))+'</span>';
     var badge = providerBench(p) ? '<span class="badge bench">benchmarked</span>' : '<span class="badge ref">reference</span>';
     if(role==='jump') badge += reg.jumpGia ? ' <span class="badge gia">CN2 GIA</span>' : ' <span class="badge i163">163 · non-GIA</span>';
-    if(role==='exit' && providerMetered(p)) badge += ' <span class="badge mtr">metered · 专线GIA</span>';
     return '<button class="pcard" type="button" draggable="true" data-id="'+p.id+'" data-role="'+role+'" '+
       'aria-label="Add '+esc(p.name)+' as '+(role==='jump'?'jump host':'residential exit')+(both?' (fits both roles)':'')+'">'+
       '<span class="pc-top"><span class="nm">'+esc(p.name)+'</span>'+roleTag+'</span>'+
@@ -752,25 +733,28 @@
       '<span class="fsub">'+esc(netOf(node,'jump'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
     if(state.gatingOn && !giaOf(node)) h += '<span class="badge i163" style="margin-top:.3rem">'+esc(netOf(node,'jump'))+' · non-GIA entry</span>';
     h += configurator(node);
-    if(pl.pricing.type==='metered') h += trafficUI('jump');   // MED-1: metered jump gets the same traffic configurator as an exit
+    if(pl.pricing.type==='tiered') h += bandwidthUI('jump');   // VirVM as jump gets the bandwidth-tier selector
     return h+'</div>';
   }
-  function trafficUI(scope){
-    var node = scope==='jump' ? state.jump : state.exits[scope];
-    var t = (node && node.traffic) || { pkgGB:300, cycle:12 };
-    var label = scope==='jump' ? 'jump host' : 'exit '+(scope+1);
-    var chips = [100,300,500,1000].map(function(g){ return '<button type="button" class="chip'+(t.pkgGB===g?' on':'')+'" data-pkg="'+g+'" data-scope="'+scope+'" aria-pressed="'+(t.pkgGB===g)+'">'+g+' GB</button>'; }).join('');
-    var opts = CYCLES.map(function(c){ return '<option value="'+c.months+'"'+(t.cycle===c.months?' selected':'')+'>'+esc(c.label)+'</option>'; }).join('');
-    return '<div class="traffic"><div class="tl">Traffic package <span class="badge ref">placeholder $ · PM-pending</span></div>'+
-      '<div class="chips">'+chips+'</div>'+
-      '<select class="cyc" data-cfg="cycle" data-scope="'+scope+'" aria-label="Billing cycle for '+label+'">'+opts+'</select></div>';
+  // Bandwidth-tier selector for VirVM (flat, unlimited traffic). Picking a tier sets
+  // both the flat monthly price and the min-hop bandwidth metric. Default = 100 Mbps.
+  function bandwidthUI(scope){
+    var ref = scope==='jump' ? state.jump : state.exits[scope];
+    var node = resolveNode(ref); if(!node) return '';
+    var pr = node.plan.pricing;
+    var sel = (ref && ref.tier!=null) ? ref.tier : pr.defaultTier;
+    var chips = [50,100].map(function(mb){
+      return '<button type="button" class="chip'+(sel===mb?' on':'')+'" data-tier="'+mb+'" data-scope="'+scope+'" aria-pressed="'+(sel===mb)+'">'+mb+' Mbps · '+money(pr.tiers[mb])+'</button>';
+    }).join('');
+    return '<div class="bwsel"><div class="tl">Bandwidth tier · flat, unlimited traffic</div>'+
+      '<div class="chips">'+chips+'</div></div>';
   }
   function exitSlot(node, i, total){
     var p=node.provider, pl=node.plan, tag = total>1 ? 'exit '+(i+1) : 'exit';
     var h = '<div class="slot filled exit" data-node="exit" data-idx="'+i+'" role="group" tabindex="0" aria-label="Exit '+(i+1)+': '+esc(p.name)+'. Press Delete to remove.">'+
       '<span class="fnm">'+esc(p.name)+' <button class="x" type="button" data-remove="exit" data-idx="'+i+'" aria-label="Remove '+esc(p.name)+' (exit '+(i+1)+')">×</button></span>'+
       '<span class="fsub"><span class="ftag">'+tag+'</span> · '+esc(netOf(node,'exit'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
-    if(pl.pricing.type==='metered') h += trafficUI(i);
+    if(pl.pricing.type==='tiered') h += bandwidthUI(i);
     return h+'</div>';
   }
   function addExitTarget(){
@@ -838,9 +822,8 @@
     }
     var p = est.price;
     var lineHtml = p.lines.map(function(l){
-      return esc(l.label)+' — '+money(l.usd)+(l.native?' <span class="u">('+esc(l.native)+')</span>':'')+(l.metered?' <span class="ph2">eff</span>':'');
+      return esc(l.label)+' — '+money(l.usd)+(l.native?' <span class="u">('+esc(l.native)+')</span>':'');
     }).join('<br>');
-    var meteredDetails = p.lines.filter(function(l){ return l.metered; }).map(function(l){ return esc(l.detail); });
     var multi = p.lines.length>1;
 
     var latHtml = est.latency ? (est.latency.lo+' ~ '+est.latency.hi+' <span class="u">ms</span>') : '—';
@@ -858,7 +841,6 @@
     els.estimate.innerHTML =
       '<div class="row"><span class="k"><span class="i">①</span> Price</span><span class="v big">'+money(p.monthlyUSD)+'<span class="u">/mo'+(p.references.length?' + ref':'')+'</span></span></div>'+
       '<div class="breakdown">'+(lineHtml||'connect a box')+(multi?'<br><b>= '+money(p.monthlyUSD)+'/mo</b> total (in-stock only)':'')+'</div>'+
-      (meteredDetails.length?'<div class="breakdown ph">'+meteredDetails.join('<br>')+'</div>':'')+
       '<div class="egress">◉ egress: '+egress+'</div>'+
       '<div class="row"><span class="k"><span class="i">②</span> Latency'+(nIP>1?' <span class="u">(across exits)</span>':'')+'</span><span class="v">'+latHtml+'</span></div>'+
       (est.latency && est.latency.illustrative ? '<div class="breakdown">entry RTT measured · +private-hop upper bound illustrative</div>' : '')+
@@ -914,12 +896,10 @@
     }
     render();
   }
-  function setTraffic(scope, patch){
+  function setTier(scope, tier){
     var e = scope==='jump' ? state.jump : state.exits[scope]; if(!e) return;
-    e.traffic = e.traffic || { pkgGB:300, cycle:12 };
-    if(patch.pkgGB!=null){ e.traffic.pkgGB = patch.pkgGB; pendingFocus = '.chip[data-pkg="'+patch.pkgGB+'"][data-scope="'+scope+'"]'; }
-    if(patch.cycle!=null){ e.traffic.cycle = patch.cycle; pendingFocus = 'select[data-cfg="cycle"][data-scope="'+scope+'"]'; }
-    render(); announce((scope==='jump'?'Jump host':'Exit '+(scope+1))+' traffic updated. '+estText(estimate(state)));
+    e.tier = tier; pendingFocus = '.chip[data-tier="'+tier+'"][data-scope="'+scope+'"]';
+    render(); announce((scope==='jump'?'Jump host':'Exit '+(scope+1))+' bandwidth set to '+tier+' Mbps. '+estText(estimate(state)));
   }
 
   /* ---- delegated wiring (bind once on the stable board) ---- */
@@ -927,7 +907,7 @@
     els.board.addEventListener('click', function(ev){
       var t = ev.target; if(!t.closest) return;
       var rm = t.closest('[data-remove]'); if(rm){ ev.stopPropagation(); remove(rm.getAttribute('data-remove'), rm.dataset.idx?parseInt(rm.dataset.idx,10):0); return; }
-      var chip = t.closest('.chip[data-pkg]'); if(chip){ setTraffic(scopeVal(chip.dataset.scope), { pkgGB:parseInt(chip.dataset.pkg,10) }); return; }
+      var chip = t.closest('.chip[data-tier]'); if(chip){ setTier(scopeVal(chip.dataset.scope), parseInt(chip.dataset.tier,10)); return; }
       var card = t.closest('.pcard'); if(card){ place(card.dataset.id, card.dataset.role); return; }
     });
     els.board.addEventListener('change', function(ev){
@@ -935,7 +915,6 @@
       var cfg = s.getAttribute('data-cfg');
       if(cfg==='region') setRegionPlan('region', s.value);
       else if(cfg==='plan') setRegionPlan('plan', s.value);
-      else if(cfg==='cycle') setTraffic(scopeVal(s.dataset.scope), { cycle:parseInt(s.value,10) });
     });
     els.board.addEventListener('keydown', function(ev){
       var t = ev.target; if(!t.closest) return;
