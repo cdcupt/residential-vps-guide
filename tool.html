@@ -508,35 +508,58 @@
   }
 
   /* ---------- price fold-in ---------- */
+  // Price string for a reference / out-of-stock line item (shown, never summed).
+  function refPriceStr(pr){
+    if(pr.type==='flat') return money(toUSD(pr.amount,pr.currency))+'/mo';
+    if(pr.type==='metered') return 'traffic-metered';
+    return 'from '+money(pr.from);
+  }
+  // Effective metered $/mo line — shared by metered jump and metered exit (MED-1).
+  function meteredLine(pr, traffic, label){
+    var t = traffic || { pkgGB:300, cycle:12 };
+    var base = pr.packages[t.pkgGB], cyc = cycleObj(t.cycle), eff = toUSD(base,pr.currency)*(1-cyc.discount);
+    return { eff: eff, pending: !!pr.packagesPending,
+      line: { label: label+' · '+t.pkgGB+'GB '+cyc.label, usd:eff, native:null, metered:true,
+        detail: t.pkgGB+'GB base '+money(base)+' × '+cyc.months+'mo −'+Math.round(cyc.discount*100)+'% = '+money(eff)+'/mo eff' } };
+  }
+  // Fold one node into the running total. Out-of-stock => reference only (shown,
+  // never summed), consistently, whatever its pricing.type (MED-2). Metered =>
+  // effective $/mo (works for jump and exit alike, MED-1).
+  function foldNode(node, label, acc){
+    var pr = node.plan.pricing;
+    if(node.plan.stock==='out'){ acc.references.push({ label:label, note:refPriceStr(pr), out:true }); return; }
+    if(pr.type==='flat'){ var u=toUSD(pr.amount,pr.currency); acc.total+=u;
+      acc.lines.push({ label:label, usd:u, native:nativeStr(pr) }); }
+    else if(pr.type==='metered'){ var m=meteredLine(pr, node.traffic, label);
+      acc.total += m.eff; acc.pending = acc.pending || m.pending; acc.lines.push(m.line); }
+    else { acc.references.push({ label:label, note:'from '+money(pr.from) }); }
+  }
   function computePrice(jump, exits){
-    var total = 0, lines = [], references = [], pending = false;
-    if(jump){
-      var jp = jump.plan.pricing;
-      if(jp.type==='flat'){ var u=toUSD(jp.amount,jp.currency); total+=u;
-        lines.push({ label: jump.provider.name+(exits.length>1?' (shared jump)':' (jump)'), usd:u, native:nativeStr(jp) }); }
-      else if(jp.type==='metered'){ references.push({ label: jump.provider.name+' (jump · 专线GIA metered)', note:'priced as exit — not summed' }); }
-      else { references.push({ label: jump.provider.name+' (jump)', note:'from '+money(jp.from) }); }
-    }
+    var acc = { total:0, lines:[], references:[], pending:false };
+    if(jump) foldNode(jump, jump.provider.name+(exits.length>1?' (shared jump)':' (jump)'), acc);
     exits.forEach(function(ex, i){
-      var ep = ex.plan.pricing, tag = exits.length>1 ? ' (exit '+(i+1)+')' : ' (exit)';
-      if(ep.type==='flat'){ var u=toUSD(ep.amount,ep.currency); total+=u;
-        lines.push({ label: ex.provider.name+tag, usd:u, native:nativeStr(ep) }); }
-      else if(ep.type==='metered'){
-        var t = ex.traffic || { pkgGB:300, cycle:12 };
-        var base = ep.packages[t.pkgGB], cyc = cycleObj(t.cycle), eff = toUSD(base,ep.currency)*(1-cyc.discount);
-        total += eff; pending = pending || !!ep.packagesPending;
-        lines.push({ label: ex.provider.name+tag+' · '+t.pkgGB+'GB '+cyc.label, usd:eff, native:null, metered:true,
-          detail: t.pkgGB+'GB base '+money(base)+' × '+cyc.months+'mo −'+Math.round(cyc.discount*100)+'% = '+money(eff)+'/mo eff' });
-      }
-      else { references.push({ label: ex.provider.name+tag, note:'from '+money(ep.from) }); }
+      foldNode(ex, ex.provider.name+(exits.length>1 ? ' (exit '+(i+1)+')' : ' (exit)'), acc);
     });
-    return { monthlyUSD: total, lines: lines, references: references, pending: pending };
+    return { monthlyUSD: acc.total, lines: acc.lines, references: acc.references, pending: acc.pending };
   }
 
   /* ---------- estimate(state) -> EstimateResult (pure, synchronous) ---------- */
   function estimate(state){
     var jump = resolveNode(state.jump);
     var exits = (state.exits||[]).map(resolveNode).filter(Boolean);
+
+    // HIGH-1: the jump host is required (you → jump ⇉ exits → internet). With no
+    // jump the network is incomplete — no price total, no billed exits, no entry
+    // edge. Everything reads blank so canvas / notice / estimate / edges agree.
+    if(!jump){
+      return {
+        incomplete: true,
+        price: { monthlyUSD: null, lines: [], references: [], pending: false },
+        latency: null, io: null, bandwidth: null, route: null, edges: [],
+        gating: { active: !!state.gatingOn, entryBlocked: false, reason: null },
+        estimated: true
+      };
+    }
 
     var gia = jump ? giaOf(jump) : false;
     var gatingActive = !!state.gatingOn;
@@ -659,12 +682,15 @@
 
   function announce(t){ els.live.textContent = t; }
   function estText(est){
+    if(est.incomplete || est.price.monthlyUSD==null) return 'Incomplete network — add a jump host to start.';
     var p = 'Estimated '+money(est.price.monthlyUSD)+' per month';
     if(est.route && est.route.exitIPs) p += ', '+est.route.exitIPs+' exit IP'+(est.route.exitIPs>1?'s':'');
     if(est.latency) p += ', latency '+est.latency.lo+' to '+est.latency.hi+' ms';
     return p+'.';
   }
   function compatible(providerId, role){ var p=findProvider(providerId); return !!(p && p.roles.indexOf(role)>=0); }
+  // traffic scope: 'jump' for the jump host, or an exit index number.
+  function scopeVal(s){ return s==='jump' ? 'jump' : parseInt(s,10); }
   function defaultRef(providerId){
     var p = findProvider(providerId), reg = p.regions[0], pl = benchPlan(reg);
     var ref = { provider:providerId, region:reg.id, plan:pl.id };
@@ -726,15 +752,18 @@
       '<span class="fsub">'+esc(netOf(node,'jump'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
     if(state.gatingOn && !giaOf(node)) h += '<span class="badge i163" style="margin-top:.3rem">'+esc(netOf(node,'jump'))+' · non-GIA entry</span>';
     h += configurator(node);
+    if(pl.pricing.type==='metered') h += trafficUI('jump');   // MED-1: metered jump gets the same traffic configurator as an exit
     return h+'</div>';
   }
-  function trafficUI(idx){
-    var t = state.exits[idx].traffic || { pkgGB:300, cycle:12 };
-    var chips = [100,300,500,1000].map(function(g){ return '<button type="button" class="chip'+(t.pkgGB===g?' on':'')+'" data-pkg="'+g+'" data-idx="'+idx+'" aria-pressed="'+(t.pkgGB===g)+'">'+g+' GB</button>'; }).join('');
+  function trafficUI(scope){
+    var node = scope==='jump' ? state.jump : state.exits[scope];
+    var t = (node && node.traffic) || { pkgGB:300, cycle:12 };
+    var label = scope==='jump' ? 'jump host' : 'exit '+(scope+1);
+    var chips = [100,300,500,1000].map(function(g){ return '<button type="button" class="chip'+(t.pkgGB===g?' on':'')+'" data-pkg="'+g+'" data-scope="'+scope+'" aria-pressed="'+(t.pkgGB===g)+'">'+g+' GB</button>'; }).join('');
     var opts = CYCLES.map(function(c){ return '<option value="'+c.months+'"'+(t.cycle===c.months?' selected':'')+'>'+esc(c.label)+'</option>'; }).join('');
     return '<div class="traffic"><div class="tl">Traffic package <span class="badge ref">placeholder $ · PM-pending</span></div>'+
       '<div class="chips">'+chips+'</div>'+
-      '<select class="cyc" data-cfg="cycle" data-idx="'+idx+'" aria-label="Billing cycle for exit '+(idx+1)+'">'+opts+'</select></div>';
+      '<select class="cyc" data-cfg="cycle" data-scope="'+scope+'" aria-label="Billing cycle for '+label+'">'+opts+'</select></div>';
   }
   function exitSlot(node, i, total){
     var p=node.provider, pl=node.plan, tag = total>1 ? 'exit '+(i+1) : 'exit';
@@ -795,6 +824,18 @@
   }
   function paintEstimate(est){
     var jump = resolveNode(state.jump);
+    if(est.incomplete){   // HIGH-1: no jump => no phantom dollar total, everything blank
+      els.estimate.innerHTML =
+        '<div class="row"><span class="k"><span class="i">①</span> Price</span><span class="v big">—<span class="u">/mo</span></span></div>'+
+        '<div class="breakdown">add a jump host to start — the required entry box</div>'+
+        '<div class="egress">◉ egress: —</div>'+
+        '<div class="row"><span class="k"><span class="i">②</span> Latency</span><span class="v">—</span></div>'+
+        '<div class="row"><span class="k"><span class="i">③</span> I/O disk</span><span class="v">—</span></div>'+
+        '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">—</span></div>'+
+        '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v">—</span></div>'+
+        '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">incomplete</span> jump host required — nothing billed yet</div>';
+      return;
+    }
     var p = est.price;
     var lineHtml = p.lines.map(function(l){
       return esc(l.label)+' — '+money(l.usd)+(l.native?' <span class="u">('+esc(l.native)+')</span>':'')+(l.metered?' <span class="ph2">eff</span>':'');
@@ -816,7 +857,7 @@
 
     els.estimate.innerHTML =
       '<div class="row"><span class="k"><span class="i">①</span> Price</span><span class="v big">'+money(p.monthlyUSD)+'<span class="u">/mo'+(p.references.length?' + ref':'')+'</span></span></div>'+
-      '<div class="breakdown">'+(lineHtml||'connect a box')+(multi?'<br><b>= '+money(p.monthlyUSD)+'/mo</b> (jump ×1 + exits)':'')+'</div>'+
+      '<div class="breakdown">'+(lineHtml||'connect a box')+(multi?'<br><b>= '+money(p.monthlyUSD)+'/mo</b> total (in-stock only)':'')+'</div>'+
       (meteredDetails.length?'<div class="breakdown ph">'+meteredDetails.join('<br>')+'</div>':'')+
       '<div class="egress">◉ egress: '+egress+'</div>'+
       '<div class="row"><span class="k"><span class="i">②</span> Latency'+(nIP>1?' <span class="u">(across exits)</span>':'')+'</span><span class="v">'+latHtml+'</span></div>'+
@@ -825,7 +866,7 @@
       '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">'+bwHtml+'</span></div>'+
       '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v" style="font-size:.72rem">'+routeHtml+'</span></div>'+
       (est.route && est.route.rankPending ? '<div class="breakdown ph">ISP rank pending PM</div>' : '')+
-      (p.references.length?'<div class="breakdown">reference (not summed): '+p.references.map(function(r){ return esc(r.label)+' ('+esc(r.note)+')'; }).join(', ')+'</div>':'')+
+      (p.references.length?'<div class="breakdown">reference (not summed): '+p.references.map(function(r){ return esc(r.label)+' — '+esc(r.note)+(r.out?' <span class="badge out">out of stock</span>':''); }).join('; ')+'</div>':'')+
       '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">estimated</span> not a quote'+(p.pending?' · <span class="ph">prices pending</span>':'')+'</div>';
   }
   function syncGuardrail(){
@@ -845,7 +886,10 @@
     var p = findProvider(providerId); if(!p) return;
     if(p.roles.indexOf(role)<0){ announce(p.name+' can’t be a '+(role==='jump'?'jump host':'residential exit')+'.'); return; }
     if(role==='jump'){ state.jump = defaultRef(providerId); pendingFocus = '[data-node="jump"]'; render(); announce('Connected '+p.name+' as jump host. '+estText(estimate(state))); }
-    else { state.exits.push(defaultRef(providerId)); var idx = state.exits.length-1; pendingFocus = '[data-node="exit"][data-idx="'+idx+'"]'; render(); announce('Added '+p.name+' as exit '+state.exits.length+'. '+estText(estimate(state))); }
+    else {
+      if(!state.jump){ announce('Add a jump host first — it’s the required entry box. Then fan out to residential exits.'); return; }  // HIGH-1: no exits without a jump
+      state.exits.push(defaultRef(providerId)); var idx = state.exits.length-1; pendingFocus = '[data-node="exit"][data-idx="'+idx+'"]'; render(); announce('Added '+p.name+' as exit '+state.exits.length+'. '+estText(estimate(state)));
+    }
   }
   function remove(role, idx){
     if(role==='jump'){ state.jump = null; pendingFocus = '[data-drop="jump"]'; announce('Removed jump host.'); }
@@ -870,12 +914,12 @@
     }
     render();
   }
-  function setTraffic(idx, patch){
-    var e = state.exits[idx]; if(!e) return;
+  function setTraffic(scope, patch){
+    var e = scope==='jump' ? state.jump : state.exits[scope]; if(!e) return;
     e.traffic = e.traffic || { pkgGB:300, cycle:12 };
-    if(patch.pkgGB!=null){ e.traffic.pkgGB = patch.pkgGB; pendingFocus = '.chip[data-pkg="'+patch.pkgGB+'"][data-idx="'+idx+'"]'; }
-    if(patch.cycle!=null){ e.traffic.cycle = patch.cycle; pendingFocus = 'select[data-cfg="cycle"][data-idx="'+idx+'"]'; }
-    render(); announce('Exit '+(idx+1)+' traffic updated. '+estText(estimate(state)));
+    if(patch.pkgGB!=null){ e.traffic.pkgGB = patch.pkgGB; pendingFocus = '.chip[data-pkg="'+patch.pkgGB+'"][data-scope="'+scope+'"]'; }
+    if(patch.cycle!=null){ e.traffic.cycle = patch.cycle; pendingFocus = 'select[data-cfg="cycle"][data-scope="'+scope+'"]'; }
+    render(); announce((scope==='jump'?'Jump host':'Exit '+(scope+1))+' traffic updated. '+estText(estimate(state)));
   }
 
   /* ---- delegated wiring (bind once on the stable board) ---- */
@@ -883,7 +927,7 @@
     els.board.addEventListener('click', function(ev){
       var t = ev.target; if(!t.closest) return;
       var rm = t.closest('[data-remove]'); if(rm){ ev.stopPropagation(); remove(rm.getAttribute('data-remove'), rm.dataset.idx?parseInt(rm.dataset.idx,10):0); return; }
-      var chip = t.closest('.chip[data-pkg]'); if(chip){ setTraffic(parseInt(chip.dataset.idx,10), { pkgGB:parseInt(chip.dataset.pkg,10) }); return; }
+      var chip = t.closest('.chip[data-pkg]'); if(chip){ setTraffic(scopeVal(chip.dataset.scope), { pkgGB:parseInt(chip.dataset.pkg,10) }); return; }
       var card = t.closest('.pcard'); if(card){ place(card.dataset.id, card.dataset.role); return; }
     });
     els.board.addEventListener('change', function(ev){
@@ -891,7 +935,7 @@
       var cfg = s.getAttribute('data-cfg');
       if(cfg==='region') setRegionPlan('region', s.value);
       else if(cfg==='plan') setRegionPlan('plan', s.value);
-      else if(cfg==='cycle') setTraffic(parseInt(s.dataset.idx,10), { cycle:parseInt(s.value,10) });
+      else if(cfg==='cycle') setTraffic(scopeVal(s.dataset.scope), { cycle:parseInt(s.value,10) });
     });
     els.board.addEventListener('keydown', function(ev){
       var t = ev.target; if(!t.closest) return;
