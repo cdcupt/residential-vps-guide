@@ -44,6 +44,7 @@
   <div class="guide">
     <aside class="toc" aria-label="On this page">
       <div class="tt">On this page</div>
+      <a href="#start">Start here</a>
       <a href="#fork">1 · The first fork</a>
       <a href="#specs">2 · Reading the spec sheet</a>
       <a href="#ip">3 · Residential-IP quality</a>
@@ -53,6 +54,32 @@
     </aside>
 
     <div class="gbody prose">
+
+      <section id="start">
+        <h2><span class="n">0</span>Start here — a VPN network from China</h2>
+        <p>Building your own VPN or residential-exit network from mainland China? The right decision order isn't specs or price — it's this. Here's the sequence, and the actual boxes we run for each role.</p>
+
+        <h3>1 · In China, the network comes first</h3>
+        <p>Latency and route quality beat cores and RAM — if the route is bad, no amount of CPU saves it. So the first question for any box is <em>how it reaches China</em>, ideally over the premium <strong>CN2 GIA</strong> backbone (see the <a href="#bench">route table</a> below).</p>
+
+        <h3>2 · The jump host — a GIA datacenter box</h3>
+        <p>Your encrypted entry point (the <a href="build.html">relay</a>) should be a datacenter box on a real GIA route. Two obvious options, both CN2 GIA: <strong>BandwagonHost</strong> and <strong>DMIT</strong>. DMIT is usually <strong>out of stock</strong>, so BandwagonHost is the practical pick — comparable performance, cheaper, and a touch more powerful. It's what our fleet runs (129&nbsp;ms to China, 0% loss).</p>
+
+        <h3>3 · The residential exit — pick by what you need</h3>
+        <p>The second box is the <a href="build.html">residential exit</a>, where you egress on a real home IP. All three we run are <strong>genuinely clean residential IPs</strong> (<a href="#ip">purity table</a>) — they differ on speed and route:</p>
+        <table class="mtable">
+          <thead><tr><th>If you want…</th><th>Pick</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Best all-round performance</td><td><strong>SolaDrive</strong></td><td>Tops the fleet on multicore and disk, clean IP, 0% loss. The default exit.</td></tr>
+            <tr><td>Lowest latency / best route</td><td><strong>VirVM</strong></td><td>Clean IP, 0% loss, slightly faster to China than SolaDrive — and 8&nbsp;GB RAM.</td></tr>
+            <tr><td>Just a clean IP, speed irrelevant</td><td><strong>AaITR</strong></td><td>Genuinely residential and clean, but <strong>low I/O and lossy routes</strong> — pick it only when throughput and latency don't matter.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout tip">
+          <div class="ct">▲ The short version</div>
+          From China: <strong>BandwagonHost</strong> (GIA jump host) → <strong>SolaDrive</strong> or <strong>VirVM</strong> (clean residential exit). Reach for AaITR only when all you need is a clean address. Everything below is how to verify each of these choices for yourself.
+        </div>
+      </section>
 
       <section id="fork">
         <h2><span class="n">01</span>The first fork: residential or datacenter?</h2>
