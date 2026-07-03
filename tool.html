@@ -38,28 +38,125 @@
   .bar{height:7px; border-radius:99px; background:var(--line); overflow:hidden; min-width:60px}
   .bar>i{display:block; height:100%; background:var(--accent)}
   #results:empty{display:none}
-  /* network builder */
-  .nb-grp{margin:1.3rem 0}
-  .nb-grp>.gl{font-family:var(--mono); font-size:.7rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:.55rem}
-  .nb-opts{display:grid; gap:.5rem}
-  .nb-opt{display:flex; align-items:center; gap:.7rem; border:1px solid var(--line-2); border-radius:var(--r-sm); padding:.65rem .85rem; cursor:pointer; background:var(--card); transition:.12s; position:relative}
-  .nb-opt:hover{border-color:var(--accent)}
-  .nb-opt input{position:absolute; opacity:0; pointer-events:none}
-  .nb-opt.sel{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); background:var(--accent-bg)}
-  .nb-opt .nm{font-weight:650; white-space:nowrap}
-  .nb-opt .sp{flex:1; color:var(--ink-soft); font-size:.84rem; min-width:0}
-  .nb-opt .pr{font-family:var(--mono); font-weight:700; white-space:nowrap}
-  .nb-opt .ref{font-size:.62rem; color:var(--warn-ink); border:1px solid var(--warn); border-radius:99px; padding:.06rem .42rem; margin-left:.15rem; white-space:nowrap}
-  .nb-sum{margin-top:1.6rem; border:1px solid var(--line); border-radius:var(--r-md); background:var(--paper-2); padding:1.2rem 1.3rem; box-shadow:var(--shadow-sm)}
-  .nb-sum h3{margin:0 0 .5rem; font-size:1.1rem}
-  .nb-arch{font-family:var(--mono); font-size:.82rem; color:var(--accent-ink); margin:0 0 1rem; overflow-x:auto; white-space:nowrap; padding-bottom:.2rem}
-  .nb-rows{display:grid; gap:.55rem; font-size:.9rem; margin:0}
-  .nb-r{display:flex; justify-content:space-between; gap:1rem; border-bottom:1px solid var(--line); padding-bottom:.55rem}
-  .nb-r .k{color:var(--ink-soft); white-space:nowrap}
-  .nb-r .v{text-align:right}
-  .nb-total{display:flex; justify-content:space-between; align-items:baseline; margin-top:1rem; font-size:1.15rem; font-weight:800}
-  .nb-total .amt{font-family:var(--mono)}
-  @media(max-width:520px){ .nb-opt{flex-wrap:wrap} .nb-opt .sp{flex-basis:100%; order:3} }
+  /* ============ network builder board ============ */
+  .nbx{border:1px solid var(--line-2); border-radius:var(--r-md); background:var(--card); box-shadow:var(--shadow-sm); margin:1.2rem 0 0; overflow:hidden}
+  .nbx-guard{display:flex; flex-wrap:wrap; gap:.5rem .9rem; align-items:center; padding:.7rem .9rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line); font-size:.9rem; background:var(--paper-2)}
+  .nbx .switch{position:relative; display:inline-flex; align-items:center; gap:.5rem; cursor:pointer; user-select:none; min-height:40px}
+  .nbx .switch input{position:absolute; opacity:0; width:0; height:0}
+  .nbx .track{width:40px; height:22px; border-radius:99px; background:var(--line-2); transition:.15s; flex:none}
+  .nbx .knob{position:absolute; left:3px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.3); transition:.15s}
+  .nbx .switch input:checked + .track{background:var(--warn)}
+  .nbx .switch input:checked + .track + .knob{transform:translateX(18px)}
+  .nbx .switch input:focus-visible + .track{outline:2px solid var(--accent); outline-offset:2px}
+  .nbx-geo{font-family:var(--mono); font-size:.72rem; color:var(--ink-soft)}
+  .nbx-body{display:grid; grid-template-columns:236px minmax(0,1fr) 264px; gap:1px; background:var(--line)}
+  @media(max-width:900px){ .nbx-body{grid-template-columns:1fr} }
+  .nbx-col{background:var(--card); padding:.9rem; min-width:0}
+  .nbx-col h3{margin:.1rem 0 .6rem; font-family:var(--mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-soft); font-weight:700; line-height:1.3}
+  .nbx-hint{font-size:.72rem; color:var(--ink-soft); margin:.7rem 0 0; line-height:1.4}
+  .nbx kbd{font-family:var(--mono); font-size:.72em; background:var(--paper-2); border:1px solid var(--line-2); border-bottom-width:2px; border-radius:5px; padding:.05em .4em}
+  /* palette cards */
+  .nbx .pcard{display:block; width:100%; text-align:left; border:1px solid var(--line-2); border-radius:var(--r-sm); background:var(--card); padding:.55rem .65rem; margin-bottom:.5rem; cursor:grab; transition:.12s; font:inherit; color:inherit; min-height:40px}
+  .nbx .pcard:hover{border-color:var(--accent); box-shadow:0 2px 8px oklch(52% 0.16 264 / .12)}
+  .nbx .pcard:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .nbx .pcard.dragging{opacity:.45}
+  .nbx .pc-top{display:flex; align-items:center; gap:.4rem; flex-wrap:wrap}
+  .nbx .pcard .nm{font-weight:700; font-size:.9rem}
+  .nbx .role{font-family:var(--mono); font-size:.56rem; text-transform:uppercase; letter-spacing:.04em; color:var(--accent-ink); border:1px solid var(--accent); border-radius:99px; padding:.02rem .4rem; background:var(--accent-bg); white-space:nowrap}
+  .nbx .role.ex{color:var(--exit-ink); border-color:var(--exit); background:var(--exit-bg)}
+  .nbx .role.both{color:var(--ink-2); border-color:var(--line-2); background:var(--paper-2)}
+  .nbx .pcard .sp{color:var(--ink-soft); font-size:.72rem; margin-top:.15rem; line-height:1.3; display:block; overflow-wrap:anywhere}
+  .nbx .pc-foot{display:flex; justify-content:space-between; align-items:center; margin-top:.35rem; gap:.3rem; flex-wrap:wrap}
+  .nbx .pcard .pr{font-family:var(--mono); font-weight:700; font-size:.8rem}
+  .nbx .badge{font-family:var(--mono); font-size:.55rem; text-transform:uppercase; letter-spacing:.03em; padding:.05rem .38rem; border-radius:99px; white-space:nowrap; display:inline-block}
+  .nbx .badge.bench{background:var(--exit-bg); color:var(--exit-ink); border:1px solid var(--exit)}
+  .nbx .badge.ref{background:var(--card); color:var(--warn-ink); border:1px dashed var(--warn)}
+  .nbx .badge.gia{background:var(--accent-bg); color:var(--accent-ink); border:1px solid var(--accent)}
+  .nbx .badge.mtr{background:var(--warn-bg); color:var(--warn-ink); border:1px solid var(--warn)}
+  .nbx .badge.i163{background:var(--paper-2); color:var(--ink-2); border:1px solid var(--line-2)}
+  .nbx .badge.out{background:var(--warn-bg); color:var(--warn-ink); border:1px solid var(--warn)}
+  /* canvas + fan-out */
+  .nbx .canvas{min-height:150px; position:relative}
+  .nbx .fan{display:flex; flex-direction:column; gap:.5rem}
+  .nbx .entryrow{display:flex; align-items:stretch; flex-wrap:wrap; gap:.15rem}
+  .nbx .node{flex:1 1 84px; min-width:84px; border:1.4px solid var(--line-2); border-radius:var(--r-sm); background:var(--paper-2); padding:.5rem; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:74px}
+  .nbx .node.you,.nbx .node.net{background:var(--card); color:var(--ink-soft)}
+  .nbx .node .nlab{font-family:var(--mono); font-size:.58rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
+  .nbx .node .nnm{font-weight:700; font-size:.82rem; margin-top:.15rem}
+  .nbx .conn{align-self:center; flex:0 0 22px; height:2px; background:var(--ink-2); position:relative; min-width:18px}
+  .nbx .conn::after{content:""; position:absolute; right:-1px; top:-3px; border-left:7px solid var(--ink-2); border-top:4px solid transparent; border-bottom:4px solid transparent}
+  .nbx .conn.red{background:var(--warn); height:3px} .nbx .conn.red::after{border-left-color:var(--warn)}
+  .nbx .conn.ok{background:var(--exit)} .nbx .conn.ok::after{border-left-color:var(--exit)}
+  .nbx .branches{margin:.15rem 0 0 .9rem; border-left:2px dashed var(--exit); padding-left:.7rem; display:flex; flex-direction:column; gap:.5rem}
+  .nbx .branch{display:flex; align-items:stretch; flex-wrap:wrap; position:relative; gap:.15rem}
+  .nbx .branch::before{content:""; position:absolute; left:-0.72rem; top:50%; width:.6rem; height:2px; background:var(--exit)}
+  .nbx .ipnode{align-self:center; border:1.2px solid var(--line-2); border-radius:var(--r-sm); background:var(--card); padding:.35rem .45rem; text-align:center; min-width:74px; flex:0 0 auto}
+  .nbx .ipnode .il{font-family:var(--mono); font-size:.52rem; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-soft); display:block}
+  .nbx .ipnode .iv{font-weight:700; font-size:.72rem; color:var(--exit-ink)}
+  .nbx .addexit{border:1.6px dashed var(--exit); border-radius:var(--r-sm); background:var(--card); padding:.45rem .5rem; text-align:center; color:var(--exit-ink); font-size:.72rem; font-weight:600; flex:1 1 120px; min-width:120px; min-height:40px; align-self:stretch; display:flex; flex-direction:column; justify-content:center; gap:.1rem; cursor:pointer; transition:.12s}
+  .nbx .addexit:hover{background:var(--exit-bg)}
+  .nbx .addexit span{color:var(--ink-soft); font-weight:400; font-size:.62rem}
+  .nbx .addexit.over{background:var(--exit-bg); border-style:solid}
+  .nbx .addexit.reject{background:var(--warn-bg); border-color:var(--warn)}
+  .nbx .addexit:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  /* slots */
+  .nbx .slot{border:1.6px dashed var(--line-2); border-radius:var(--r-sm); background:var(--card); padding:.5rem; min-height:74px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; flex:1 1 96px; min-width:96px; transition:.12s}
+  .nbx .slot .stitle{font-family:var(--mono); font-size:.58rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
+  .nbx .slot .shint{font-size:.68rem; color:var(--ink-soft); margin-top:.2rem}
+  .nbx .slot.jump{border-color:var(--accent)} .nbx .slot.exit{border-color:var(--exit)}
+  .nbx .slot.over{background:var(--accent-bg); border-style:solid}
+  .nbx .slot.reject{background:var(--warn-bg); border-color:var(--warn); border-style:solid}
+  .nbx .slot.filled{border-style:solid; background:var(--paper-2); text-align:left; align-items:stretch}
+  .nbx .slot.filled.jump{background:var(--accent-bg); border-color:var(--accent)}
+  .nbx .slot.filled.exit{background:var(--exit-bg); border-color:var(--exit)}
+  .nbx .slot .fnm{font-weight:700; font-size:.82rem; display:flex; justify-content:space-between; align-items:center; gap:.3rem}
+  .nbx .slot .ftag{font-family:var(--mono); font-size:.54rem; text-transform:uppercase; letter-spacing:.03em; color:var(--exit-ink); font-weight:600}
+  .nbx .slot .fsub{font-size:.66rem; color:var(--ink-2); margin-top:.15rem; line-height:1.35; overflow-wrap:anywhere}
+  .nbx .slot .x{border:1px solid transparent; background:none; color:var(--ink-soft); cursor:pointer; font-size:1rem; line-height:1; min-width:40px; min-height:40px; border-radius:6px; flex:none}
+  .nbx .slot .x:hover{color:var(--warn); background:var(--warn-bg)}
+  .nbx .slot .x:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+  .nbx .slot:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  /* configurator */
+  .nbx .cfg{display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.45rem}
+  .nbx .cfg-l{display:flex; flex-direction:column; gap:.15rem; font-family:var(--mono); font-size:.54rem; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); flex:1 1 auto; min-width:0}
+  .nbx .cfg-s{font-family:var(--sans); font-size:.72rem; padding:.35rem .4rem; min-height:40px; border:1px solid var(--line-2); border-radius:6px; background:var(--card); color:var(--ink); max-width:100%; width:100%}
+  /* notice */
+  .nbx .notice{margin-top:.5rem; background:var(--warn-bg); border:1px solid var(--warn); color:var(--warn-ink); border-radius:var(--r-sm); padding:.5rem .6rem; font-size:.74rem; line-height:1.4}
+  .nbx .notice.info{background:var(--accent-bg); border-color:var(--accent); color:var(--accent-ink)}
+  .nbx .notice.ok{background:var(--exit-bg); border-color:var(--exit); color:var(--exit-ink)}
+  .nbx .notice b{color:inherit}
+  /* per-edge readouts */
+  .nbx .edges{margin-top:.7rem}
+  .nbx .edges .eh{font-family:var(--mono); font-size:.6rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:.35rem}
+  .nbx .edgerow{border:1px solid var(--line); border-left:3px solid var(--line-2); border-radius:var(--r-sm); background:var(--paper-2); padding:.45rem .55rem; margin-bottom:.4rem}
+  .nbx .edgerow .ehead{font-weight:700; font-size:.76rem; display:flex; align-items:center; gap:.35rem; flex-wrap:wrap}
+  .nbx .edgerow .emetrics{font-family:var(--mono); font-size:.7rem; color:var(--ink-2); margin-top:.25rem; line-height:1.55; overflow-wrap:anywhere}
+  .nbx .edgerow.entry{border-left-color:var(--accent)} .nbx .edgerow.entry.red{border-left-color:var(--warn); background:var(--warn-bg)}
+  .nbx .edgerow.link{border-left-color:var(--exit)}
+  /* traffic selector */
+  .nbx .traffic{margin-top:.55rem; border-top:1px dashed var(--warn); padding-top:.5rem}
+  .nbx .traffic .tl{font-family:var(--mono); font-size:.58rem; text-transform:uppercase; letter-spacing:.04em; color:var(--warn-ink); margin-bottom:.3rem; display:flex; flex-wrap:wrap; gap:.3rem; align-items:center}
+  .nbx .chips{display:flex; flex-wrap:wrap; gap:.28rem}
+  .nbx .chip{font-family:var(--mono); font-size:.68rem; border:1px solid var(--line-2); background:var(--card); color:var(--ink-2); border-radius:99px; padding:.18rem .6rem; min-height:40px; cursor:pointer; transition:.1s}
+  .nbx .chip:hover{border-color:var(--warn)}
+  .nbx .chip.on{background:var(--warn); color:#fff; border-color:var(--warn)}
+  .nbx .chip:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+  .nbx .cyc{margin-top:.35rem; width:100%; font-family:var(--sans); font-size:.72rem; padding:.35rem .4rem; min-height:40px; border:1px solid var(--line-2); border-radius:6px; background:var(--card); color:var(--ink)}
+  /* estimate panel */
+  .nbx .est h3{margin-top:0}
+  .nbx .est .row{display:flex; justify-content:space-between; align-items:baseline; gap:.5rem; padding:.5rem 0; border-bottom:1px solid var(--line)}
+  .nbx .est .row:last-of-type{border-bottom:none}
+  .nbx .est .k{font-size:.72rem; color:var(--ink-soft); font-family:var(--mono); text-transform:uppercase; letter-spacing:.03em}
+  .nbx .est .k .i{color:var(--accent-ink); font-weight:700}
+  .nbx .est .v{font-family:var(--mono); font-weight:700; text-align:right; font-size:.82rem}
+  .nbx .est .v.big{font-size:1.4rem; font-family:var(--serif)}
+  .nbx .est .v .u{font-weight:400; font-size:.7rem; color:var(--ink-soft)}
+  .nbx .est .breakdown{font-family:var(--mono); font-size:.66rem; color:var(--ink-soft); margin:.15rem 0 .1rem; line-height:1.5; overflow-wrap:anywhere}
+  .nbx .est .egress{font-family:var(--mono); font-size:.66rem; color:var(--exit-ink); background:var(--exit-bg); border:1px solid var(--exit); border-radius:6px; padding:.25rem .45rem; margin:.35rem 0 .1rem}
+  .nbx .estlabel{display:inline-block; font-family:var(--mono); font-size:.55rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); border:1px dashed var(--line-2); border-radius:99px; padding:.02rem .38rem; margin-left:.3rem; vertical-align:middle}
+  .nbx .ph{color:var(--warn-ink)} .nbx .ph::after{content:" ⚑ph"; font-size:.8em; opacity:.7}
+  .nbx .ph2{color:var(--warn-ink); font-weight:600}
+  .nbx-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 </style>
 </head>
 <body>
@@ -94,15 +191,40 @@
 
 <main class="wrap" style="padding-bottom:3rem">
 
-  <div class="prose">
-    <h2 style="margin-top:.2rem">Build your network</h2>
-    <p>Pick a jump host — and optionally a residential exit — and see the assembled network's performance and total cost. Boxes <strong>we run</strong> are benchmarked; the rest are listed at their <strong>official price</strong> for comparison (<span class="ref" style="position:static">reference</span> — not benchmarked by us).</p>
-  </div>
-  <div class="nb">
-    <div class="nb-grp"><div class="gl">1 · Jump host — datacenter, CN2 GIA (required)</div><div class="nb-opts" id="jhost"></div></div>
-    <div class="nb-grp"><div class="gl">2 · Residential exit — optional</div><div class="nb-opts" id="rexit"></div></div>
-    <div class="nb-sum" id="nbsum"></div>
-  </div>
+  <section class="nbx" id="nbx-board" aria-label="Network builder">
+    <div class="prose" style="max-width:none; padding:1rem 1rem 0">
+      <h2 style="margin-top:.2rem">Build your network</h2>
+      <p style="margin:.3rem 0 0; color:var(--ink-soft); font-size:.95rem">Place a jump host, then fan out to one or more residential exits — <code>you &rarr; jump &#8649; exit&middot;N &rarr; internet</code>. Boxes <strong>we run</strong> are benchmarked; the rest are listed at their <strong>official price</strong> for comparison. Every number is an <strong>estimate</strong>.</p>
+    </div>
+    <div class="nbx-guard" id="nbx-guardrail">
+      <label class="switch">
+        <input type="checkbox" id="nbx-toggle" aria-describedby="nbx-geo">
+        <span class="track" aria-hidden="true"></span><span class="knob" aria-hidden="true"></span>
+        <span><b>Building from mainland China?</b> &mdash; gate the route to CN2 GIA</span>
+      </label>
+      <span class="nbx-geo" id="nbx-geo">detecting location&hellip;</span>
+    </div>
+    <div class="nbx-body">
+      <div class="nbx-col">
+        <h3>Jump hosts</h3>
+        <div id="nbx-palette-jump" aria-label="Jump host providers"></div>
+        <h3 style="margin-top:.8rem">Residential exits</h3>
+        <div id="nbx-palette-exit" aria-label="Residential exit providers"></div>
+        <p class="nbx-hint">Drag a card onto the canvas, tap it, or focus it and press <kbd>Enter</kbd>. Exits append to the fan-out; each has its own <kbd>Delete</kbd>. A box only drops into a slot it fits.</p>
+      </div>
+      <div class="nbx-col">
+        <h3>Your network &mdash; one jump, many exits</h3>
+        <div class="canvas" id="nbx-canvas"></div>
+        <div id="nbx-notice"></div>
+        <div class="edges" id="nbx-edges"></div>
+      </div>
+      <div class="nbx-col est">
+        <h3>Estimate <span class="estlabel">all values estimated</span></h3>
+        <div id="nbx-estimate"></div>
+      </div>
+    </div>
+    <div class="nbx-sr" id="nbx-live" aria-live="polite"></div>
+  </section>
 
   <div class="prose"><h2 style="margin-top:2.8rem">Or score any VPS yourself</h2></div>
   <p class="prose">Enter your boxes (there's example data to start — overwrite it). Get each box's <a href="choose.html#bench">benchmark numbers</a> from the ten-minute method, then hit <strong>Compute scores</strong>. Everything runs in your browser; nothing is sent anywhere.</p>
@@ -247,52 +369,574 @@
 </script>
 
 <script>
+/* ===================================================================
+   Network builder — roster (PROVIDERS) + pure estimate() engine +
+   detectGeo() guardrail + vanilla view. Self-contained IIFE.
+   =================================================================== */
 (function(){
-  var JUMP=[
-    {id:'bwh44',nm:'BandwagonHost',sp:'4C · 4GB · CN2 GIA · 129 ms · 0% loss · perf 83',pr:30,ours:true},
-    {id:'bwh32',nm:'BandwagonHost',sp:'3C · 2GB · CN2 GIA · 129 ms · 0% loss · perf 75',pr:30,ours:true},
-    {id:'dmit', nm:'DMIT',         sp:'LAX Pro · CN2 GIA · out of stock',pr:null,from:10.90,ours:false}
+  'use strict';
+
+  /* ---------- module constants ---------- */
+  var FX = { USD:1, CAD:0.73, CNY:0.147 };
+  var CURSYM = { USD:'$', CAD:'CA$', CNY:'¥' };
+  var CYCLES = [
+    { months:1,  discount:0.00, label:'1 month' },
+    { months:3,  discount:0.05, label:'3 months −5%' },
+    { months:6,  discount:0.10, label:'6 months −10%' },
+    { months:12, discount:0.20, label:'1 year −20%' },
+    { months:24, discount:0.25, label:'2 years −25%' }
   ];
-  var RES=[
-    {id:'none', nm:'None',      sp:'single host — run a service here (like a relay)',pr:0,ours:true,single:true},
-    {id:'sola', nm:'SolaDrive', sp:'4C · 4GB · clean IP · 175 ms · 0% loss · perf 88',pr:40,ours:true},
-    {id:'virvm',nm:'VirVM',     sp:'4C · 8GB · clean IP · 158 ms · 0% loss · perf 38',pr:65.99,ours:true},
-    {id:'aaitr',nm:'AaITR',     sp:'2C · 2GB · clean IP, but low I/O + 40–70% loss · perf 18',pr:21.88,ours:true},
-    {id:'qqpw', nm:'QQ.pw',     sp:'Hawaii · from 2C · 3GB · out of stock',pr:35,ours:false}
+
+  /* ---------- PROVIDERS dataset (provider -> region -> plan) ----------
+     LIST-PRICE rule: perf pairs with its own plan's list price.
+     BWH US-LA 3C/2GB (perf 75) -> $30 ; 4C/4GB (perf 83) -> $56.99.
+     Benchmarked plans carry metrics; every other plan metrics=null.
+     Metered (VirVM) package $ are PM-pending placeholders. */
+  var PROVIDERS = [
+    { id:'bwh', name:'BandwagonHost', roles:['jump'], regions:[
+      { id:'us-la', name:'US-LA · GIA-E', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'bwh-la-1g', label:'2C · 1GB · 20GB', bench:false, stock:'in',
+          pricing:{ type:'flat', amount:16.66, currency:'USD' }, metrics:null },
+        { id:'bwh-vpn', label:'bwh-vpn · 3C · 2GB · 40GB', bench:true, stock:'in',
+          pricing:{ type:'flat', amount:30, currency:'USD' },
+          metrics:{ perf:75, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
+        { id:'bwh-prod', label:'bwh-prod · 4C · 4GB · 80GB', bench:true, stock:'in',
+          pricing:{ type:'flat', amount:56.99, currency:'USD' },
+          metrics:{ perf:83, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
+        { id:'bwh-la-8g', label:'6C · 8GB · 160GB', bench:false, stock:'in',
+          pricing:{ type:'flat', amount:86.99, currency:'USD' }, metrics:null }
+      ]},
+      { id:'sg', name:'Singapore · SG_8', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'bwh-sg-2g', label:'2C · 2GB · 40GB', bench:false, stock:'in', pricing:{ type:'flat', amount:49.99, currency:'USD' }, metrics:null },
+        { id:'bwh-sg-4g', label:'4C · 4GB · 80GB', bench:false, stock:'in', pricing:{ type:'flat', amount:86.99, currency:'USD' }, metrics:null }
+      ]},
+      { id:'hk', name:'Hong Kong · HKHK_8', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'bwh-hk-2g', label:'2C · 2GB · 40GB', bench:false, stock:'in', pricing:{ type:'flat', amount:89.99, currency:'USD' }, metrics:null },
+        { id:'bwh-hk-4g', label:'4C · 4GB · 80GB', bench:false, stock:'in', pricing:{ type:'flat', amount:155.99, currency:'USD' }, metrics:null }
+      ]},
+      { id:'jp', name:'Japan-Osaka · JPOS_6', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'bwh-jp-2g', label:'2C · 2GB · 40GB', bench:false, stock:'in', pricing:{ type:'flat', amount:49.99, currency:'USD' }, metrics:null },
+        { id:'bwh-jp-4g', label:'4C · 4GB · 80GB', bench:false, stock:'in', pricing:{ type:'flat', amount:86.99, currency:'USD' }, metrics:null }
+      ]}
+    ]},
+    { id:'dmit', name:'DMIT', roles:['jump'], stockNote:'out of stock', regions:[
+      { id:'us-la', name:'US-LA · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'dmit-la-tiny', label:'LAX.AS3.Pro.TINY', bench:false, stock:'out', pricing:{ type:'reference', from:10.90, currency:'USD' }, metrics:null },
+        { id:'dmit-la-starter', label:'LAX.AS3.Pro.STARTER', bench:false, stock:'out', pricing:{ type:'reference', from:34.90, currency:'USD' }, metrics:null }
+      ]},
+      { id:'hk', name:'Hong Kong · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'dmit-hk-tiny', label:'HKG.AS3.Pro.TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'reference', from:39.90, currency:'USD' }, metrics:null }
+      ]},
+      { id:'jp', name:'Japan-Tokyo · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'dmit-jp-tiny', label:'TYO.AS3.Pro.TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'reference', from:21.90, currency:'USD' }, metrics:null }
+      ]}
+    ]},
+    { id:'vmiss', name:'VMISS', roles:['jump'], stockNote:'out of stock', regions:[
+      { id:'us-la', name:'US-LA · CN2 GIA', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'vmiss-basic', label:'Basic · 1C/1GB · 300GB', bench:false, stock:'out', pricing:{ type:'flat', amount:6, currency:'CAD' }, metrics:null },
+        { id:'vmiss-core',  label:'Core · 1C/1GB · 600GB',  bench:false, stock:'out', pricing:{ type:'flat', amount:12, currency:'CAD' }, metrics:null },
+        { id:'vmiss-pro',   label:'Pro · 1C/2GB · 1000GB',  bench:false, stock:'out', pricing:{ type:'flat', amount:20, currency:'CAD' }, metrics:null },
+        { id:'vmiss-elite', label:'Elite · 2C/4GB · 1600GB', bench:false, stock:'out', pricing:{ type:'flat', amount:38, currency:'CAD' }, metrics:null },
+        { id:'vmiss-ultra', label:'Ultra · 4C/8GB · 2800GB', bench:false, stock:'out', pricing:{ type:'flat', amount:75, currency:'CAD' }, metrics:null }
+      ]}
+    ]},
+    { id:'virvm', name:'VirVM', roles:['jump','exit'], regions:[
+      { id:'us-la', name:'US-LA', network:'163', exitNetwork:'专线GIA residential', jumpGia:false, plans:[
+        { id:'virvm-1', label:'4C · 8GB · metered', bench:true, stock:'in',
+          pricing:{ type:'metered', packages:{100:8,300:18,500:28,1000:48}, packagesPending:true, currency:'USD' },
+          metrics:{ perf:38, latencyMs:{lo:158,hi:201}, iops:38813, iopsCapped:false, bandwidthMbps:94, hopAddMs:50, route:{ isp:'AT&T', rank:2, rankPending:true, purity:'high' } } }
+      ]}
+    ]},
+    { id:'sola', name:'SolaDrive', roles:['exit'], regions:[
+      { id:'us-la', name:'US-LA', network:'163 · clean IP', jumpGia:false, plans:[
+        { id:'sola-1', label:'4C · 4GB · 48GB', bench:true, stock:'in',
+          pricing:{ type:'flat', amount:40, currency:'USD' },
+          metrics:{ perf:88, latencyMs:{lo:175,hi:199}, iops:109775, iopsCapped:false, bandwidthMbps:569, hopAddMs:46, route:{ isp:'consumer ISP', rank:2, rankPending:true, purity:'high' } } }
+      ]}
+    ]},
+    { id:'aaitr', name:'AaITR', roles:['exit'], regions:[
+      { id:'us', name:'US · AT&T/Frontier', network:'163 · clean IP · lossy', jumpGia:false, plans:[
+        { id:'aaitr-1', label:'2C · 2GB · 25GB', bench:true, stock:'in',
+          pricing:{ type:'flat', amount:21.88, currency:'USD', native:{ amount:149, currency:'CNY' } },
+          metrics:{ perf:18, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', rank:1, rankPending:true, purity:'high' } } }
+      ]}
+    ]},
+    { id:'qqpw', name:'QQ.pw', roles:['exit'], stockNote:'out of stock', regions:[
+      { id:'hi', name:'Hawaii · residential', network:'—', jumpGia:false, plans:[
+        { id:'qqpw-1', label:'from 2C · 3GB', bench:false, stock:'out', pricing:{ type:'reference', from:35, currency:'USD' }, metrics:null }
+      ]}
+    ]}
   ];
-  var js='bwh44', rs='none';
-  function opt(o,grp){
-    var ref=o.ours?'':'<span class="ref">reference</span>';
-    var per='<span style="font-weight:500;font-size:.72rem;color:var(--ink-soft)">/mo</span>';
-    var price = o.pr==null
-       ? (o.from ? '<span class="pr">from $'+o.from.toFixed(2)+per+'</span>' : '<span class="pr" style="color:var(--ink-soft);font-weight:500">see site</span>')
-       : '<span class="pr">'+(o.pr===0?'—':'$'+o.pr.toFixed(2)+per)+'</span>';
-    return '<label class="nb-opt" data-id="'+o.id+'" data-grp="'+grp+'"><input type="radio" name="'+grp+'" value="'+o.id+'"><span class="nm">'+o.nm+'</span>'+ref+'<span class="sp">'+o.sp+'</span>'+price+'</label>';
+
+  /* ---------- pure helpers ---------- */
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function money(n){ return '$'+Number(n).toFixed(2); }
+  function commas(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function findProvider(id){ for(var i=0;i<PROVIDERS.length;i++){ if(PROVIDERS[i].id===id) return PROVIDERS[i]; } return null; }
+  function toUSD(amount, currency){ return amount * (FX[currency]!=null?FX[currency]:1); }
+  function nativeStr(pr){
+    if(pr.native) return CURSYM[pr.native.currency]+commas(pr.native.amount);
+    if(pr.currency && pr.currency!=='USD') return CURSYM[pr.currency]+pr.amount;
+    return null;
   }
-  document.getElementById('jhost').innerHTML=JUMP.map(function(o){return opt(o,'j')}).join('');
-  document.getElementById('rexit').innerHTML=RES.map(function(o){return opt(o,'r')}).join('');
-  function find(a,id){for(var i=0;i<a.length;i++){if(a[i].id===id)return a[i];}}
+  function priceShort(pr){
+    if(pr.type==='flat') return money(toUSD(pr.amount,pr.currency))+'/mo';
+    if(pr.type==='metered') return 'traffic pkg';
+    return 'from '+money(pr.from)+'/mo';
+  }
+  function benchPlan(region){ for(var i=0;i<region.plans.length;i++){ if(region.plans[i].bench) return region.plans[i]; } return region.plans[0]; }
+  function providerBench(p){ return p.regions.some(function(r){ return r.plans.some(function(x){ return x.bench; }); }); }
+  function providerMetered(p){ return p.regions.some(function(r){ return r.plans.some(function(x){ return x.pricing.type==='metered'; }); }); }
+  function resolveNode(ref){
+    if(!ref) return null;
+    var p = findProvider(ref.provider); if(!p) return null;
+    var reg = null, i;
+    for(i=0;i<p.regions.length;i++){ if(p.regions[i].id===ref.region){ reg=p.regions[i]; break; } }
+    if(!reg) reg = p.regions[0];
+    var pl = null;
+    for(i=0;i<reg.plans.length;i++){ if(reg.plans[i].id===ref.plan){ pl=reg.plans[i]; break; } }
+    if(!pl) pl = benchPlan(reg);
+    return { provider:p, region:reg, plan:pl, traffic:ref.traffic||null };
+  }
+  function netOf(node, role){ var r=node.region; return role==='exit' ? (r.exitNetwork||r.network) : r.network; }
+  function giaOf(node){ return !!node.region.jumpGia; }
+  function cycleObj(m){ for(var i=0;i<CYCLES.length;i++){ if(CYCLES[i].months===m) return CYCLES[i]; } return CYCLES[0]; }
+  function meteredMonthlyUSD(plan, pkgGB, cycleMonths){
+    var base = plan.pricing.packages[pkgGB];
+    var cyc = cycleObj(cycleMonths);
+    return toUSD(base, plan.pricing.currency) * (1 - cyc.discount);
+  }
+
+  /* ---------- price fold-in ---------- */
+  function computePrice(jump, exits){
+    var total = 0, lines = [], references = [], pending = false;
+    if(jump){
+      var jp = jump.plan.pricing;
+      if(jp.type==='flat'){ var u=toUSD(jp.amount,jp.currency); total+=u;
+        lines.push({ label: jump.provider.name+(exits.length>1?' (shared jump)':' (jump)'), usd:u, native:nativeStr(jp) }); }
+      else if(jp.type==='metered'){ references.push({ label: jump.provider.name+' (jump · 专线GIA metered)', note:'priced as exit — not summed' }); }
+      else { references.push({ label: jump.provider.name+' (jump)', note:'from '+money(jp.from) }); }
+    }
+    exits.forEach(function(ex, i){
+      var ep = ex.plan.pricing, tag = exits.length>1 ? ' (exit '+(i+1)+')' : ' (exit)';
+      if(ep.type==='flat'){ var u=toUSD(ep.amount,ep.currency); total+=u;
+        lines.push({ label: ex.provider.name+tag, usd:u, native:nativeStr(ep) }); }
+      else if(ep.type==='metered'){
+        var t = ex.traffic || { pkgGB:300, cycle:12 };
+        var base = ep.packages[t.pkgGB], cyc = cycleObj(t.cycle), eff = toUSD(base,ep.currency)*(1-cyc.discount);
+        total += eff; pending = pending || !!ep.packagesPending;
+        lines.push({ label: ex.provider.name+tag+' · '+t.pkgGB+'GB '+cyc.label, usd:eff, native:null, metered:true,
+          detail: t.pkgGB+'GB base '+money(base)+' × '+cyc.months+'mo −'+Math.round(cyc.discount*100)+'% = '+money(eff)+'/mo eff' });
+      }
+      else { references.push({ label: ex.provider.name+tag, note:'from '+money(ep.from) }); }
+    });
+    return { monthlyUSD: total, lines: lines, references: references, pending: pending };
+  }
+
+  /* ---------- estimate(state) -> EstimateResult (pure, synchronous) ---------- */
+  function estimate(state){
+    var jump = resolveNode(state.jump);
+    var exits = (state.exits||[]).map(resolveNode).filter(Boolean);
+
+    var gia = jump ? giaOf(jump) : false;
+    var gatingActive = !!state.gatingOn;
+    var gated = !!(gatingActive && jump && !gia);
+
+    /* edges: pre-ordered [entry, link x N] OR [entry, tail] */
+    var edges = [];
+    if(jump){
+      var jm = jump.plan.metrics;
+      edges.push({ kind:'entry', from:'you', to:jump.provider.name, gia:gia, gated:gated,
+        latency: jm ? { lo:jm.latencyMs.lo, hi:jm.latencyMs.hi } : null,
+        bandwidthMbps: jm ? jm.bandwidthMbps : null,
+        io: jm ? { iops:jm.iops, capped:!!jm.iopsCapped } : null,
+        route: null, benchmarked: !!jm, exitIndex:-1 });
+    }
+    if(jump && exits.length===0){
+      var jm2 = jump.plan.metrics;
+      edges.push({ kind:'tail', from:jump.provider.name, to:'internet',
+        latency: jm2 ? { lo:jm2.latencyMs.lo, hi:jm2.latencyMs.hi } : null,
+        bandwidthMbps: jm2 ? jm2.bandwidthMbps : null,
+        io: jm2 ? { iops:jm2.iops, capped:!!jm2.iopsCapped } : null,
+        route: null, benchmarked: !!jm2, exitIndex:-1 });
+    } else {
+      exits.forEach(function(ex, i){
+        var jmm = jump && jump.plan.metrics, em = ex.plan.metrics;
+        var lat = (jmm && em) ? { lo:jmm.latencyMs.lo, hi:jmm.latencyMs.lo + (em.hopAddMs||0) }
+                : (em ? { lo:em.latencyMs.lo, hi:em.latencyMs.hi } : null);
+        edges.push({ kind:'link', from: jump?jump.provider.name:'—', to: ex.provider.name,
+          latency: lat,
+          bandwidthMbps: em ? em.bandwidthMbps : null,
+          io: em ? { iops:em.iops, capped:!!em.iopsCapped } : null,
+          route: (em && em.route) ? { isp:em.route.isp, rank:em.route.rank, purity:em.route.purity, rankPending:!!em.route.rankPending } : null,
+          benchmarked: !!em, exitIndex:i });
+      });
+    }
+
+    var price = computePrice(jump, exits);
+
+    /* latency: [min lo .. max hi] across link edges; single-host = jump range */
+    var latency = null;
+    var linkEdges = edges.filter(function(e){ return e.kind==='link' && e.latency; });
+    if(linkEdges.length){
+      var los = linkEdges.map(function(e){ return e.latency.lo; }), his = linkEdges.map(function(e){ return e.latency.hi; });
+      latency = { lo: Math.min.apply(null,los), hi: Math.max.apply(null,his), illustrative:true };
+    } else if(jump && exits.length===0 && jump.plan.metrics){
+      latency = { lo: jump.plan.metrics.latencyMs.lo, hi: jump.plan.metrics.latencyMs.hi, illustrative:false };
+    }
+
+    /* io: min across link edges (bottleneck); single-host = jump */
+    var io = null;
+    var ioEdges = edges.filter(function(e){ return e.kind==='link' && e.io; });
+    if(ioEdges.length){
+      var iv = ioEdges.map(function(e){ return e.io.iops; });
+      io = { iops: Math.min.apply(null,iv), capped: ioEdges.some(function(e){ return e.io.capped; }) };
+    } else if(jump && exits.length===0 && jump.plan.metrics){
+      io = { iops: jump.plan.metrics.iops, capped: !!jump.plan.metrics.iopsCapped };
+    }
+
+    /* bandwidth: min across ALL hops (jump + every exit) */
+    var bandwidth = null, bwVals = [], bwPending = false;
+    if(jump){ var jbm = jump.plan.metrics; if(jbm && jbm.bandwidthMbps!=null) bwVals.push(jbm.bandwidthMbps); else bwPending=true; }
+    exits.forEach(function(ex){ var em2=ex.plan.metrics; if(em2 && em2.bandwidthMbps!=null) bwVals.push(em2.bandwidthMbps); else bwPending=true; });
+    if(bwVals.length) bandwidth = { mbps: Math.min.apply(null,bwVals), pending: bwPending };
+    else if(jump || exits.length) bandwidth = { mbps:null, pending:true };
+
+    /* route: collapse identical exits; N egress IPs */
+    var route = null;
+    if(jump){
+      if(exits.length===0){
+        route = { label:'datacenter IP', purity:null, exitIPs:0, rankPending:false, benchmarked: !!jump.plan.metrics };
+      } else {
+        var lr = edges.filter(function(e){ return e.kind==='link'; });
+        var labels = lr.map(function(e){ return e.route ? (e.route.isp+' (#'+e.route.rank+')') : 'not benchmarked'; });
+        var allSame = labels.every(function(v){ return v===labels[0]; });
+        var label = allSame ? (lr.length>1 ? lr.length+'× '+labels[0] : labels[0]) : labels.join(', ');
+        var purs = lr.map(function(e){ return e.route ? e.route.purity : null; }).filter(Boolean);
+        var purity = purs.length ? (purs.every(function(v){ return v===purs[0]; }) ? purs[0] : 'mixed') : null;
+        route = { label:label, purity:purity, exitIPs:exits.length,
+          rankPending: lr.some(function(e){ return e.route && e.route.rankPending; }),
+          benchmarked: lr.every(function(e){ return e.benchmarked; }) };
+      }
+    }
+
+    return {
+      price: price, latency: latency, io: io, bandwidth: bandwidth, route: route, edges: edges,
+      gating: { active: gatingActive, entryBlocked: gated,
+        reason: gated ? (jump.provider.name+' reaches China over '+netOf(jump,'jump')+', not CN2 GIA') : null },
+      estimated: true
+    };
+  }
+
+  /* ---------- detectGeo({timeoutMs}) — keyless, graceful ---------- */
+  function detectGeo(opts){
+    opts = opts || {}; var timeoutMs = opts.timeoutMs!=null ? opts.timeoutMs : 1500;
+    var sources = [
+      { url:'https://ipapi.co/json/', pick:function(j){ return j.country_code; } },
+      { url:'https://ipwho.is/',      pick:function(j){ return j.country_code; } }
+    ];
+    return sources.reduce(function(chain, src){
+      return chain.then(function(acc){
+        if(acc) return acc;
+        var ctl = new AbortController();
+        var t = setTimeout(function(){ ctl.abort(); }, timeoutMs);
+        return fetch(src.url, { signal: ctl.signal }).then(function(res){
+          clearTimeout(t); if(!res.ok) return null;
+          return res.json().then(function(j){ var code = src.pick(j); return code ? { country:code, source:src.url } : null; });
+        }).catch(function(){ clearTimeout(t); return null; });
+      });
+    }, Promise.resolve(null)).then(function(acc){ return acc || { country:null, source:null }; });
+  }
+
+  /* ================= VIEW ================= */
+  var state = {
+    geo: null, gatingOn: false,
+    jump: { provider:'bwh', region:'us-la', plan:'bwh-vpn' },
+    exits: [ { provider:'aaitr', region:'us', plan:'aaitr-1' }, { provider:'aaitr', region:'us', plan:'aaitr-1' } ]
+  };
+  var els = {};
+  var pendingFocus = null;
+
+  function announce(t){ els.live.textContent = t; }
+  function estText(est){
+    var p = 'Estimated '+money(est.price.monthlyUSD)+' per month';
+    if(est.route && est.route.exitIPs) p += ', '+est.route.exitIPs+' exit IP'+(est.route.exitIPs>1?'s':'');
+    if(est.latency) p += ', latency '+est.latency.lo+' to '+est.latency.hi+' ms';
+    return p+'.';
+  }
+  function compatible(providerId, role){ var p=findProvider(providerId); return !!(p && p.roles.indexOf(role)>=0); }
+  function defaultRef(providerId){
+    var p = findProvider(providerId), reg = p.regions[0], pl = benchPlan(reg);
+    var ref = { provider:providerId, region:reg.id, plan:pl.id };
+    if(pl.pricing.type==='metered') ref.traffic = { pkgGB:300, cycle:12 };
+    return ref;
+  }
+
+  /* ---- palette (data-driven, built once) ---- */
+  function pcard(p, role){
+    var reg = p.regions[0], pl = benchPlan(reg);
+    var net = role==='jump' ? reg.network : (reg.exitNetwork||reg.network);
+    var sub = net + (pl.metrics ? ' · perf '+pl.metrics.perf : (p.stockNote?' · '+p.stockNote:''));
+    var both = p.roles.length>1;
+    var roleTag = '<span class="role '+(both?'both':(role==='exit'?'ex':''))+'">'+(both?'JUMP + EXIT':(role==='jump'?'JUMP':'EXIT'))+'</span>';
+    var badge = providerBench(p) ? '<span class="badge bench">benchmarked</span>' : '<span class="badge ref">reference</span>';
+    if(role==='jump') badge += reg.jumpGia ? ' <span class="badge gia">CN2 GIA</span>' : ' <span class="badge i163">163 · non-GIA</span>';
+    if(role==='exit' && providerMetered(p)) badge += ' <span class="badge mtr">metered · 专线GIA</span>';
+    return '<button class="pcard" type="button" draggable="true" data-id="'+p.id+'" data-role="'+role+'" '+
+      'aria-label="Add '+esc(p.name)+' as '+(role==='jump'?'jump host':'residential exit')+(both?' (fits both roles)':'')+'">'+
+      '<span class="pc-top"><span class="nm">'+esc(p.name)+'</span>'+roleTag+'</span>'+
+      '<span class="sp">'+esc(sub)+'</span>'+
+      '<span class="pc-foot"><span>'+badge+'</span><span class="pr">'+priceShort(pl.pricing)+'</span></span>'+
+      '</button>';
+  }
+  function buildPalette(){
+    els.palJump.innerHTML = PROVIDERS.filter(function(p){ return p.roles.indexOf('jump')>=0; }).map(function(p){ return pcard(p,'jump'); }).join('');
+    els.palExit.innerHTML = PROVIDERS.filter(function(p){ return p.roles.indexOf('exit')>=0; }).map(function(p){ return pcard(p,'exit'); }).join('');
+  }
+
+  /* ---- canvas pieces ---- */
+  function nodeYou(){ return '<div class="node you"><span class="nlab">origin</span><span class="nnm">you</span></div>'; }
+  function nodeNet(){ return '<div class="node net"><span class="nlab">→</span><span class="nnm">internet</span></div>'; }
+  function conn(k){ return '<div class="conn '+(k||'')+'" aria-hidden="true"></div>'; }
+  function ipNode(i){ return '<div class="ipnode" aria-hidden="true"><span class="il">egress</span><span class="iv">exit IP '+(i+1)+'</span></div>'; }
+  function stockBadge(pl){ return pl.stock==='out' ? ' · <span class="badge out">out of stock</span>' : ''; }
+  function benchTag(pl){ return pl.bench ? '' : ' · <span class="badge ref">not benchmarked</span>'; }
+
+  function configurator(node){
+    var p = node.provider, multiRegion = p.regions.length>1, multiPlan = node.region.plans.length>1;
+    if(!multiRegion && !multiPlan) return '';
+    var h = '<div class="cfg">';
+    if(multiRegion){
+      h += '<label class="cfg-l">Region<select class="cfg-s" data-cfg="region" aria-label="Region for '+esc(p.name)+'">'+
+        p.regions.map(function(r){ return '<option value="'+r.id+'"'+(r.id===node.region.id?' selected':'')+'>'+esc(r.name)+'</option>'; }).join('')+
+        '</select></label>';
+    }
+    if(multiPlan){
+      h += '<label class="cfg-l">Plan<select class="cfg-s" data-cfg="plan" aria-label="Plan for '+esc(p.name)+'">'+
+        node.region.plans.map(function(pl){ return '<option value="'+pl.id+'"'+(pl.id===node.plan.id?' selected':'')+'>'+esc(pl.label)+' — '+esc(priceShort(pl.pricing))+'</option>'; }).join('')+
+        '</select></label>';
+    }
+    return h+'</div>';
+  }
+  function jumpSlot(node){
+    if(!node) return '<div class="slot jump" data-drop="jump" role="button" tabindex="0" aria-label="Jump host slot, empty. Activate a jump provider in the palette, or drop one here."><span class="stitle">Jump host</span><span class="shint">required · drop · tap · ⏎</span></div>';
+    var p=node.provider, pl=node.plan;
+    var h = '<div class="slot filled jump" data-node="jump" role="group" tabindex="0" aria-label="Jump host: '+esc(p.name)+' '+esc(pl.label)+'. Press Delete to remove.">'+
+      '<span class="fnm">'+esc(p.name)+' <button class="x" type="button" data-remove="jump" aria-label="Remove '+esc(p.name)+'">×</button></span>'+
+      '<span class="fsub">'+esc(netOf(node,'jump'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
+    if(state.gatingOn && !giaOf(node)) h += '<span class="badge i163" style="margin-top:.3rem">'+esc(netOf(node,'jump'))+' · non-GIA entry</span>';
+    h += configurator(node);
+    return h+'</div>';
+  }
+  function trafficUI(idx){
+    var t = state.exits[idx].traffic || { pkgGB:300, cycle:12 };
+    var chips = [100,300,500,1000].map(function(g){ return '<button type="button" class="chip'+(t.pkgGB===g?' on':'')+'" data-pkg="'+g+'" data-idx="'+idx+'" aria-pressed="'+(t.pkgGB===g)+'">'+g+' GB</button>'; }).join('');
+    var opts = CYCLES.map(function(c){ return '<option value="'+c.months+'"'+(t.cycle===c.months?' selected':'')+'>'+esc(c.label)+'</option>'; }).join('');
+    return '<div class="traffic"><div class="tl">Traffic package <span class="badge ref">placeholder $ · PM-pending</span></div>'+
+      '<div class="chips">'+chips+'</div>'+
+      '<select class="cyc" data-cfg="cycle" data-idx="'+idx+'" aria-label="Billing cycle for exit '+(idx+1)+'">'+opts+'</select></div>';
+  }
+  function exitSlot(node, i, total){
+    var p=node.provider, pl=node.plan, tag = total>1 ? 'exit '+(i+1) : 'exit';
+    var h = '<div class="slot filled exit" data-node="exit" data-idx="'+i+'" role="group" tabindex="0" aria-label="Exit '+(i+1)+': '+esc(p.name)+'. Press Delete to remove.">'+
+      '<span class="fnm">'+esc(p.name)+' <button class="x" type="button" data-remove="exit" data-idx="'+i+'" aria-label="Remove '+esc(p.name)+' (exit '+(i+1)+')">×</button></span>'+
+      '<span class="fsub"><span class="ftag">'+tag+'</span> · '+esc(netOf(node,'exit'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
+    if(pl.pricing.type==='metered') h += trafficUI(i);
+    return h+'</div>';
+  }
+  function addExitTarget(){
+    return '<div class="addexit" data-drop="exit" role="button" tabindex="0" aria-label="Add a residential exit to the fan-out. Drop or activate a compatible provider.">+ add residential exit<span>drop · tap · ⏎</span></div>';
+  }
+
+  function paintCanvas(est){
+    var jump = resolveNode(state.jump);
+    var exits = state.exits.map(resolveNode).filter(Boolean);
+    var entryKind = !jump ? '' : (est.gating.entryBlocked ? 'red' : (state.gatingOn ? 'ok' : ''));
+    var html = '<div class="fan"><div class="entryrow">'+ nodeYou() + conn(entryKind) + jumpSlot(jump);
+    if(jump && exits.length===0) html += conn('') + nodeNet();
+    html += '</div>';
+    if(jump){
+      var rows = '';
+      exits.forEach(function(ex, i){ rows += '<div class="branch">'+conn('')+exitSlot(ex,i,exits.length)+conn('')+ipNode(i)+'</div>'; });
+      rows += '<div class="branch">'+addExitTarget()+'</div>';
+      html += '<div class="branches" aria-label="Residential exits — fan-out from the jump host">'+rows+'</div>';
+    }
+    els.canvas.innerHTML = html+'</div>';
+  }
+  function paintNotice(est){
+    var jump = resolveNode(state.jump), n='';
+    if(!jump) n = '<div class="notice info">Start by connecting a <b>jump host</b> — the required entry box. Then fan out to one or more residential exits.</div>';
+    else if(est.gating.entryBlocked) n = '<div class="notice">⚠ <b>'+esc(jump.provider.name)+'</b> reaches China over <b>'+esc(netOf(jump,'jump'))+'</b>, not CN2 GIA. From the mainland this route is slow or blocked — <b>pick a CN2 GIA box</b> (BandwagonHost / DMIT / VMISS)'+(jump.provider.id==='virvm'?', or add VirVM’s 专线GIA upgrade':'')+'.</div>';
+    else if(state.exits.length===0) n = '<div class="notice ok">Single-host network — egress on the jump host’s datacenter IP. Add residential exits to fan out, or keep it to run a service here.</div>';
+    els.notice.innerHTML = n;
+  }
+  function paintEdges(est){
+    if(!est.edges.length){ els.edges.innerHTML=''; return; }
+    var jn = resolveNode(state.jump), entryNet = jn ? netOf(jn,'jump') : '';
+    var h = '<div class="eh">Connections — per-edge readout</div>';
+    est.edges.forEach(function(e){
+      if(e.kind==='entry'){
+        var line = (e.latency ? e.latency.lo+'–'+e.latency.hi+' ms · ' : '') +
+          (e.gia ? 'CN2 GIA ✓' : (esc(entryNet)+' · non-GIA'+(e.gated?' — gated':'')));
+        h += '<div class="edgerow entry'+(e.gated?' red':'')+'"><div class="ehead">'+esc(e.from)+' → '+esc(e.to)+'</div><div class="emetrics">'+line+'</div></div>';
+      } else if(e.kind==='tail'){
+        h += '<div class="edgerow link"><div class="ehead">'+esc(e.from)+' → internet</div><div class="emetrics">egress on datacenter IP · no residential exit'+(e.latency?' · '+e.latency.lo+'–'+e.latency.hi+' ms':'')+'</div></div>';
+      } else {
+        var lat = e.latency ? e.latency.lo+'–'+e.latency.hi+' ms' : '—';
+        var rq = e.route ? esc(e.route.isp)+' (#'+e.route.rank+(e.route.rankPending?'·ph':'')+')' : (e.benchmarked?'—':'not benchmarked');
+        var bw = e.bandwidthMbps!=null ? e.bandwidthMbps+'M (min hop)' : (e.benchmarked?'—':'not benchmarked');
+        var io = e.io ? commas(e.io.iops)+(e.io.capped?' IOPS capped':' IOPS') : (e.benchmarked?'—':'not benchmarked');
+        var pur = e.route && e.route.purity ? ' · purity '+esc(e.route.purity) : '';
+        h += '<div class="edgerow link"><div class="ehead">'+esc(e.from)+' → '+esc(e.to)+' → IP '+(e.exitIndex+1)+'</div>'+
+          '<div class="emetrics">'+lat+' · outbound '+rq+pur+' · bandwidth '+bw+' · I/O '+io+'</div></div>';
+      }
+    });
+    els.edges.innerHTML = h;
+  }
+  function paintEstimate(est){
+    var jump = resolveNode(state.jump);
+    var p = est.price;
+    var lineHtml = p.lines.map(function(l){
+      return esc(l.label)+' — '+money(l.usd)+(l.native?' <span class="u">('+esc(l.native)+')</span>':'')+(l.metered?' <span class="ph2">eff</span>':'');
+    }).join('<br>');
+    var meteredDetails = p.lines.filter(function(l){ return l.metered; }).map(function(l){ return esc(l.detail); });
+    var multi = p.lines.length>1;
+
+    var latHtml = est.latency ? (est.latency.lo+' ~ '+est.latency.hi+' <span class="u">ms</span>') : '—';
+    var ioHtml = est.io ? commas(est.io.iops)+(est.io.capped?' <span class="u">capped</span>':'')+' <span class="u">IOPS</span>'
+      : ((jump||est.edges.length)?'not benchmarked':'—');
+    var bwHtml = est.bandwidth ? (est.bandwidth.mbps!=null ? est.bandwidth.mbps+'M <span class="u">min hop</span>'+(est.bandwidth.pending?' <span class="ph">pending</span>':'') : '<span class="ph">pending</span>') : '—';
+    var routeHtml;
+    if(!est.route) routeHtml = '—';
+    else if(est.route.exitIPs===0) routeHtml = 'datacenter IP <span class="u">no residential</span>';
+    else if(!est.route.benchmarked) routeHtml = 'not benchmarked';
+    else routeHtml = esc(est.route.label)+'<span class="u"> · purity '+esc(est.route.purity||'—')+'</span>';
+    var nIP = est.route ? est.route.exitIPs : 0;
+    var egress = nIP ? nIP+' exit IP'+(nIP>1?'s':'')+' — '+nIP+' separate egress path'+(nIP>1?'s':'') : (jump?'single host · datacenter egress':'—');
+
+    els.estimate.innerHTML =
+      '<div class="row"><span class="k"><span class="i">①</span> Price</span><span class="v big">'+money(p.monthlyUSD)+'<span class="u">/mo'+(p.references.length?' + ref':'')+'</span></span></div>'+
+      '<div class="breakdown">'+(lineHtml||'connect a box')+(multi?'<br><b>= '+money(p.monthlyUSD)+'/mo</b> (jump ×1 + exits)':'')+'</div>'+
+      (meteredDetails.length?'<div class="breakdown ph">'+meteredDetails.join('<br>')+'</div>':'')+
+      '<div class="egress">◉ egress: '+egress+'</div>'+
+      '<div class="row"><span class="k"><span class="i">②</span> Latency'+(nIP>1?' <span class="u">(across exits)</span>':'')+'</span><span class="v">'+latHtml+'</span></div>'+
+      (est.latency && est.latency.illustrative ? '<div class="breakdown">entry RTT measured · +private-hop upper bound illustrative</div>' : '')+
+      '<div class="row"><span class="k"><span class="i">③</span> I/O disk'+(nIP>1?' <span class="u">(min)</span>':'')+'</span><span class="v">'+ioHtml+'</span></div>'+
+      '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">'+bwHtml+'</span></div>'+
+      '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v" style="font-size:.72rem">'+routeHtml+'</span></div>'+
+      (est.route && est.route.rankPending ? '<div class="breakdown ph">ISP rank pending PM</div>' : '')+
+      (p.references.length?'<div class="breakdown">reference (not summed): '+p.references.map(function(r){ return esc(r.label)+' ('+esc(r.note)+')'; }).join(', ')+'</div>':'')+
+      '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">estimated</span> not a quote'+(p.pending?' · <span class="ph">prices pending</span>':'')+'</div>';
+  }
+  function syncGuardrail(){
+    els.toggle.checked = !!state.gatingOn;
+    els.geo.textContent = state.geo==='CN' ? 'geo: CN (auto-detected · you can override)'
+      : state.geo==='ROW' ? 'geo: outside CN (auto-detected · you can override)'
+      : 'location unknown — toggle manually';
+  }
   function render(){
-    document.querySelectorAll('.nb-opt').forEach(function(el){
-      el.classList.toggle('sel', (el.dataset.grp==='j'&&el.dataset.id===js)||(el.dataset.grp==='r'&&el.dataset.id===rs)); });
-    var J=find(JUMP,js), R=find(RES,rs);
-    var arch = R.single ? 'you → <b>'+J.nm+'</b> → internet'
-                        : 'you → <b>'+J.nm+'</b> → <b>'+R.nm+'</b> → internet (home IP)';
-    var rows='<div class="nb-r"><span class="k">Entry · '+J.nm+'</span><span class="v">'+J.sp+'</span></div>';
-    if(!R.single) rows+='<div class="nb-r"><span class="k">Exit · '+R.nm+'</span><span class="v">'+R.sp+'</span></div>';
-    var sum=0, refs=[];
-    [J,R].forEach(function(o){ if(o.single) return; if(o.pr==null) refs.push(o.from? o.nm+' (from $'+o.from.toFixed(2)+'/mo)' : o.nm+' (see site)'); else sum+=o.pr; });
-    var total='$'+sum.toFixed(2)+' /mo'+(refs.length?' + '+refs.join(' & '):'');
-    var verdict = R.single ? 'Single box — host a service directly; egress is the datacenter IP.'
-               : (R.id==='aaitr' ? 'Cheapest clean-IP exit — fine only if you don’t need throughput or a stable route.'
-               : 'Encrypted entry over CN2 GIA, egress on a clean residential IP.');
-    document.getElementById('nbsum').innerHTML='<h3>Your network</h3><p class="nb-arch">'+arch+'</p><div class="nb-rows">'+rows+'</div><div class="nb-total"><span>Total</span><span class="amt">'+total+'</span></div><p style="margin:.8rem 0 0;font-size:.85rem;color:var(--ink-soft)">'+verdict+'</p>';
+    var est = estimate(state);
+    paintCanvas(est); paintNotice(est); paintEdges(est); paintEstimate(est); syncGuardrail();
+    if(pendingFocus){ var f = els.board.querySelector(pendingFocus); if(f) f.focus(); pendingFocus = null; }
   }
-  document.getElementById('jhost').addEventListener('change',function(e){js=e.target.value;render();});
-  document.getElementById('rexit').addEventListener('change',function(e){rs=e.target.value;render();});
-  var j0=document.querySelector('.nb-opt[data-grp="j"][data-id="bwh44"] input'); if(j0)j0.checked=true;
-  var r0=document.querySelector('.nb-opt[data-grp="r"][data-id="none"] input'); if(r0)r0.checked=true;
-  render();
+
+  /* ---- actions (the only mutators) ---- */
+  function place(providerId, role){
+    var p = findProvider(providerId); if(!p) return;
+    if(p.roles.indexOf(role)<0){ announce(p.name+' can’t be a '+(role==='jump'?'jump host':'residential exit')+'.'); return; }
+    if(role==='jump'){ state.jump = defaultRef(providerId); pendingFocus = '[data-node="jump"]'; render(); announce('Connected '+p.name+' as jump host. '+estText(estimate(state))); }
+    else { state.exits.push(defaultRef(providerId)); var idx = state.exits.length-1; pendingFocus = '[data-node="exit"][data-idx="'+idx+'"]'; render(); announce('Added '+p.name+' as exit '+state.exits.length+'. '+estText(estimate(state))); }
+  }
+  function remove(role, idx){
+    if(role==='jump'){ state.jump = null; pendingFocus = '[data-drop="jump"]'; announce('Removed jump host.'); }
+    else {
+      var g = resolveNode(state.exits[idx]); state.exits.splice(idx,1);
+      pendingFocus = state.exits.length ? '[data-node="exit"][data-idx="'+Math.min(idx,state.exits.length-1)+'"]' : '.addexit';
+      announce('Removed exit '+(g?g.provider.name:'')+'. '+(state.exits.length?state.exits.length+' exit(s) left.':'Single-host network.'));
+    }
+    render();
+  }
+  function setRegionPlan(kind, value){
+    if(!state.jump) return;
+    var p = findProvider(state.jump.provider);
+    if(kind==='region'){
+      var reg=null,i; for(i=0;i<p.regions.length;i++){ if(p.regions[i].id===value){ reg=p.regions[i]; break; } } if(!reg) reg=p.regions[0];
+      state.jump.region = reg.id; state.jump.plan = benchPlan(reg).id;
+      pendingFocus = 'select[data-cfg="region"]';
+      announce('Region set to '+reg.name+'. '+estText(estimate(state)));
+    } else {
+      state.jump.plan = value; pendingFocus = 'select[data-cfg="plan"]';
+      announce('Plan updated. '+estText(estimate(state)));
+    }
+    render();
+  }
+  function setTraffic(idx, patch){
+    var e = state.exits[idx]; if(!e) return;
+    e.traffic = e.traffic || { pkgGB:300, cycle:12 };
+    if(patch.pkgGB!=null){ e.traffic.pkgGB = patch.pkgGB; pendingFocus = '.chip[data-pkg="'+patch.pkgGB+'"][data-idx="'+idx+'"]'; }
+    if(patch.cycle!=null){ e.traffic.cycle = patch.cycle; pendingFocus = 'select[data-cfg="cycle"][data-idx="'+idx+'"]'; }
+    render(); announce('Exit '+(idx+1)+' traffic updated. '+estText(estimate(state)));
+  }
+
+  /* ---- delegated wiring (bind once on the stable board) ---- */
+  function wire(){
+    els.board.addEventListener('click', function(ev){
+      var t = ev.target; if(!t.closest) return;
+      var rm = t.closest('[data-remove]'); if(rm){ ev.stopPropagation(); remove(rm.getAttribute('data-remove'), rm.dataset.idx?parseInt(rm.dataset.idx,10):0); return; }
+      var chip = t.closest('.chip[data-pkg]'); if(chip){ setTraffic(parseInt(chip.dataset.idx,10), { pkgGB:parseInt(chip.dataset.pkg,10) }); return; }
+      var card = t.closest('.pcard'); if(card){ place(card.dataset.id, card.dataset.role); return; }
+    });
+    els.board.addEventListener('change', function(ev){
+      var s = ev.target.closest && ev.target.closest('select[data-cfg]'); if(!s) return;
+      var cfg = s.getAttribute('data-cfg');
+      if(cfg==='region') setRegionPlan('region', s.value);
+      else if(cfg==='plan') setRegionPlan('plan', s.value);
+      else if(cfg==='cycle') setTraffic(parseInt(s.dataset.idx,10), { cycle:parseInt(s.value,10) });
+    });
+    els.board.addEventListener('keydown', function(ev){
+      var t = ev.target; if(!t.closest) return;
+      var card = t.closest('.pcard');
+      if(card && (ev.key==='Enter'||ev.key===' ')){ ev.preventDefault(); place(card.dataset.id, card.dataset.role); return; }
+      var filled = t.closest('.slot.filled');
+      if(filled && (ev.key==='Delete'||ev.key==='Backspace')){ ev.preventDefault(); remove(filled.getAttribute('data-node')==='jump'?'jump':'exit', filled.dataset.idx?parseInt(filled.dataset.idx,10):0); return; }
+      var drop = t.closest('.slot[data-drop], .addexit');
+      if(drop && (ev.key==='Enter'||ev.key===' ')){ ev.preventDefault(); announce(drop.getAttribute('data-drop')==='jump'?'To add a jump host, activate a jump-host card in the palette.':'To add an exit, activate a residential-exit card in the palette; it appends here.'); return; }
+    });
+    els.board.addEventListener('dragstart', function(ev){ var card = ev.target.closest && ev.target.closest('.pcard'); if(!card) return; card.classList.add('dragging'); ev.dataTransfer.setData('text/plain', card.dataset.id+'|'+card.dataset.role); ev.dataTransfer.effectAllowed='copy'; });
+    els.board.addEventListener('dragend', function(ev){ var card = ev.target.closest && ev.target.closest('.pcard'); if(card) card.classList.remove('dragging'); });
+    els.board.addEventListener('dragover', function(ev){ var z = ev.target.closest && ev.target.closest('[data-drop]'); if(!z) return; ev.preventDefault();
+      var id = (ev.dataTransfer.getData('text/plain')||'').split('|')[0], role = z.getAttribute('data-drop');
+      z.classList.remove('over','reject'); z.classList.add(id && !compatible(id,role) ? 'reject' : 'over'); ev.dataTransfer.dropEffect='copy'; });
+    els.board.addEventListener('dragleave', function(ev){ var z = ev.target.closest && ev.target.closest('[data-drop]'); if(z) z.classList.remove('over','reject'); });
+    els.board.addEventListener('drop', function(ev){ var z = ev.target.closest && ev.target.closest('[data-drop]'); if(!z) return; ev.preventDefault();
+      z.classList.remove('over');
+      var id = (ev.dataTransfer.getData('text/plain')||'').split('|')[0], role = z.getAttribute('data-drop'); if(!id) return;
+      if(compatible(id,role)){ z.classList.remove('reject'); place(id,role); }
+      else { z.classList.add('reject'); setTimeout(function(){ z.classList.remove('reject'); }, 450); var pp=findProvider(id); announce((pp?pp.name:'That box')+' can’t be a '+(role==='jump'?'jump host':'residential exit')+'.'); } });
+    els.toggle.addEventListener('change', function(ev){ state.gatingOn = ev.target.checked; render(); announce(state.gatingOn?'China gating on. Entry must be CN2 GIA.':'China gating off.'); });
+  }
+
+  /* ---- init ---- */
+  function init(){
+    els.board = document.getElementById('nbx-board');
+    els.palJump = document.getElementById('nbx-palette-jump');
+    els.palExit = document.getElementById('nbx-palette-exit');
+    els.canvas = document.getElementById('nbx-canvas');
+    els.notice = document.getElementById('nbx-notice');
+    els.edges = document.getElementById('nbx-edges');
+    els.estimate = document.getElementById('nbx-estimate');
+    els.toggle = document.getElementById('nbx-toggle');
+    els.geo = document.getElementById('nbx-geo');
+    els.live = document.getElementById('nbx-live');
+    buildPalette(); wire(); render();
+    detectGeo({ timeoutMs:1500 }).then(function(res){
+      var c = res.country;
+      state.geo = c==='CN' ? 'CN' : (c ? 'ROW' : null);
+      state.gatingOn = state.geo==='CN';
+      render();
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 </script>
 </body>
