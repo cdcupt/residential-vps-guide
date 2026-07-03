@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRD — VPS Network Builder & Cost-Performance</title>
+<style>
+  :root{
+    --ink:#14171c; --ink-2:#3a4150; --muted:#6b7280; --line:#e6e8ec; --line-2:#cfd3da;
+    --paper:#fbfbf9; --card:#fff; --accent:#2f4fe0; --accent-bg:#eef1fd; --accent-ink:#2038b8;
+    --exit:#0f9d6e; --exit-bg:#e8f7f1; --warn:#d5562e; --warn-bg:#fbebe4; --warn-ink:#a23c1c;
+    --r:14px; --mono:ui-monospace,"SF Mono",Menlo,monospace; --sans:-apple-system,"Segoe UI",Inter,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:clamp(1.1rem,3.5vw,2.75rem)}
+  header.doc{border-bottom:1px solid var(--line);padding-bottom:1.2rem;margin-bottom:1.6rem}
+  .tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
+  h1{font-size:clamp(1.7rem,1.3rem+1.8vw,2.5rem);line-height:1.08;letter-spacing:-.02em;margin:.35rem 0 .5rem}
+  .sub{color:var(--ink-2);max-width:64ch;margin:0}
+  .meta{font-family:var(--mono);font-size:.76rem;color:var(--muted);margin-top:.7rem}
+  h2{font-size:1.32rem;letter-spacing:-.01em;margin:2.4rem 0 .3rem;padding-top:.6rem}
+  h2 .n{font-family:var(--mono);color:var(--accent);font-size:.8em;margin-right:.5rem}
+  h3{font-size:1.02rem;margin:1.3rem 0 .3rem}
+  p{margin:.5rem 0}
+  ul,ol{margin:.4rem 0;padding-left:1.2rem} li{margin:.2rem 0}
+  .fig{margin:1.2rem 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:0 1px 2px rgba(20,23,28,.05);padding:1.2rem 1rem .8rem;overflow-x:auto}
+  .fig svg{display:block;margin:0 auto;height:auto;max-width:100%}
+  .fig figcaption{margin:.8rem auto 0;max-width:70ch;text-align:center;color:var(--muted);font-size:.82rem;line-height:1.45}
+  .glance{border:1.5px solid var(--accent);background:linear-gradient(180deg,#fff,var(--accent-bg))}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.9rem 0;background:var(--card);
+    border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  th,td{text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f4f5f3;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  tr:last-child td{border-bottom:none}
+  .tw{overflow-x:auto;margin:.9rem 0;-webkit-overflow-scrolling:touch} .tw table{margin:0}
+  code,.mono{font-family:var(--mono);font-size:.86em}
+  .pill{display:inline-block;font-family:var(--mono);font-size:.68rem;padding:.08rem .5rem;border-radius:99px;border:1px solid var(--line-2);color:var(--ink-2)}
+  .pill.in{background:var(--exit-bg);border-color:var(--exit);color:#0a6b4c}
+  .pill.out{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-ink)}
+  .pill.data{background:var(--warn-bg);border-color:var(--warn);color:var(--warn-ink)}
+  .callout{border:1px solid var(--line-2);border-left:3px solid var(--accent);background:var(--card);
+    border-radius:10px;padding:.8rem 1rem;margin:1rem 0;font-size:.92rem}
+  .callout.data{border-left-color:var(--warn)}
+  .callout .ct{font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);margin-bottom:.2rem}
+  .callout.data .ct{color:var(--warn-ink)}
+  .toc{font-size:.9rem;columns:2;column-gap:2rem;margin:.6rem 0 0}
+  @media(max-width:560px){ .toc{columns:1} }
+  /* diagram primitives */
+  .b{fill:var(--card);stroke:var(--line-2);stroke-width:1.4}
+  .b.a{fill:var(--accent-bg);stroke:var(--accent)} .b.e{fill:var(--exit-bg);stroke:var(--exit)}
+  .b.w{fill:var(--warn-bg);stroke:var(--warn)} .b.d{fill:#f4f5f3;stroke:var(--line-2);stroke-dasharray:5 4}
+  .t{font-family:var(--sans);font-weight:650;fill:var(--ink)} .s{font-family:var(--sans);fill:var(--muted)}
+  .m{font-family:var(--mono);fill:var(--accent-ink)} .arw{stroke:var(--ink-2);stroke-width:1.6;fill:none}
+  .arw.w{stroke:var(--warn);stroke-width:2.2} .lbl{font-family:var(--mono);font-size:10px;fill:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="doc">
+  <div class="tag">PRD · SDD Workflow · Artifact 1 of 5</div>
+  <h1>VPS Network Builder &amp; Cost-Performance</h1>
+  <p class="sub">A drag-and-drop board where a user assembles their own VPS network from real providers and sees estimated <b>performance, latency and cost</b> — with mainland-China CN2-GIA guardrails — plus a real cost-performance figure on every VPS in the guide.</p>
+  <p class="meta">residential-vps.daichenlab.com · Orchestrator-authored · Gate target: Gate 1 (Design)</p>
+</header>
+
+<div class="fig glance">
+  <svg viewBox="0 0 980 430" role="img" aria-label="At-a-glance: the two surfaces, the drag-drop loop, the cost/latency/gating engine.">
+    <text x="20" y="26" class="t" font-size="15">★ At a glance</text>
+    <!-- surface 1: choose -->
+    <rect class="b" x="18" y="44" width="300" height="150" rx="12"/>
+    <text x="34" y="70" class="t" font-size="13">choose.html</text>
+    <text x="34" y="90" class="s" font-size="11">every VPS gets a real</text>
+    <text x="34" y="106" class="m" font-size="12">cost-performance = perf ÷ $/mo</text>
+    <rect class="b a" x="34" y="120" width="268" height="26" rx="6"/><text x="46" y="137" class="s" font-size="10.5">SolaDrive · perf 88 · $40 · 2.20 pt/$</text>
+    <rect class="b" x="34" y="150" width="268" height="26" rx="6"/><text x="46" y="167" class="s" font-size="10.5">BandwagonHost · perf 83 · $30 · 2.77 pt/$</text>
+    <!-- surface 2: tool board -->
+    <rect class="b" x="338" y="44" width="624" height="150" rx="12"/>
+    <text x="354" y="70" class="t" font-size="13">tool.html — drag-and-drop board</text>
+    <rect class="b" x="354" y="82" width="120" height="98" rx="8"/><text x="414" y="100" class="s" font-size="10" text-anchor="middle">palette</text>
+    <rect class="b a" x="366" y="108" width="96" height="20" rx="5"/><text x="414" y="122" class="s" font-size="9" text-anchor="middle">BandwagonHost</text>
+    <rect class="b e" x="366" y="132" width="96" height="20" rx="5"/><text x="414" y="146" class="s" font-size="9" text-anchor="middle">SolaDrive</text>
+    <rect class="b e" x="366" y="156" width="96" height="20" rx="5"/><text x="414" y="170" class="s" font-size="9" text-anchor="middle">VirVM / more…</text>
+    <text x="500" y="132" class="lbl">drag →</text>
+    <rect class="b d" x="500" y="82" width="446" height="98" rx="8"/><text x="512" y="100" class="s" font-size="10">canvas · your network</text>
+    <rect class="b" x="512" y="112" width="70" height="52" rx="7"/><text x="547" y="142" class="s" font-size="10" text-anchor="middle">you</text>
+    <line class="arw" x1="582" y1="138" x2="612" y2="138" marker-end="url(#a)"/>
+    <rect class="b a" x="612" y="112" width="96" height="52" rx="7"/><text x="660" y="135" class="t" font-size="10.5" text-anchor="middle">jump host</text><text x="660" y="150" class="m" font-size="9" text-anchor="middle">CN2 GIA</text>
+    <line class="arw" x1="708" y1="138" x2="738" y2="138" marker-end="url(#a)"/>
+    <rect class="b e" x="738" y="112" width="100" height="52" rx="7"/><text x="788" y="135" class="t" font-size="10.5" text-anchor="middle">residential</text><text x="788" y="150" class="s" font-size="9" text-anchor="middle">exit</text>
+    <line class="arw" x1="838" y1="138" x2="868" y2="138" marker-end="url(#a)"/>
+    <rect class="b d" x="868" y="112" width="66" height="52" rx="7"/><text x="901" y="142" class="s" font-size="9.5" text-anchor="middle">internet</text>
+    <!-- engine -->
+    <rect class="b" x="18" y="214" width="944" height="196" rx="12"/>
+    <text x="34" y="240" class="t" font-size="13">the estimate engine (client-side)</text>
+    <rect class="b a" x="34" y="256" width="220" height="60" rx="9"/><text x="144" y="282" class="t" font-size="11" text-anchor="middle">Performance</text><text x="144" y="300" class="s" font-size="9.5" text-anchor="middle">exit box score + entry route</text>
+    <rect class="b" x="270" y="256" width="220" height="60" rx="9"/><text x="380" y="282" class="t" font-size="11" text-anchor="middle">Latency</text><text x="380" y="300" class="s" font-size="9.5" text-anchor="middle">measured RTT to China (per hop)</text>
+    <rect class="b e" x="506" y="256" width="220" height="60" rx="9"/><text x="616" y="282" class="t" font-size="11" text-anchor="middle">Cost</text><text x="616" y="300" class="s" font-size="9.5" text-anchor="middle">flat $/mo + traffic package</text>
+    <rect class="b w" x="742" y="256" width="204" height="60" rx="9"/><text x="844" y="282" class="t" font-size="11" text-anchor="middle">China guardrail</text><text x="844" y="300" class="s" font-size="9.5" text-anchor="middle">non-GIA hop → red + notice</text>
+    <rect class="b w" x="34" y="332" width="912" height="60" rx="9"/>
+    <text x="490" y="357" class="t" font-size="11" text-anchor="middle">⚠ In mainland China? (auto geo-IP + override toggle) → every non-CN2-GIA link renders RED, with a "pick a CN2 GIA box" notice</text>
+    <text x="490" y="378" class="s" font-size="9.5" text-anchor="middle">estimates are labelled ESTIMATED · benchmarked boxes carry real numbers · reference-only providers are priced but not scored</text>
+    <defs><marker id="a" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker></defs>
+  </svg>
+  <figcaption>The whole product on one screen: a cost-performance figure on Choose, a drag-and-drop network board on Tool, and a client-side engine that estimates performance, latency, and cost — gated by a mainland-China CN2-GIA guardrail.</figcaption>
+</div>
+
+<h2><span class="n">1</span>Problem &amp; goal</h2>
+<p>The guide already <em>measures</em> VPS boxes and lists prices, but a first-time builder still has to hold it all in their head: which box is a good deal, whether the route works from China, and what a two-box network will cost and perform like. Two gaps:</p>
+<ul>
+  <li><b>No value-for-money signal.</b> Perf and price sit in separate columns — nobody computes "performance per dollar."</li>
+  <li><b>No way to try a network on.</b> The current builder is a fixed pair of radio lists; it can't express "drag these together and tell me what I get."</li>
+</ul>
+<p><b>Goal:</b> let a user <b>assemble a network by dragging real providers onto a board</b> and instantly see estimated <b>performance, latency and cost</b> — and surface a <b>cost-performance</b> number on every VPS — so that choosing and composing a China-ready VPS network becomes a two-minute, self-serve task.</p>
+
+<h2><span class="n">2</span>Users &amp; jobs</h2>
+<div class="tw"><table>
+  <tr><th>User</th><th>Job-to-be-done</th></tr>
+  <tr><td>Mainland-China self-hoster</td><td>"Build a network that actually reaches China fast (CN2 GIA) and stays cheap." Needs the guardrail loud.</td></tr>
+  <tr><td>Residential-exit builder</td><td>"Pick a clean-IP exit behind a fast jump host, and know the monthly + traffic cost before I buy."</td></tr>
+  <tr><td>Value shopper</td><td>"Which box gives the most performance per dollar?" Wants the cost-performance column.</td></tr>
+  <tr><td>Single-service host</td><td>"I just want one jump host to run a service on." Board must allow a one-box network.</td></tr>
+</table></div>
+
+<h2><span class="n">3</span>Scope</h2>
+<div class="fig">
+  <svg viewBox="0 0 900 200" role="img" aria-label="Scope across two pages.">
+    <rect class="b" x="20" y="30" width="410" height="150" rx="12"/>
+    <text x="40" y="58" class="t" font-size="14">choose.html <tspan class="s" font-size="11">· IN scope</tspan></text>
+    <text x="40" y="84" class="s" font-size="12">＋ cost-performance figure (perf ÷ $/mo)</text>
+    <text x="40" y="106" class="s" font-size="12">＋ sortable / highlighted best value</text>
+    <text x="40" y="128" class="s" font-size="12">reuses existing measured tables</text>
+    <text x="40" y="158" class="m" font-size="11">no new data — derive from what we have</text>
+    <rect class="b a" x="470" y="30" width="410" height="150" rx="12"/>
+    <text x="490" y="58" class="t" font-size="14">tool.html <tspan class="s" font-size="11">· IN scope</tspan></text>
+    <text x="490" y="84" class="s" font-size="12">＋ drag-and-drop network board</text>
+    <text x="490" y="106" class="s" font-size="12">＋ estimate engine (perf · latency · cost)</text>
+    <text x="490" y="128" class="s" font-size="12">＋ China CN2-GIA guardrail + traffic pricing</text>
+    <text x="490" y="158" class="m" font-size="11">replaces the current radio builder</text>
+  </svg>
+  <figcaption>Two surfaces. Choose gains a derived value metric; Tool gains the interactive board. The "Score a VPS" comparison and all existing guide content stay.</figcaption>
+</div>
+<p><b>Out of scope (v1):</b> user accounts / saved builds; automatic ordering/checkout; a backend or database; live stock/price polling (prices are curated snapshots we refresh); benchmarking new providers (reference-only until we deploy + measure).</p>
+
+<h2><span class="n">4</span>The board — product model</h2>
+<div class="fig">
+  <svg viewBox="0 0 900 250" role="img" aria-label="Drag-drop loop.">
+    <rect class="b" x="20" y="90" width="150" height="70" rx="10"/><text x="95" y="120" class="t" font-size="12" text-anchor="middle">① Pick from</text><text x="95" y="138" class="s" font-size="11" text-anchor="middle">provider palette</text>
+    <line class="arw" x1="170" y1="125" x2="215" y2="125" marker-end="url(#a2)"/>
+    <rect class="b a" x="215" y="90" width="150" height="70" rx="10"/><text x="290" y="120" class="t" font-size="12" text-anchor="middle">② Drag onto</text><text x="290" y="138" class="s" font-size="11" text-anchor="middle">the canvas (a role)</text>
+    <line class="arw" x1="365" y1="125" x2="410" y2="125" marker-end="url(#a2)"/>
+    <rect class="b" x="410" y="90" width="150" height="70" rx="10"/><text x="485" y="118" class="t" font-size="12" text-anchor="middle">③ Adjust</text><text x="485" y="136" class="s" font-size="10.5" text-anchor="middle">traffic pkg · exits · IPs</text>
+    <line class="arw" x1="560" y1="125" x2="605" y2="125" marker-end="url(#a2)"/>
+    <rect class="b e" x="605" y="90" width="160" height="70" rx="10"/><text x="685" y="118" class="t" font-size="12" text-anchor="middle">④ Read the estimate</text><text x="685" y="136" class="s" font-size="10.5" text-anchor="middle">perf · latency · $/mo</text>
+    <path class="arw" d="M685 90 C 685 40, 95 40, 95 88" marker-end="url(#a2)"/>
+    <text x="390" y="52" class="lbl">iterate — swap boxes, re-read</text>
+    <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker></defs>
+  </svg>
+  <figcaption>Roles on the canvas: exactly one <b>jump host</b> (required), zero-or-more <b>residential exits</b> (optional; "none" = single-host network). The estimate recomputes live on every drop or adjustment.</figcaption>
+</div>
+<p><b>Estimate rules (all labelled "estimated"):</b></p>
+<ul>
+  <li><b>Performance</b> — from the exit box's measured score when present, else the jump host's; reference-only boxes show "not benchmarked."</li>
+  <li><b>Latency</b> — the jump host's measured China RTT (entry), noting the exit adds a private hop. Real measured numbers for our fleet; reference boxes marked.</li>
+  <li><b>Cost</b> — <span class="pill">flat $/mo</span> summed across hops, plus any <span class="pill data">traffic package</span> for metered providers (see §6).</li>
+</ul>
+
+<h2><span class="n">5</span>Mainland-China CN2-GIA guardrail</h2>
+<div class="fig">
+  <svg viewBox="0 0 900 250" role="img" aria-label="China guardrail flowchart.">
+    <rect class="b" x="30" y="30" width="180" height="52" rx="10"/><text x="120" y="55" class="t" font-size="11" text-anchor="middle">page load</text><text x="120" y="70" class="s" font-size="9.5" text-anchor="middle">geo-IP lookup (client)</text>
+    <line class="arw" x1="210" y1="56" x2="255" y2="56" marker-end="url(#a3)"/>
+    <path class="b" d="M255 56 L325 26 L395 56 L325 86 Z"/><text x="325" y="52" class="t" font-size="10" text-anchor="middle">in CN?</text><text x="325" y="66" class="s" font-size="8.5" text-anchor="middle">+ manual toggle</text>
+    <line class="arw" x1="395" y1="56" x2="450" y2="56" marker-end="url(#a3)"/><text x="422" y="46" class="lbl">yes</text>
+    <rect class="b w" x="450" y="30" width="200" height="52" rx="10"/><text x="550" y="52" class="t" font-size="10.5" text-anchor="middle">gating ON</text><text x="550" y="67" class="s" font-size="9" text-anchor="middle">require CN2 GIA on entry</text>
+    <line class="arw" x1="325" y1="86" x2="325" y2="130" marker-end="url(#a3)"/><text x="338" y="112" class="lbl">no</text>
+    <rect class="b" x="235" y="130" width="180" height="46" rx="10"/><text x="325" y="158" class="s" font-size="10" text-anchor="middle">gating OFF (toggle available)</text>
+    <line class="arw w" x1="550" y1="82" x2="550" y2="128" marker-end="url(#a3w)"/>
+    <path class="b w" d="M470 128 L550 108 L630 128 L550 148 Z"/><text x="550" y="130" class="t" font-size="9.5" text-anchor="middle">hop = CN2 GIA?</text>
+    <line class="arw w" x1="630" y1="138" x2="700" y2="138" marker-end="url(#a3w)"/><text x="668" y="128" class="lbl">no</text>
+    <rect class="b w" x="700" y="112" width="170" height="52" rx="10"/><text x="785" y="134" class="t" font-size="10.5" text-anchor="middle" fill="var(--warn-ink)">link → RED</text><text x="785" y="149" class="s" font-size="9" text-anchor="middle">+ "pick a CN2 GIA box" notice</text>
+    <line class="arw" x1="550" y1="148" x2="550" y2="196" marker-end="url(#a3)"/><text x="563" y="176" class="lbl">yes</text>
+    <rect class="b e" x="460" y="196" width="180" height="40" rx="10"/><text x="550" y="221" class="s" font-size="10" text-anchor="middle">link normal (green/neutral)</text>
+    <defs>
+      <marker id="a3" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="a3w" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>Auto-detect the visitor's country (client-side geo-IP, graceful fallback), with a visible override toggle. When gating is on, any hop whose network isn't CN2 GIA renders its link <b>red</b> and shows a notice to pick a CN2-GIA box.</figcaption>
+</div>
+
+<h2><span class="n">6</span>Cost model — flat + traffic-metered</h2>
+<p>Two pricing shapes must both work in the estimate:</p>
+<div class="fig">
+  <svg viewBox="0 0 900 180" role="img" aria-label="Two cost models.">
+    <rect class="b a" x="20" y="30" width="410" height="120" rx="12"/>
+    <text x="40" y="58" class="t" font-size="13">Flat monthly</text>
+    <text x="40" y="82" class="s" font-size="11.5">BandwagonHost $30 · SolaDrive $40 · AaITR ~$21.88</text>
+    <text x="40" y="104" class="m" font-size="12">cost = Σ hop.pricePerMonth</text>
+    <text x="40" y="130" class="s" font-size="10.5">what we already have for our fleet</text>
+    <rect class="b w" x="470" y="30" width="410" height="120" rx="12"/>
+    <text x="490" y="58" class="t" font-size="13">Traffic-metered (premium GIA residential)</text>
+    <text x="490" y="82" class="s" font-size="11.5">VirVM: 专线GIA · pick 100 / 300 / 500 / 1000 GB</text>
+    <text x="490" y="104" class="m" font-size="12">cost = base + trafficPackage(cycle)</text>
+    <text x="490" y="130" class="s" font-size="10.5">billing-cycle discounts: 3mo −5% · 6mo −10% · 1yr −20%</text>
+  </svg>
+  <figcaption>VirVM is the concrete traffic-metered case: a residential VPS on a 专线/CN2-GIA network priced by a traffic package. The estimate must let the user choose the package and see it fold into the total.</figcaption>
+</div>
+<div class="callout data"><div class="ct">⛁ Data the PM will supply (feeds the build, not this PRD)</div>
+  <b>1 · Additional providers</b> for the palette (name · link · specs · flat price, or reference). <b>2 · Traffic-package prices</b> per metered provider — e.g. <code>VirVM: 100GB=$?, 300GB=$?, 500GB=$?, 1000GB=$?</code> and the base. The roster + package structure are already modelled as extensible; only the numbers are pending.</div>
+
+<h2><span class="n">7</span>Provider roster (extensible)</h2>
+<div class="tw"><table>
+  <tr><th>Provider</th><th>Role</th><th>Network</th><th>Perf</th><th>Pricing</th></tr>
+  <tr><td>BandwagonHost <span class="pill in">benchmarked</span></td><td>jump host</td><td>CN2 GIA</td><td>measured</td><td>flat $30/mo</td></tr>
+  <tr><td>SolaDrive <span class="pill in">benchmarked</span></td><td>residential exit</td><td>163</td><td>measured</td><td>flat $40/mo</td></tr>
+  <tr><td>VirVM <span class="pill in">benchmarked</span></td><td>residential exit</td><td>163 (专线GIA option)</td><td>measured</td><td>traffic-metered</td></tr>
+  <tr><td>AaITR <span class="pill in">benchmarked</span></td><td>residential exit</td><td>163 (lossy)</td><td>measured</td><td>flat ~$21.88/mo</td></tr>
+  <tr><td>DMIT <span class="pill out">reference</span></td><td>jump host</td><td>CN2 GIA</td><td>—</td><td>flat, from $10.90/mo (out of stock)</td></tr>
+  <tr><td>QQ.pw <span class="pill out">reference</span></td><td>residential exit</td><td>—</td><td>—</td><td>flat $35–55/mo (out of stock)</td></tr>
+  <tr><td>…PM additions <span class="pill data">pending</span></td><td>—</td><td>—</td><td>ref until measured</td><td>flat or metered</td></tr>
+</table></div>
+
+<h2><span class="n">8</span>Success criteria</h2>
+<ol>
+  <li>A user can drag a jump host (and optionally exits) onto the board and see a live <b>perf · latency · cost</b> estimate in ≤ 2 interactions.</li>
+  <li>Every VPS on <code>choose.html</code> shows a correct, derived <b>cost-performance</b> value (perf ÷ $/mo), and the best value is visible at a glance.</li>
+  <li>With China gating on, a non-CN2-GIA entry hop is unmistakably <b>red</b> and a notice explains why.</li>
+  <li>A traffic-metered provider's cost updates correctly when the user picks a 100/300/500/1000 GB package and a billing cycle.</li>
+  <li>Estimates are clearly labelled <b>estimated</b>; benchmarked vs reference boxes are visually distinct; no fabricated numbers.</li>
+  <li>Works with zero backend, no horizontal overflow, legible at 1440 / 390 / 320.</li>
+</ol>
+
+<h2><span class="n">9</span>Constraints, risks &amp; open items</h2>
+<ul>
+  <li><b>Static site, client-side only.</b> Geo-IP via a free third-party lookup with graceful fallback (if it fails, gating defaults off and the toggle is shown). No secrets, no backend.</li>
+  <li><b>Honesty guardrail (standing site principle).</b> Only measured numbers for boxes we run; reference providers are price/spec only and badged. Never fabricate perf, latency, or price.</li>
+  <li><b>Drag-and-drop accessibility.</b> Must have a keyboard/tap fallback (click-to-place) so it works on touch + without a mouse.</li>
+  <li><b>Data freshness.</b> Prices are curated snapshots (with an "as of" date), not live — refreshed manually.</li>
+  <li><span class="pill data">OPEN</span> PM to supply the additional-provider list and the traffic-package prices (§6 callout).</li>
+</ul>
+
+<p class="meta">Next: Step 2 kickoff → Step 3 Design Document (Designer) → <b>Gate 1</b>. This PRD is the spine; the Design Document elaborates the board interaction, states, and mockups.</p>
+</div>
+</body>
+</html>
