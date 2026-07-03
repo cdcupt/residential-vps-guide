@@ -251,7 +251,7 @@
   var JUMP=[
     {id:'bwh44',nm:'BandwagonHost',sp:'4C · 4GB · CN2 GIA · 129 ms · 0% loss · perf 83',pr:30,ours:true},
     {id:'bwh32',nm:'BandwagonHost',sp:'3C · 2GB · CN2 GIA · 129 ms · 0% loss · perf 75',pr:30,ours:true},
-    {id:'dmit', nm:'DMIT',         sp:'CN2 GIA · usually out of stock',pr:null,ours:false}
+    {id:'dmit', nm:'DMIT',         sp:'LAX Pro · CN2 GIA · out of stock',pr:null,from:10.90,ours:false}
   ];
   var RES=[
     {id:'none', nm:'None',      sp:'single host — run a service here (like a relay)',pr:0,ours:true,single:true},
@@ -263,8 +263,10 @@
   var js='bwh44', rs='none';
   function opt(o,grp){
     var ref=o.ours?'':'<span class="ref">reference</span>';
-    var price = o.pr==null ? '<span class="pr" style="color:var(--ink-soft);font-weight:500">see site</span>'
-             : '<span class="pr">'+(o.pr===0?'—':'$'+o.pr.toFixed(2)+'<span style="font-weight:500;font-size:.72rem;color:var(--ink-soft)">/mo</span>')+'</span>';
+    var per='<span style="font-weight:500;font-size:.72rem;color:var(--ink-soft)">/mo</span>';
+    var price = o.pr==null
+       ? (o.from ? '<span class="pr">from $'+o.from.toFixed(2)+per+'</span>' : '<span class="pr" style="color:var(--ink-soft);font-weight:500">see site</span>')
+       : '<span class="pr">'+(o.pr===0?'—':'$'+o.pr.toFixed(2)+per)+'</span>';
     return '<label class="nb-opt" data-id="'+o.id+'" data-grp="'+grp+'"><input type="radio" name="'+grp+'" value="'+o.id+'"><span class="nm">'+o.nm+'</span>'+ref+'<span class="sp">'+o.sp+'</span>'+price+'</label>';
   }
   document.getElementById('jhost').innerHTML=JUMP.map(function(o){return opt(o,'j')}).join('');
@@ -279,8 +281,8 @@
     var rows='<div class="nb-r"><span class="k">Entry · '+J.nm+'</span><span class="v">'+J.sp+'</span></div>';
     if(!R.single) rows+='<div class="nb-r"><span class="k">Exit · '+R.nm+'</span><span class="v">'+R.sp+'</span></div>';
     var sum=0, refs=[];
-    [J,R].forEach(function(o){ if(o.single) return; if(o.pr==null) refs.push(o.nm); else sum+=o.pr; });
-    var total='$'+sum.toFixed(2)+' /mo'+(refs.length?' + '+refs.join(' & ')+' (see site)':'');
+    [J,R].forEach(function(o){ if(o.single) return; if(o.pr==null) refs.push(o.from? o.nm+' (from $'+o.from.toFixed(2)+'/mo)' : o.nm+' (see site)'); else sum+=o.pr; });
+    var total='$'+sum.toFixed(2)+' /mo'+(refs.length?' + '+refs.join(' & '):'');
     var verdict = R.single ? 'Single box — host a service directly; egress is the datacenter IP.'
                : (R.id==='aaitr' ? 'Cheapest clean-IP exit — fine only if you don’t need throughput or a stable route.'
                : 'Encrypted entry over CN2 GIA, egress on a clean residential IP.');
