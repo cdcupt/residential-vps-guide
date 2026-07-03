@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tech Doc — Backend / Logic Layer — VPS Network Builder</title>
+<style>
+  :root{
+    --ink:#14171c; --ink-2:#3a4150; --muted:#6b7280; --line:#e6e8ec; --line-2:#cfd3da;
+    --paper:#fbfbf9; --paper-2:#f4f5f2; --card:#fff;
+    --accent:#2f4fe0; --accent-bg:#eef1fd; --accent-ink:#2038b8;
+    --exit:#0f9d6e; --exit-bg:#e8f7f1; --exit-ink:#0a6b4c;
+    --warn:#d5562e; --warn-bg:#fbebe4; --warn-ink:#a23c1c;
+    --r:14px; --r-sm:8px;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:clamp(1.1rem,3.5vw,2.75rem)}
+  a{color:var(--accent-ink)}
+  header.doc{border-bottom:1px solid var(--line);padding-bottom:1.2rem;margin-bottom:1.5rem}
+  .tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
+  h1{font-size:clamp(1.7rem,1.3rem+1.8vw,2.4rem);line-height:1.08;letter-spacing:-.02em;margin:.35rem 0 .5rem}
+  .sub{color:var(--ink-2);max-width:70ch;margin:0}
+  .meta{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-top:.7rem}
+  h2{font-size:1.3rem;letter-spacing:-.01em;margin:2.5rem 0 .3rem;padding-top:.5rem}
+  h2 .n{font-family:var(--mono);color:var(--accent);font-size:.78em;margin-right:.5rem}
+  h3{font-size:1.02rem;margin:1.4rem 0 .3rem}
+  p{margin:.55rem 0} ul,ol{margin:.4rem 0;padding-left:1.2rem} li{margin:.22rem 0}
+  strong{font-weight:650}
+  code,.mono{font-family:var(--mono);font-size:.86em}
+  .fig{margin:1.25rem 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:0 1px 2px rgba(20,23,28,.05);padding:1.2rem 1rem .8rem;overflow-x:auto}
+  .fig svg{display:block;margin:0 auto;height:auto;max-width:100%;min-width:0}
+  .fig figcaption{margin:.8rem auto 0;max-width:74ch;text-align:center;color:var(--muted);font-size:.82rem;line-height:1.45}
+  .glance{border:1.5px solid var(--accent);background:linear-gradient(180deg,#fff,var(--accent-bg))}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.9rem 0;background:var(--card);
+    border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  th,td{text-align:left;padding:.55rem .78rem;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--paper-2);font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-family:var(--mono)}
+  tr:last-child td{border-bottom:none}
+  .tw{overflow-x:auto;margin:.9rem 0;-webkit-overflow-scrolling:touch;border-radius:var(--r)} .tw table{margin:0}
+  .pill{display:inline-block;font-family:var(--mono);font-size:.66rem;padding:.05rem .5rem;border-radius:99px;border:1px solid var(--line-2);color:var(--ink-2);white-space:nowrap}
+  .pill.in{background:var(--exit-bg);border-color:var(--exit);color:var(--exit-ink)}
+  .pill.out{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-ink)}
+  .pill.data{background:var(--warn-bg);border-color:var(--warn);color:var(--warn-ink)}
+  .pill.est{background:#fff;border-style:dashed;color:var(--muted)}
+  .callout{border:1px solid var(--line-2);border-left:3px solid var(--accent);background:var(--card);
+    border-radius:10px;padding:.8rem 1rem;margin:1rem 0;font-size:.92rem}
+  .callout.data{border-left-color:var(--warn);background:var(--warn-bg)}
+  .callout.ok{border-left-color:var(--exit);background:var(--exit-bg)}
+  .callout .ct{font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);margin-bottom:.2rem}
+  .callout.data .ct{color:var(--warn-ink)} .callout.ok .ct{color:var(--exit-ink)}
+  .toc{font-size:.9rem;columns:2;column-gap:2rem;margin:.4rem 0 0;padding-left:1rem}
+  @media(max-width:560px){ .toc{columns:1} }
+  pre.code{font-family:var(--mono);font-size:.78rem;line-height:1.6;background:#0f1218;color:#e7eaf0;
+    border-radius:var(--r);padding:1rem 1.1rem;overflow-x:auto;margin:1rem 0;-webkit-overflow-scrolling:touch}
+  pre.code .c{color:#7d8799} pre.code .k{color:#8fb2ff} pre.code .s{color:#9ad3a0} pre.code .n{color:#e6c07b} pre.code .w{color:#e79a7a}
+  .ph{color:var(--warn-ink)} .ph::after{content:" ⚑ph";font-size:.8em;opacity:.7}
+  /* diagram primitives (mirror site tokens) */
+  .b{fill:var(--card);stroke:var(--line-2);stroke-width:1.4}
+  .b.a{fill:var(--accent-bg);stroke:var(--accent)} .b.e{fill:var(--exit-bg);stroke:var(--exit)}
+  .b.w{fill:var(--warn-bg);stroke:var(--warn)} .b.d{fill:var(--paper-2);stroke:var(--line-2);stroke-dasharray:5 4}
+  .t{font-family:var(--sans);font-weight:650;fill:var(--ink)} .s{font-family:var(--sans);fill:var(--muted)}
+  .m{font-family:var(--mono);fill:var(--accent-ink)} .me{font-family:var(--mono);fill:var(--exit-ink)}
+  .arw{stroke:var(--ink-2);stroke-width:1.6;fill:none} .arw.w{stroke:var(--warn);stroke-width:2.2} .arw.e{stroke:var(--exit);stroke-width:2}
+  .lbl{font-family:var(--mono);font-size:10px;fill:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .fld{font-family:var(--mono);font-size:10px;fill:var(--ink-2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <div class="tag">TECH DOC · Backend / Logic Layer · SDD Workflow · Artifact 3 of 5</div>
+  <h1>VPS Network Builder — the logic layer</h1>
+  <p class="sub">The infrastructure section of the Tech Document: the <b>provider data model</b>, the pure-function
+  <b>estimate engine</b> (five metrics over a 1-jump → N-exit fan-out), the client-side <b>geo-IP guardrail</b>,
+  and the <b>honesty invariants</b> that keep every number truthful. No backend, no database, no secrets —
+  the whole layer is an embedded constant plus pure functions plus one graceful third-party lookup.</p>
+  <p class="meta">residential-vps.daichenlab.com · pairs with TECH-frontend.html · builds against DESIGN v3 + PROVIDERS.md</p>
+</header>
+
+<nav aria-label="Contents">
+  <div class="tag" style="color:var(--muted)">On this page</div>
+  <div class="toc">
+    <a href="#glance">★ At a glance — the logic layer</a> ·
+    <a href="#model">1 · Provider data model (ER)</a> ·
+    <a href="#constants">2 · Module constants (FX · cycles)</a> ·
+    <a href="#engine">3 · Estimate engine — pipeline</a> ·
+    <a href="#formulas">4 · The five formulas</a> ·
+    <a href="#geo">5 · Geo-IP guardrail flow</a> ·
+    <a href="#honesty">6 · Honesty invariants</a> ·
+    <a href="#contract">7 · Interface to the frontend</a> ·
+    <a href="#integration">8 · Integration &amp; verification</a> ·
+    <a href="#open">9 · Open questions</a>
+  </div>
+</nav>
+
+<!-- ============================ AT A GLANCE ============================ -->
+<div class="fig glance" id="glance">
+  <svg viewBox="0 0 960 430" role="img" aria-label="The logic layer on one screen: an embedded provider constant feeds a resolver, a pure estimate engine computes five metrics per-edge then aggregates, and a client-side geo-IP lookup drives the guardrail — all client-side.">
+    <text x="20" y="26" class="t" font-size="15">★ At a glance — the client-side logic layer</text>
+
+    <!-- data source -->
+    <rect class="b a" x="18" y="44" width="216" height="120" rx="11"/>
+    <text x="34" y="68" class="t" font-size="12.5">① Provider data model</text>
+    <text x="34" y="86" class="s" font-size="10">embedded JS constant (curated</text>
+    <text x="34" y="100" class="s" font-size="10">snapshot · “as of” date)</text>
+    <text x="34" y="120" class="m" font-size="10">provider → region → plan</text>
+    <text x="34" y="136" class="m" font-size="10">pricing · metrics · stock · bench</text>
+    <text x="34" y="154" class="s" font-size="9.5">no fetch · no DB · versioned in tool.html</text>
+
+    <!-- resolver -->
+    <line class="arw" x1="234" y1="104" x2="266" y2="104" marker-end="url(#a)"/>
+    <rect class="b" x="266" y="52" width="150" height="104" rx="11"/>
+    <text x="341" y="76" class="t" font-size="11.5" text-anchor="middle">② Resolve</text>
+    <text x="341" y="94" class="s" font-size="9.5" text-anchor="middle">NetworkState →</text>
+    <text x="341" y="108" class="s" font-size="9.5" text-anchor="middle">placed nodes</text>
+    <text x="341" y="126" class="m" font-size="9" text-anchor="middle">jump ×1</text>
+    <text x="341" y="140" class="me" font-size="9" text-anchor="middle">exits[] (fan-out)</text>
+
+    <!-- engine -->
+    <line class="arw" x1="416" y1="104" x2="448" y2="104" marker-end="url(#a)"/>
+    <rect class="b" x="448" y="44" width="286" height="120" rx="11"/>
+    <text x="464" y="66" class="t" font-size="11.5">③ Estimate engine — pure fns</text>
+    <rect class="b a" x="462" y="76" width="128" height="34" rx="6"/><text x="526" y="90" class="s" font-size="8.5" text-anchor="middle">per-edge readout</text><text x="526" y="103" class="m" font-size="8" text-anchor="middle">entry + one/exit</text>
+    <rect class="b e" x="598" y="76" width="122" height="34" rx="6"/><text x="659" y="90" class="s" font-size="8.5" text-anchor="middle">aggregate</text><text x="659" y="103" class="me" font-size="8" text-anchor="middle">jump ×1 + Σ exits</text>
+    <text x="464" y="128" class="s" font-size="9">bottleneck = min(hops) · latency = range · FX→USD</text>
+    <text x="464" y="146" class="s" font-size="9">idempotent · deterministic · no I/O · no globals</text>
+
+    <!-- five metrics -->
+    <line class="arw" x1="591" y1="164" x2="591" y2="196" marker-end="url(#a)"/>
+    <rect class="b" x="18" y="196" width="716" height="86" rx="11"/>
+    <text x="34" y="218" class="t" font-size="11.5">④ Five metrics (all “estimated”)</text>
+    <rect class="b e" x="34" y="228" width="132" height="44" rx="7"/><text x="100" y="245" class="s" font-size="8.5" text-anchor="middle">① Price</text><text x="100" y="260" class="me" font-size="8" text-anchor="middle">jump×1 + Σexit + pkg</text>
+    <rect class="b a" x="174" y="228" width="132" height="44" rx="7"/><text x="240" y="245" class="s" font-size="8.5" text-anchor="middle">② Latency</text><text x="240" y="260" class="m" font-size="8" text-anchor="middle">range across exits</text>
+    <rect class="b" x="314" y="228" width="132" height="44" rx="7"/><text x="380" y="245" class="s" font-size="8.5" text-anchor="middle">③ I/O · ④ Bandwidth</text><text x="380" y="260" class="m" font-size="8" text-anchor="middle">min = bottleneck</text>
+    <rect class="b" x="454" y="228" width="132" height="44" rx="7"/><text x="520" y="245" class="s" font-size="8.5" text-anchor="middle">⑤ Route quality</text><text x="520" y="260" class="s" font-size="8" text-anchor="middle">ISP+rank · purity · N IPs</text>
+    <rect class="b d" x="594" y="228" width="128" height="44" rx="7"/><text x="658" y="245" class="s" font-size="8.5" text-anchor="middle">→ frontend</text><text x="658" y="260" class="s" font-size="8" text-anchor="middle">EstimateResult obj</text>
+
+    <!-- guardrail column -->
+    <rect class="b w" x="750" y="44" width="192" height="238" rx="11"/>
+    <text x="846" y="66" class="t" font-size="11.5" text-anchor="middle">⑤ Geo-IP guardrail</text>
+    <rect class="b" x="762" y="78" width="168" height="40" rx="7"/><text x="846" y="94" class="s" font-size="9" text-anchor="middle">fetch ipapi.co/json</text><text x="846" y="108" class="m" font-size="8.5" text-anchor="middle">keyless · CORS · HTTPS</text>
+    <line class="arw w" x1="846" y1="118" x2="846" y2="140" marker-end="url(#aw)"/>
+    <rect class="b w" x="762" y="140" width="168" height="40" rx="7"/><text x="846" y="156" class="t" font-size="9" text-anchor="middle" fill="var(--warn-ink)">country_code===CN?</text><text x="846" y="170" class="s" font-size="8.5" text-anchor="middle">+ override toggle</text>
+    <line class="arw w" x1="846" y1="180" x2="846" y2="202" marker-end="url(#aw)"/>
+    <rect class="b w" x="762" y="202" width="168" height="40" rx="7"/><text x="846" y="218" class="s" font-size="8.5" text-anchor="middle">gate entry edge:</text><text x="846" y="232" class="s" font-size="8.5" text-anchor="middle">non-CN2-GIA → RED</text>
+    <rect class="b d" x="762" y="250" width="168" height="26" rx="7"/><text x="846" y="267" class="s" font-size="8" text-anchor="middle">fail → gating off · toggle shown</text>
+
+    <text x="376" y="418" class="lbl" text-anchor="middle" font-size="10">honesty invariants run through every box — estimated-labelled · benchmarked vs reference · PM-pending stamped ⚑ph · no fabricated numbers</text>
+    <defs>
+      <marker id="a" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="aw" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>Four moving parts, all in the browser: an <b>embedded provider constant</b> → a <b>resolver</b> that turns the
+  board state into placed nodes → a <b>pure estimate engine</b> that computes per-edge then aggregates into five metrics →
+  a returned <code>EstimateResult</code> the frontend renders. A separate <b>geo-IP</b> lookup drives the guardrail with a
+  graceful fallback. Nothing is fetched except geo-IP; nothing is stored; no secret exists.</figcaption>
+</div>
+
+<!-- ============================ 1 DATA MODEL ============================ -->
+<h2 id="model"><span class="n">1</span>Provider data model</h2>
+<p><code>PROVIDERS.md</code> is the source of truth, and it is deliberately <b>region × plan</b> shaped: BandwagonHost spans
+US-LA / SG / HK / JP with many plans; DMIT and VMISS likewise. So the model nests <b>provider → region → plan</b>, and the
+measurable facts (perf, latency, IOPS, bandwidth, route, purity) live on the <b>plan</b> — because that is the unit we actually
+benchmarked. The palette shows one <b>provider</b> card; a placed jump node then grows a region + plan selector (the same
+inline-configurator pattern as VirVM's traffic selector), so the model must let the UI enumerate regions and plans from data.</p>
+
+<div class="fig">
+  <svg viewBox="0 0 940 470" role="img" aria-label="Entity-relationship diagram: Provider has many Regions, a Region has many Plans, a Plan has one Pricing (flat/metered/reference), an optional Metrics, and an optional Route; module constants FX and CYCLES sit alongside; a runtime NetworkState references placed provider/region/plan.">
+    <text x="20" y="26" class="t" font-size="14">Entity-relationship — provider → region → plan → {pricing, metrics, route}</text>
+
+    <!-- Provider -->
+    <rect class="b a" x="20" y="48" width="212" height="132" rx="10"/>
+    <text x="34" y="70" class="t" font-size="12">Provider</text><line x1="20" y1="78" x2="232" y2="78" class="arw" stroke-width="1"/>
+    <text x="34" y="96" class="fld">id · name · link</text>
+    <text x="34" y="112" class="fld">roles: [jump|exit|both]</text>
+    <text x="34" y="128" class="fld">currency: USD|CAD|CNY</text>
+    <text x="34" y="144" class="fld">bench: bool (default)</text>
+    <text x="34" y="160" class="fld">regions: Region[]  ▸</text>
+    <text x="34" y="174" class="fld ">stockNote?</text>
+
+    <!-- Region -->
+    <path class="arw" d="M232 120 L286 120" marker-end="url(#er)"/><text x="245" y="112" class="lbl" font-size="9">1 ∞</text>
+    <rect class="b" x="286" y="64" width="200" height="116" rx="10"/>
+    <text x="300" y="86" class="t" font-size="12">Region</text><line x1="286" y1="94" x2="486" y2="94" class="arw" stroke-width="1"/>
+    <text x="300" y="112" class="fld">id · name (DC)</text>
+    <text x="300" y="128" class="fld">network: CN2GIA|163</text>
+    <text x="300" y="144" class="fld">jumpGia: bool</text>
+    <text x="300" y="160" class="fld">plans: Plan[]  ▸</text>
+
+    <!-- Plan -->
+    <path class="arw" d="M486 122 L540 122" marker-end="url(#er)"/><text x="499" y="114" class="lbl" font-size="9">1 ∞</text>
+    <rect class="b" x="540" y="48" width="212" height="150" rx="10"/>
+    <text x="554" y="70" class="t" font-size="12">Plan</text><line x1="540" y1="78" x2="752" y2="78" class="arw" stroke-width="1"/>
+    <text x="554" y="96" class="fld">id · label</text>
+    <text x="554" y="112" class="fld">specs {cpu,ram,disk,port,xfer}</text>
+    <text x="554" y="128" class="fld">bench: bool (this plan)</text>
+    <text x="554" y="144" class="fld">stock: in|out</text>
+    <text x="554" y="160" class="fld">pricing: Pricing  ▸</text>
+    <text x="554" y="176" class="fld">metrics?: Metrics  ▸</text>
+    <text x="554" y="190" class="fld ">＊ facts live here</text>
+
+    <!-- Pricing union -->
+    <path class="arw" d="M646 198 L646 226" marker-end="url(#er)"/>
+    <rect class="b e" x="540" y="228" width="212" height="104" rx="10"/>
+    <text x="554" y="250" class="t" font-size="11.5">Pricing <tspan class="s" font-size="9">(tagged union)</tspan></text>
+    <text x="554" y="268" class="fld">flat:  {amount, currency}</text>
+    <text x="554" y="284" class="fld">metered: {base, packages{},</text>
+    <text x="566" y="298" class="fld">   packagesPending, currency}</text>
+    <text x="554" y="314" class="fld">reference: {from, currency}</text>
+    <text x="554" y="328" class="fld ">stock badge orthogonal</text>
+
+    <!-- Metrics -->
+    <path class="arw" d="M700 198 L700 350 L654 350" marker-end="url(#er)"/>
+    <rect class="b" x="768" y="228" width="152" height="150" rx="10" transform="translate(-114,122)"/>
+    <text x="668" y="372" class="t" font-size="11.5">Metrics?</text><line x1="654" y1="380" x2="806" y2="380" class="arw" stroke-width="1"/>
+    <text x="668" y="398" class="fld">perf (0–100)</text>
+    <text x="668" y="414" class="fld">latencyMs {lo,hi}</text>
+    <text x="668" y="430" class="fld">iops · iopsCapped</text>
+    <text x="668" y="446" class="fld">bandwidthMbps</text>
+    <text x="668" y="462" class="fld">hopAddMs · route ▸</text>
+
+    <!-- Route -->
+    <rect class="b" x="286" y="360" width="220" height="100" rx="10"/>
+    <text x="300" y="382" class="t" font-size="11.5">Route? <tspan class="s" font-size="9">(exit metrics)</tspan></text><line x1="286" y1="390" x2="506" y2="390" class="arw" stroke-width="1"/>
+    <text x="300" y="408" class="fld">isp: "AT&amp;T" | "consumer ISP"</text>
+    <text x="300" y="424" class="fld">rank: n · rankPending: bool</text>
+    <text x="300" y="440" class="fld">purity: high|med|low</text>
+    <text x="300" y="454" class="fld ">→ metric ⑤ per exit</text>
+    <path class="arw" d="M600 462 C 560 462, 540 430, 506 420" marker-end="url(#er)"/>
+
+    <!-- constants + runtime -->
+    <rect class="b d" x="20" y="200" width="212" height="70" rx="10"/>
+    <text x="34" y="222" class="t" font-size="11">Module constants</text>
+    <text x="34" y="240" class="fld">FX {USD:1, CAD:.73, CNY:.147}</text>
+    <text x="34" y="256" class="fld">CYCLES [1,3,6,12,24 mo · disc]</text>
+
+    <rect class="b" x="20" y="286" width="212" height="120" rx="10"/>
+    <text x="34" y="308" class="t" font-size="11">NetworkState <tspan class="s" font-size="9">(runtime)</tspan></text>
+    <line x1="20" y1="316" x2="232" y2="316" class="arw" stroke-width="1"/>
+    <text x="34" y="334" class="fld">jump: {providerId, regionId,</text>
+    <text x="46" y="348" class="fld">  planId} | null</text>
+    <text x="34" y="366" class="fld">exits: PlacedNode[]  (fan-out)</text>
+    <text x="34" y="382" class="fld">  PlacedNode + {pkgGB, cycle}</text>
+    <text x="34" y="398" class="fld">china: bool (auto|override)</text>
+    <path class="arw" d="M126 406 C 126 430, 200 440, 286 420" marker-end="url(#er)" stroke-dasharray="4 3"/>
+    <text x="150" y="426" class="lbl" font-size="8.5">references plan by id</text>
+
+    <defs>
+      <marker id="er" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>The schema. Facts are attached to the <b>plan</b> (the benchmarked unit); <code>Pricing</code> is a tagged union of
+  <b>flat / metered / reference</b>; <code>Metrics</code> and <code>Route</code> are present only when we measured the box.
+  Module-level <code>FX</code> and <code>CYCLES</code> are shared constants. The runtime <code>NetworkState</code> holds the board —
+  one jump and an <b>array</b> of exits (fan-out) — referencing providers/regions/plans by id.</figcaption>
+</div>
+
+<h3>Schema, field by field</h3>
+<div class="tw"><table>
+  <tr><th>Level</th><th>Key</th><th>Meaning / values</th></tr>
+  <tr><td rowspan="6"><b>Provider</b></td><td><code>id · name · link</code></td><td>identity + official URL</td></tr>
+  <tr><td><code>roles</code></td><td><code>['jump']</code> · <code>['exit']</code> · <code>['jump','exit']</code> (VirVM = both). Drives palette placement + drop-compatibility.</td></tr>
+  <tr><td><code>currency</code></td><td><code>USD</code> (default) · <code>CAD</code> (VMISS) · <code>CNY</code> (AaITR). Native currency; converted to USD in the total.</td></tr>
+  <tr><td><code>bench</code></td><td>provider-level default; a plan may override. <span class="pill in">benchmarked</span> vs <span class="pill data">reference</span>.</td></tr>
+  <tr><td><code>regions</code></td><td>array of <code>Region</code>. Single-region providers still use a one-element array.</td></tr>
+  <tr><td><code>stockNote</code></td><td>optional (e.g. "out of stock") — surfaced as a badge, still priced.</td></tr>
+  <tr><td rowspan="4"><b>Region</b></td><td><code>id · name</code></td><td>DC label, e.g. <code>US-LA · GIA-E</code>, <code>Singapore · SG_8</code></td></tr>
+  <tr><td><code>network</code></td><td><code>CN2GIA</code> | <code>163</code> — the entry route class.</td></tr>
+  <tr><td><code>jumpGia</code></td><td>boolean — does this region qualify as CN2 GIA <b>when used as a jump</b>? (VirVM-as-jump = <code>false</code>: 163 unless the 专线GIA upgrade). Feeds the guardrail.</td></tr>
+  <tr><td><code>plans</code></td><td>array of <code>Plan</code>.</td></tr>
+  <tr><td rowspan="6"><b>Plan</b></td><td><code>id · label</code></td><td>e.g. <code>bwh-prod</code>, <code>US.LA.CN2.Pro</code></td></tr>
+  <tr><td><code>specs</code></td><td><code>{cpu, ramGB, diskGB, portMbps, transfer}</code> — display + optional derivations.</td></tr>
+  <tr><td><code>bench</code></td><td>is <b>this plan</b> measured? (BWH: only <code>bwh-vpn</code>/<code>bwh-prod</code> are; other rows are reference.)</td></tr>
+  <tr><td><code>stock</code></td><td><code>in</code> | <code>out</code></td></tr>
+  <tr><td><code>pricing</code></td><td>tagged union → next table.</td></tr>
+  <tr><td><code>metrics</code></td><td><code>Metrics</code> or <code>null</code> (reference/unmeasured → <code>null</code> ⇒ "not benchmarked").</td></tr>
+  <tr><td rowspan="5"><b>Metrics</b></td><td><code>perf</code></td><td>0–100 overall score (feeds <code>choose.html</code> Value = perf ÷ $/mo).</td></tr>
+  <tr><td><code>latencyMs</code></td><td><code>{lo, hi}</code> measured China RTT.</td></tr>
+  <tr><td><code>iops · iopsCapped</code></td><td>disk IOPS; <code>capped</code> flags a throttled measurement (AaITR 2,018).</td></tr>
+  <tr><td><code>bandwidthMbps</code></td><td>measured throughput (Mbps).</td></tr>
+  <tr><td><code>hopAddMs · route</code></td><td>illustrative private-hop latency add (exit); <code>route</code> = <code>{isp, rank, rankPending, purity}</code>.</td></tr>
+</table></div>
+
+<h3>Pricing — the tagged union</h3>
+<div class="tw"><table>
+  <tr><th>type</th><th>shape</th><th>example (from PROVIDERS.md)</th><th>in the total?</th></tr>
+  <tr><td><code>flat</code></td><td><code>{amount, currency}</code></td><td>SolaDrive <code>$40 USD</code> · AaITR <code>¥149 CNY</code> · BWH <code>$30 USD</code></td><td>yes — converted to USD</td></tr>
+  <tr><td><code>metered</code></td><td><code>{base, packages:{100,300,500,1000}, packagesPending, currency}</code></td><td>VirVM 专线GIA — <b>values PM-pending</b>, carried as flagged placeholders</td><td>yes — effective $/mo (see §4)</td></tr>
+  <tr><td><code>reference</code></td><td><code>{from, currency}</code></td><td>DMIT <code>from $10.90</code> · QQ.pw <code>from $35</code> · VMISS <code>$6 CAD</code></td><td><b>no</b> — listed separately, "not summed"</td></tr>
+</table></div>
+
+<div class="callout"><div class="ct">▸ Why plan-level facts, provider-level palette</div>
+  A provider is one palette card, but its numbers differ per plan. The model resolves this by putting <code>metrics</code>/<code>pricing</code>
+  on the <b>plan</b> and letting the placed node carry <code>{providerId, regionId, planId}</code>. Single-plan providers (SolaDrive, AaITR)
+  collapse to a one-region, one-plan array — the UI still reads them uniformly, so there is no special-case code path.</div>
+
+<!-- ============================ 2 CONSTANTS ============================ -->
+<h2 id="constants"><span class="n">2</span>Module constants — currency &amp; cycles</h2>
+<p>Two shared constants keep the money math honest and in one place (DRY). Rates are the same snapshots the fleet dashboard uses.</p>
+<pre class="code"><span class="c">// currency → USD multiplier (snapshot "as of 2026-07-03"; refreshed manually)</span>
+<span class="k">const</span> FX = { USD: <span class="n">1</span>, CAD: <span class="n">0.73</span>, CNY: <span class="n">0.147</span> };
+<span class="k">const</span> toUSD = (amount, currency) => amount * (FX[currency] ?? <span class="n">1</span>);
+
+<span class="c">// billing-cycle discounts (structure final; applies to metered packages)</span>
+<span class="k">const</span> CYCLES = [
+  { months: <span class="n">1</span>,  discount: <span class="n">0.00</span>, label: <span class="s">'1 month'</span> },
+  { months: <span class="n">3</span>,  discount: <span class="n">0.05</span>, label: <span class="s">'3 months −5%'</span> },
+  { months: <span class="n">6</span>,  discount: <span class="n">0.10</span>, label: <span class="s">'6 months −10%'</span> },
+  { months: <span class="n">12</span>, discount: <span class="n">0.20</span>, label: <span class="s">'1 year −20%'</span> },
+  { months: <span class="n">24</span>, discount: <span class="n">0.25</span>, label: <span class="s">'2 years −25%'</span> },
+];</pre>
+<p>Native amounts are shown alongside the ≈USD conversion (e.g. <code>¥149 ≈ $21.88</code>), matching the guide's convention. Only USD
+values are summed into the total.</p>
+
+<!-- ============================ 3 ENGINE PIPELINE ============================ -->
+<h2 id="engine"><span class="n">3</span>Estimate engine — the pipeline</h2>
+<p>One entry point — <code>estimate(networkState) → EstimateResult</code> — built from small <b>pure functions</b>: no globals, no DOM,
+no fetch, deterministic. The frontend calls it on every drop / remove / traffic-change and renders the returned object. The pipeline
+computes <b>per edge first</b> (connections are first-class), then folds edges into the five aggregate metrics.</p>
+<div class="fig">
+  <svg viewBox="0 0 940 380" role="img" aria-label="Estimate pipeline: NetworkState is resolved to placed nodes, split into an entry edge (you to jump) and per-exit link edges, each edge computes latency, bandwidth, io and route, then aggregation counts the jump price once, sums exits, takes min for bottlenecks, ranges latency, and summarizes route into the EstimateResult.">
+    <text x="20" y="26" class="t" font-size="14">inputs → resolve → per-edge → aggregate → EstimateResult</text>
+
+    <!-- input -->
+    <rect class="b" x="18" y="52" width="150" height="86" rx="10"/>
+    <text x="93" y="78" class="t" font-size="11" text-anchor="middle">NetworkState</text>
+    <text x="93" y="98" class="s" font-size="9" text-anchor="middle">jump {ids}</text>
+    <text x="93" y="112" class="me" font-size="9" text-anchor="middle">exits[] {ids,pkg,cycle}</text>
+    <text x="93" y="128" class="s" font-size="9" text-anchor="middle">china: bool</text>
+
+    <!-- resolve -->
+    <line class="arw" x1="168" y1="95" x2="200" y2="95" marker-end="url(#p)"/>
+    <rect class="b a" x="200" y="52" width="150" height="86" rx="10"/>
+    <text x="275" y="78" class="t" font-size="11" text-anchor="middle">resolve()</text>
+    <text x="275" y="98" class="s" font-size="9" text-anchor="middle">ids → plan objects</text>
+    <text x="275" y="112" class="s" font-size="9" text-anchor="middle">jump ×1 · exits[]</text>
+    <text x="275" y="128" class="s" font-size="9" text-anchor="middle">attach pkg/cycle</text>
+
+    <!-- split to edges -->
+    <line class="arw a" x1="350" y1="80" x2="382" y2="66" marker-end="url(#pa)"/>
+    <line class="arw e" x1="350" y1="110" x2="382" y2="150" marker-end="url(#pe)"/>
+
+    <!-- entry edge -->
+    <rect class="b a" x="382" y="44" width="196" height="46" rx="9"/>
+    <text x="396" y="63" class="t" font-size="10">edge① entry · you → jump</text>
+    <text x="396" y="80" class="s" font-size="8.5">RTT = jump.lat · gia? · gate if china &amp; !gia</text>
+
+    <!-- link edges (fan-out) -->
+    <rect class="b e" x="382" y="104" width="196" height="46" rx="9"/>
+    <text x="396" y="123" class="t" font-size="10">edge② link · jump → exit·N</text>
+    <text x="396" y="140" class="s" font-size="8.5">one per exit: lat range · bw · io · route · IP</text>
+    <rect class="b e" x="392" y="158" width="196" height="30" rx="9" style="opacity:.55"/>
+    <text x="406" y="177" class="s" font-size="8.5">…each exit = its own edge + egress IP</text>
+
+    <!-- aggregate -->
+    <line class="arw" x1="588" y1="120" x2="620" y2="120" marker-end="url(#p)"/>
+    <rect class="b" x="620" y="44" width="304" height="188" rx="11"/>
+    <text x="636" y="66" class="t" font-size="11">aggregate() — fold edges</text>
+    <rect class="b e" x="634" y="76" width="276" height="26" rx="6"/><text x="644" y="93" class="me" font-size="9">① price = jump(once) + Σ exits + pkg → USD</text>
+    <rect class="b a" x="634" y="106" width="276" height="26" rx="6"/><text x="644" y="123" class="m" font-size="9">② latency = [min lo … max hi] across exits</text>
+    <rect class="b" x="634" y="136" width="276" height="26" rx="6"/><text x="644" y="153" class="m" font-size="9">③ io = min(exit iops)  · ④ bw = min(all hops)</text>
+    <rect class="b" x="634" y="166" width="276" height="26" rx="6"/><text x="644" y="183" class="m" font-size="9">⑤ route = summarize(isp,rank,purity) · N IPs</text>
+    <rect class="b d" x="634" y="196" width="276" height="28" rx="6"/><text x="644" y="214" class="s" font-size="9">refs collected separately · pending flags propagate</text>
+
+    <!-- output -->
+    <line class="arw" x1="772" y1="232" x2="772" y2="262" marker-end="url(#p)"/>
+    <rect class="b" x="560" y="262" width="364" height="96" rx="11"/>
+    <text x="576" y="284" class="t" font-size="11">EstimateResult  <tspan class="s" font-size="9">→ frontend renders</tspan></text>
+    <text x="576" y="304" class="fld">{ price, latency, io, bandwidth, route,</text>
+    <text x="588" y="320" class="fld">  egress, edges[], gating, estimated:true }</text>
+    <text x="576" y="340" class="s" font-size="8.5">pure return value — the frontend owns all DOM</text>
+
+    <!-- guardrail feeds gating -->
+    <rect class="b w" x="18" y="200" width="330" height="72" rx="10"/>
+    <text x="34" y="222" class="t" font-size="10.5">geoIP → state.china (auto|override)</text>
+    <text x="34" y="240" class="s" font-size="9">feeds edge① gating decision only</text>
+    <text x="34" y="256" class="s" font-size="9">orthogonal to price/latency/io/bw/route</text>
+    <path class="arw w" d="M348 224 C 400 224, 430 150, 460 92" marker-end="url(#pw)"/>
+
+    <defs>
+      <marker id="p" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="pa" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker>
+      <marker id="pe" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
+      <marker id="pw" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>The engine resolves ids to plan objects, computes each <b>edge</b> independently (entry = <code>you → jump</code>;
+  one link per exit), then <code>aggregate()</code> folds them: price counts the jump <b>once</b> and sums exits, I/O and bandwidth
+  take the <b>min</b> (bottleneck), latency takes the <b>range</b>, and route is <b>summarized</b>. Geo-IP only touches the entry
+  edge's gating — it never changes a number.</figcaption>
+</div>
+
+<!-- ============================ 4 FORMULAS ============================ -->
+<h2 id="formulas"><span class="n">4</span>The five formulas — exactly</h2>
+<div class="tw"><table>
+  <tr><th>#</th><th>Metric</th><th>Formula</th><th>Notes</th></tr>
+  <tr><td>①</td><td><b>Price</b></td>
+    <td><code>monthlyUSD = jumpUSD·1 + Σ<sub>exit</sub> exitUSD</code></td>
+    <td>jump counted <b>once</b> (shared relay). Reference boxes excluded (listed apart). See fold-in below.</td></tr>
+  <tr><td>②</td><td><b>Latency</b></td>
+    <td><code>[ min<sub>exit</sub>(jump.lo) … max<sub>exit</sub>(jump.lo + exit.hopAdd) ]</code></td>
+    <td>entry RTT measured; per-exit upper bound adds the illustrative private hop → a <b>range</b>. Single-host = jump's measured <code>{lo,hi}</code>.</td></tr>
+  <tr><td>③</td><td><b>I/O</b></td>
+    <td><code>min<sub>exit</sub>(exit.iops)</code></td>
+    <td>bottleneck disk across the exits; <code>capped</code> if any contributor was throttled. Single-host = jump's iops.</td></tr>
+  <tr><td>④</td><td><b>Bandwidth</b></td>
+    <td><code>min( jump.bw, exit₁.bw, … exitₙ.bw )</code></td>
+    <td>bottleneck across <b>all</b> hops (jump + every exit) — the global cap.</td></tr>
+  <tr><td>⑤</td><td><b>Route quality</b></td>
+    <td><code>summarize( {isp,#rank}<sub>per exit</sub> ) + purity + N IPs</code></td>
+    <td>identical exits collapse to <code>"N× AT&amp;T (#1)"</code>; else joined. Purity common-or-"mixed". N = egress-IP count.</td></tr>
+</table></div>
+
+<h3>① Price fold-in — flat, metered, multi-exit</h3>
+<pre class="code"><span class="c">// effective monthly cost of a metered exit, in USD</span>
+<span class="k">function</span> meteredMonthlyUSD(plan, pkgGB, cycleMonths) {
+  <span class="k">const</span> base  = plan.pricing.packages[pkgGB];            <span class="c">// PM-pending placeholder ⚑ph</span>
+  <span class="k">const</span> cyc   = CYCLES.find(c => c.months === cycleMonths) ?? CYCLES[<span class="n">0</span>];
+  <span class="k">return</span> toUSD(base, plan.pricing.currency) * (<span class="n">1</span> - cyc.discount);
+}
+
+<span class="c">// whole-network price — jump counted ONCE, each exit summed</span>
+<span class="k">function</span> priceUSD(jump, exits) {
+  <span class="k">let</span> total = <span class="n">0</span>; <span class="k">const</span> refs = [];
+  <span class="k">if</span> (jump &amp;&amp; jump.pricing.type === <span class="s">'flat'</span>) total += toUSD(jump.pricing.amount, jump.pricing.currency);
+  <span class="k">else if</span> (jump) refs.push(jump);                       <span class="c">// metered/reference jump → not summed</span>
+  <span class="k">for</span> (<span class="k">const</span> e <span class="k">of</span> exits) {
+    <span class="k">if</span> (e.pricing.type === <span class="s">'flat'</span>)    total += toUSD(e.pricing.amount, e.pricing.currency);
+    <span class="k">else if</span> (e.pricing.type === <span class="s">'metered'</span>) total += meteredMonthlyUSD(e, e.pkgGB, e.cycle);
+    <span class="k">else</span>                              refs.push(e);       <span class="c">// reference → listed, not summed</span>
+  }
+  <span class="k">return</span> { monthlyUSD: total, references: refs };
+}</pre>
+<div class="callout ok"><div class="ct">✓ Worked example — the PM's multi-exit case (1 BWH → 2 AaITR)</div>
+  <span class="mono">BandwagonHost (shared jump) $30.00 + AaITR (exit 1) $21.88 + AaITR (exit 2) $21.88 = <b>$73.76 / mo</b></span> · 2 exit IPs.<br>
+  Latency <code>[129 … 129+81] = 129–210 ms</code> · I/O <code>min(2018) = 2,018 IOPS (capped)</code> · Bandwidth
+  <code>min(2280, 102, 102) = 102M</code> · Route <code>2× AT&amp;T (#1·rank pending), purity high</code>.</div>
+<div class="callout ok"><div class="ct">✓ Worked example — metered fold-in (VirVM exit, placeholder $)</div>
+  <span class="mono">300 GB base <span class="ph">$18</span> × 12 mo (−20%) = <span class="ph">$14.40</span>/mo effective</span> → summed with the shared jump.
+  The base is a <b>PM-pending placeholder</b>; the −20% cycle math and the fold-in structure are final.</div>
+
+<!-- ============================ 5 GEO-IP ============================ -->
+<h2 id="geo"><span class="n">5</span>Geo-IP guardrail — client-side, keyless, graceful</h2>
+<p>The guardrail needs the visitor's country, client-side, with no backend and no secret. The chosen primary is
+<b><code>https://ipapi.co/json/</code></b>; a second keyless source backs it up; total failure defaults gating <b>off</b> with the toggle shown.
+The toggle always wins — the user is authoritative.</p>
+
+<div class="fig">
+  <svg viewBox="0 0 940 300" role="img" aria-label="Geo-IP flow: on load, fetch ipapi.co with a 1.5s abort timeout; on success read country_code; on failure try a keyless fallback; on total failure set gating off but show the toggle; the manual toggle overrides in all cases and only recolours the entry edge.">
+    <text x="20" y="26" class="t" font-size="14">page load → detect country → drive (only) the entry-edge gate</text>
+
+    <rect class="b" x="18" y="52" width="150" height="60" rx="10"/><text x="93" y="78" class="t" font-size="10.5" text-anchor="middle">page load</text><text x="93" y="96" class="s" font-size="9" text-anchor="middle">detectCountry()</text>
+
+    <line class="arw" x1="168" y1="82" x2="200" y2="82" marker-end="url(#g)"/>
+    <rect class="b a" x="200" y="52" width="176" height="60" rx="10"/>
+    <text x="288" y="76" class="t" font-size="10" text-anchor="middle">fetch ipapi.co/json/</text>
+    <text x="288" y="94" class="s" font-size="8.5" text-anchor="middle">AbortController · 1.5s timeout</text>
+    <text x="288" y="106" class="m" font-size="8.5" text-anchor="middle">keyless · CORS * · HTTPS</text>
+
+    <!-- success -->
+    <line class="arw e" x1="376" y1="72" x2="470" y2="72" marker-end="url(#ge)"/><text x="418" y="63" class="lbl" font-size="8.5">ok</text>
+    <rect class="b" x="470" y="48" width="180" height="48" rx="10"/><text x="560" y="68" class="t" font-size="10" text-anchor="middle">read country_code</text><text x="560" y="84" class="m" font-size="8.5" text-anchor="middle">=== "CN" ?</text>
+
+    <!-- failure to fallback -->
+    <line class="arw w" x1="288" y1="112" x2="288" y2="150" marker-end="url(#gw)"/><text x="300" y="136" class="lbl" font-size="8.5" fill="var(--warn-ink)">error / timeout</text>
+    <rect class="b w" x="200" y="150" width="176" height="52" rx="10"/><text x="288" y="172" class="t" font-size="9.5" text-anchor="middle">fallback: ipwho.is/</text><text x="288" y="188" class="s" font-size="8.5" text-anchor="middle">keyless · CORS · country_code</text>
+    <line class="arw e" x1="376" y1="168" x2="470" y2="120" marker-end="url(#ge)"/><text x="430" y="132" class="lbl" font-size="8">ok</text>
+
+    <!-- total failure -->
+    <line class="arw w" x1="288" y1="202" x2="288" y2="238" marker-end="url(#gw)"/><text x="300" y="224" class="lbl" font-size="8.5" fill="var(--warn-ink)">both fail</text>
+    <rect class="b d" x="150" y="238" width="300" height="46" rx="10"/><text x="300" y="258" class="t" font-size="9.5" text-anchor="middle">gatingAuto = false · toggle shown</text><text x="300" y="274" class="s" font-size="8.5" text-anchor="middle">stamp: "location unknown — toggle manually"</text>
+
+    <!-- decision -> gate -->
+    <line class="arw" x1="650" y1="72" x2="690" y2="72" marker-end="url(#g)"/>
+    <rect class="b w" x="690" y="48" width="232" height="48" rx="10"/><text x="806" y="68" class="t" font-size="10" text-anchor="middle" fill="var(--warn-ink)">state.china = true → gate ON</text><text x="806" y="84" class="s" font-size="8.5" text-anchor="middle">entry non-GIA → edge① RED + notice</text>
+
+    <!-- override -->
+    <rect class="b" x="560" y="150" width="362" height="72" rx="10"/>
+    <text x="576" y="172" class="t" font-size="10.5">Manual override toggle — always wins</text>
+    <text x="576" y="190" class="s" font-size="9">user sets state.china explicitly; auto result is a <i>default</i>, not a lock.</text>
+    <text x="576" y="208" class="s" font-size="9">gate never blocks a build — it only <b>recolours the entry edge</b> + prints a notice.</text>
+    <line class="arw w" x1="806" y1="150" x2="806" y2="98" marker-end="url(#gw)"/>
+
+    <defs>
+      <marker id="g" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="ge" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
+      <marker id="gw" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
+    </defs>
+  </svg>
+  <figcaption>Client-side detection with a 1.5s abort timeout and a two-source chain, degrading to "gating off, toggle shown".
+  The gate never blocks — it recolours the single entry edge (<code>you → jump</code>) and prints a notice. The manual toggle
+  overrides the auto result in every case.</figcaption>
+</div>
+
+<h3>Why ipapi.co (and why not the others)</h3>
+<div class="tw"><table>
+  <tr><th>Candidate</th><th>Verdict</th><th>Reason</th></tr>
+  <tr><td><b>ipapi.co/json/</b> <span class="pill in">chosen · primary</span></td><td>✓</td>
+    <td>Keyless for basic country lookup, <b>HTTPS</b>, sends <code>Access-Control-Allow-Origin: *</code> (works cross-origin from our non-CF site), returns <code>country_code</code> (ISO-2). We read one field.</td></tr>
+  <tr><td><b>ipwho.is/</b> <span class="pill out">chosen · fallback</span></td><td>✓</td>
+    <td>Independent operator, also keyless + CORS + HTTPS, returns <code>country_code</code>. A second source guards against one host's rate limit / outage.</td></tr>
+  <tr><td>Cloudflare <code>/cdn-cgi/trace</code></td><td>✗</td>
+    <td>Two failures: (a) <b>our site is not behind Cloudflare</b>, so a same-origin <code>/cdn-cgi/trace</code> 404s; (b) the cross-origin <code>www.cloudflare.com/cdn-cgi/trace</code> sends <b>no CORS headers</b>, so a browser <code>fetch</code> is blocked.</td></tr>
+  <tr><td>ipinfo.io</td><td>✗</td>
+    <td>Reliable country lookup increasingly wants a <b>token</b> — that reintroduces a secret/key we are told to avoid.</td></tr>
+</table></div>
+<pre class="code"><span class="c">// no key, no storage of the IP — only the country is read</span>
+<span class="k">async function</span> detectCountry({ timeoutMs = <span class="n">1500</span> } = {}) {
+  <span class="k">const</span> sources = [
+    { url: <span class="s">'https://ipapi.co/json/'</span>,  pick: j => j.country_code },
+    { url: <span class="s">'https://ipwho.is/'</span>,       pick: j => j.country_code },
+  ];
+  <span class="k">for</span> (<span class="k">const</span> src <span class="k">of</span> sources) {
+    <span class="k">try</span> {
+      <span class="k">const</span> ctl = <span class="k">new</span> AbortController();
+      <span class="k">const</span> t = setTimeout(() => ctl.abort(), timeoutMs);
+      <span class="k">const</span> res = <span class="k">await</span> fetch(src.url, { signal: ctl.signal });
+      clearTimeout(t);
+      <span class="k">if</span> (!res.ok) <span class="k">continue</span>;
+      <span class="k">const</span> code = src.pick(<span class="k">await</span> res.json());
+      <span class="k">if</span> (code) <span class="k">return</span> { country: code, source: src.url };  <span class="c">// e.g. "CN"</span>
+    } <span class="k">catch</span> { <span class="c">/* timeout / network / CORS → next source */</span> }
+  }
+  <span class="k">return</span> { country: <span class="k">null</span>, source: <span class="k">null</span> };  <span class="c">// → gatingAuto=false, toggle shown</span>
+}</pre>
+<p><b>Privacy &amp; security:</b> no key, no request body, no cookie; we read only the country code and never persist the IP. The lookup is
+the site's <b>only</b> runtime network call — everything else is the embedded constant. (A CSP <code>connect-src</code> allowance for
+<code>ipapi.co</code> + <code>ipwho.is</code> is the one edge-config note for the frontend/ops side.)</p>
+
+<!-- ============================ 6 HONESTY ============================ -->
+<h2 id="honesty"><span class="n">6</span>Honesty invariants — enforced in data &amp; logic</h2>
+<p>The guide's standing principle — never present a number as measured unless it is — is encoded, not just styled:</p>
+<div class="tw"><table>
+  <tr><th>Invariant</th><th>How the logic enforces it</th></tr>
+  <tr><td><b>Everything is "estimated"</b></td><td><code>EstimateResult.estimated === true</code> always; the panel label is not optional.</td></tr>
+  <tr><td><b>Benchmarked vs reference</b></td><td>reference plans have <code>metrics === null</code> ⇒ engine emits "not benchmarked" for perf/latency/io/bw/route and <b>excludes them from the price sum</b> (listed under <code>references[]</code>).</td></tr>
+  <tr><td><b>No fabricated numbers</b></td><td>a missing measurement is <code>null</code>, never a guess. <code>null</code> renders as "not benchmarked" / "pending", never as 0 or an invented value.</td></tr>
+  <tr><td><b>PM-pending stamped</b></td><td>illustrative/awaited values carry a boolean flag — <code>route.rankPending</code>, <code>pricing.packagesPending</code>, latency's <code>pending</code> (private-hop add) — which the frontend renders as <span class="ph">⚑ph</span>.</td></tr>
+  <tr><td><b>VirVM traffic $ are placeholders</b></td><td><code>pricing.packages</code> values are placeholders behind <code>packagesPending:true</code>; they fold into the total (so the UX works) but are visibly stamped and swapped for real numbers when the PM supplies them.</td></tr>
+  <tr><td><b>Currency truth</b></td><td>native amount + currency are preserved; only <code>toUSD()</code> output is summed, and the native value is shown beside the ≈USD.</td></tr>
+  <tr><td><b>Stock is orthogonal</b></td><td><code>stock:'out'</code> shows a badge but the box is still priced (DMIT/VMISS/QQ.pw) — honesty about availability, not suppression.</td></tr>
+</table></div>
+
+<!-- ============================ 7 CONTRACT ============================ -->
+<h2 id="contract"><span class="n">7</span>Interface exposed to the frontend</h2>
+<p>The backend layer exposes <b>data + pure functions</b>; the frontend owns all DOM. Two calls and one object are the whole contract.</p>
+<pre class="code"><span class="c">// ---- functions the frontend calls ----</span>
+estimate(networkState) => EstimateResult          <span class="c">// pure; call on every change</span>
+detectCountry({timeoutMs?}) => Promise&lt;{country, source}&gt;   <span class="c">// once, on load</span>
+PROVIDERS                                          <span class="c">// the embedded roster constant (read-only)</span>
+
+<span class="c">// ---- the return object the frontend renders ----</span>
+EstimateResult = {
+  price: {
+    monthlyUSD: number,                            <span class="c">// jump ×1 + Σ exits (flat + metered eff.)</span>
+    lines: [{ label, amountUSD, native?:{amount,currency}, kind }],
+    references: [string],                          <span class="c">// reference boxes, not summed</span>
+    pending: boolean                               <span class="c">// a metered placeholder is involved</span>
+  },
+  latency:   { loMs, hiMs, pending } | <span class="k">null</span>,        <span class="c">// range across exits; pending = hop-add illustrative</span>
+  io:        { iops, capped, pending } | <span class="k">null</span>,      <span class="c">// bottleneck; null ⇒ not benchmarked</span>
+  bandwidth: { mbps, pending } | <span class="k">null</span>,             <span class="c">// min across hops</span>
+  route:     { label, purity, exitCount, rankPending,
+               isDatacenter, notBenchmarked } | <span class="k">null</span>,
+  egress:    { ipCount },                          <span class="c">// N separate exit IPs (0 = single-host DC egress)</span>
+  edges: [                                         <span class="c">// per-edge readouts, in order</span>
+    { kind:<span class="s">'entry'</span>, from, to, latencyMs, gia, gatedRed },
+    { kind:<span class="s">'link'</span>,  from, to, latencyMs, bandwidthMbps, iops, iopsCapped,
+      route:{isp,rank,rankPending,purity}, egressIp:n }
+  ],
+  gating: { active, entryBlocked, reason },        <span class="c">// drives edge① red + notice</span>
+  estimated: <span class="k">true</span>                                <span class="c">// invariant</span>
+}</pre>
+<div class="callout"><div class="ct">▸ Contract guarantees</div>
+  <b>1</b> Pure &amp; synchronous — <code>estimate()</code> does no I/O and returns the same object for the same state (safe to call on every keystroke/drop).
+  <b>2</b> Total-safe — an empty board, a single-host network, and an all-reference board each return a valid object (nulls, not throws).
+  <b>3</b> The frontend never recomputes money/latency itself — it renders these fields verbatim, so the two sections cannot drift.</div>
+
+<!-- ============================ 8 INTEGRATION ============================ -->
+<h2 id="integration"><span class="n">8</span>Integration &amp; verification</h2>
+<ul>
+  <li><b>Embedded, not fetched.</b> <code>PROVIDERS</code> ships as a JS constant inside <code>tool.html</code> (curated snapshot, "as of" date), matching the static-site / no-backend / manual-refresh constraint. Geo-IP is the <b>only</b> runtime fetch.</li>
+  <li><b>Deployment = the file ships.</b> No server, no build step, no DB. The logic layer is a <code>&lt;script&gt;</code> block, styled by the existing <code>style.css</code> and <code>.perf-ref</code> tokens.</li>
+  <li><b>choose.html Value column</b> is a pure derivation off the same roster: <code>Value = metrics.perf ÷ monthlyUSD</code> (pt/$), rendered "—" for metered until a package is chosen. No new data.</li>
+  <li><b>Reference implementation exists.</b> DESIGN v3's prototype (<code>metrics()</code>, roster <code>R</code>, presets) is the flat-shaped seed; the production model adds the region×plan nesting and the resolver, keeping the same math.</li>
+  <li><b>Responsive:</b> every diagram sits in an <code>overflow-x:auto</code> figure with <code>svg{max-width:100%}</code>; verified no page-level horizontal overflow at <b>1440 / 390 / 320</b> (see below).</li>
+</ul>
+
+<!-- ============================ 9 OPEN ============================ -->
+<h2 id="open"><span class="n">9</span>Open questions for the PM / Orchestrator</h2>
+<ol>
+  <li><span class="pill data">price</span> <b>VirVM traffic-package base $</b> (100 / 300 / 500 / 1000 GB) + whether the base is per-package or provider-wide. Placeholders stamped ⚑ph until supplied.</li>
+  <li><span class="pill data">route</span> <b>Outbound ISP rank source</b> (metric ⑤ <code>(#n)</code>) and any exits whose <b>bandwidth</b> is not yet measured (metric ④). Purity derives from the existing IP-purity table.</li>
+  <li><span class="pill data">latency</span> <b>Private-hop latency add</b> per exit — confirm the illustrative <code>hopAddMs</code> values or supply measured upper bounds for the range.</li>
+  <li><span class="pill out">decision</span> <b>Geo-IP fallback copy</b> for the "location unknown" stamp, and confirmation that a <code>connect-src</code> CSP allowance for <code>ipapi.co</code> + <code>ipwho.is</code> is acceptable.</li>
+  <li><span class="pill out">decision</span> <b>Max-exits cap</b> for the fan-out UI (engine is unbounded; default wraps cleanly — a cap is a UI-only choice).</li>
+</ol>
+
+<p class="meta">Backend / logic-layer section for the Tech Document. Pairs with TECH-frontend.html (board, palette, DOM, a11y). Builds against DESIGN v3, PROVIDERS.md, and the honesty invariants above.</p>
+
+</div><!-- /wrap -->
+</body>
+</html>
