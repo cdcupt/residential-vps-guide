@@ -60,7 +60,7 @@ Source: local dmit-watch panel (`localhost:7331/api/state`) for LAX; PM screensh
 | US.LA.CN2.Ultra | 4C · 8GB · 80GB SSD | 1000Mbps | 2800GB | **$75 CAD** (~$54.75) | out |
 
 ### VirVM (as jump host) — benchmarked (163 line; 专线GIA is a paid upgrade)
-Our box: 4C/8GB, **perf 38**, 163 route (NOT CN2 GIA unless the 专线GIA upgrade is bought). Traffic-metered — see residential.
+Our box: 4C/8GB, **perf 38**, 163 route (NOT CN2 GIA unless the 专线GIA upgrade is bought). Flat bandwidth-tier pricing ($35.99/$65.99) — see residential.
 
 ---
 
@@ -68,14 +68,21 @@ Our box: 4C/8GB, **perf 38**, 163 route (NOT CN2 GIA unless the 专线GIA upgrad
 
 | Provider | Bench? | Specs | Network | Perf | Price | Stock |
 |---|---|---|---|---|---|---|
-| **VirVM** | ✅ | 4C/8GB | 163 (专线GIA upgrade avail) | 38 | **traffic-metered** ↓ | in |
+| **VirVM** | ✅ | 4C/8GB · 50GB | 163 · 专线GIA avail | 38 | **$35.99 (50M) / $65.99 (100M)** flat · unlimited traffic | in |
 | **SolaDrive** | ✅ | 4C/4GB · 48GB | 163 · clean IP · 0% loss | 88 | **$40.00/mo** | in |
 | **AaITR** | ✅ | 2C/2GB · 25GB | 163 · AT&T/Frontier · lossy (40–70%) | 18 | **~$21.88/mo** (¥149) | in |
 | **QQ.pw** | ref | from 2C/3GB | Hawaii · residential | — | **$35–55/mo** | out |
 
-### VirVM traffic-metered pricing (专线GIA residential) — **PM-PENDING prices**
-Packages **100 / 300 / 500 / 1000 GB**; billing cycle 1mo · 3mo −5% · 6mo −10% · 1yr −20% · 2yr −25%.
-Base + package $ still owed by the PM (structure final).
+### VirVM pricing — flat, bandwidth-tiered (RESOLVED 2026-07-03; corrects the earlier "traffic-metered" assumption)
+VirVM's residential VPS (Standard plan: 4C/8GB/50GB NVMe, static residential IP, **unlimited traffic**) is priced
+flat by **bandwidth tier**, NOT by traffic package:
+- **50 Mbps → $35.99/mo**
+- **100 Mbps → $65.99/mo**
+Our benchmarked box (perf 38) = the **100 Mbps** tier → **$65.99/mo** (matches the fleet record). So on
+choose.html: Value = 38 ÷ 65.99 = **0.58**. In the builder, a placed VirVM shows a **bandwidth selector**
+(50M $35.99 / 100M $65.99), default 100M; it's in-stock so it's summed like any flat box.
+(VirVM separately sells a "Dedicated Tunnel" GIA SKU with a 100GB traffic package + 300Mbps — a different
+product, not what we run.)
 
 ---
 
