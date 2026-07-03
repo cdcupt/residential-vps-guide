@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Design — VPS Network Builder &amp; Cost-Performance</title>
+<title>Design v2 — VPS Network Builder &amp; Cost-Performance</title>
 <style>
   :root{
     --ink:#1a1d23; --ink-2:#3a4150; --muted:#6b7280; --line:#e6e8ec; --line-2:#cfd3da;
@@ -84,7 +84,7 @@
   .switch input:checked + .track + .knob{transform:translateX(16px)}
   .switch input:focus-visible + .track{outline:2px solid var(--accent);outline-offset:2px}
   /* body grid */
-  .pbody{display:grid;grid-template-columns:230px minmax(0,1fr) 250px;gap:1px;background:var(--line)}
+  .pbody{display:grid;grid-template-columns:236px minmax(0,1fr) 264px;gap:1px;background:var(--line)}
   @media(max-width:900px){ .pbody{grid-template-columns:1fr} }
   .col{background:var(--card);padding:.9rem}
   .col h4{margin:.1rem 0 .6rem;font-family:var(--mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
@@ -94,31 +94,30 @@
   .pcard:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(58,83,208,.1)}
   .pcard:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .pcard.dragging{opacity:.45}
-  .pcard .pc-top{display:flex;align-items:center;gap:.4rem}
+  .pcard .pc-top{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
   .pcard .nm{font-weight:700;font-size:.9rem}
-  .pcard .role{font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);
-    border:1px solid var(--accent);border-radius:99px;padding:.02rem .4rem;background:var(--accent-bg)}
+  .pcard .role{font-family:var(--mono);font-size:.56rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);
+    border:1px solid var(--accent);border-radius:99px;padding:.02rem .4rem;background:var(--accent-bg);white-space:nowrap}
   .pcard .role.ex{color:var(--exit-ink);border-color:var(--exit);background:var(--exit-bg)}
+  .pcard .role.both{color:var(--ink-2);border-color:var(--line-2);background:var(--paper-2)}
   .pcard .sp{color:var(--muted);font-size:.72rem;margin-top:.15rem;line-height:1.3}
-  .pcard .pc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:.35rem}
+  .pcard .pc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:.35rem;gap:.3rem;flex-wrap:wrap}
   .pcard .pr{font-family:var(--mono);font-weight:700;font-size:.8rem}
-  .badge{font-family:var(--mono);font-size:.56rem;text-transform:uppercase;letter-spacing:.03em;padding:.05rem .38rem;border-radius:99px;white-space:nowrap}
+  .badge{font-family:var(--mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.03em;padding:.05rem .38rem;border-radius:99px;white-space:nowrap}
   .badge.bench{background:var(--exit-bg);color:var(--exit-ink);border:1px solid var(--exit)}
   .badge.ref{background:#fff;color:var(--warn-ink);border:1px dashed var(--warn)}
   .badge.gia{background:var(--accent-bg);color:var(--accent-ink);border:1px solid var(--accent)}
   .badge.mtr{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn)}
-  .place{font-family:var(--sans);font-size:.68rem;font-weight:700;color:var(--accent-ink);border:none;background:none;cursor:pointer;padding:.1rem .2rem}
-  .place:hover{text-decoration:underline}
+  .badge.i163{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
   /* canvas */
-  .canvas{min-height:230px;position:relative}
+  .canvas{min-height:150px;position:relative}
   .path{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
   .node{flex:1 1 84px;min-width:84px;border:1.4px solid var(--line-2);border-radius:var(--r-sm);background:var(--paper-2);
     padding:.5rem;text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:74px}
   .node.you,.node.net{background:#fff;color:var(--muted)}
   .node .nlab{font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
   .node .nnm{font-weight:700;font-size:.82rem;margin-top:.15rem}
-  .node .nsub{font-size:.66rem;color:var(--muted);margin-top:.1rem}
-  .conn{align-self:center;flex:0 0 34px;height:2px;background:var(--ink-2);position:relative;min-width:26px}
+  .conn{align-self:center;flex:0 0 30px;height:2px;background:var(--ink-2);position:relative;min-width:24px}
   .conn::after{content:"";position:absolute;right:-1px;top:-3px;border-left:7px solid var(--ink-2);border-top:4px solid transparent;border-bottom:4px solid transparent}
   .conn.red{background:var(--warn);height:3px} .conn.red::after{border-left-color:var(--warn)}
   .conn.ok{background:var(--exit)} .conn.ok::after{border-left-color:var(--exit)}
@@ -129,6 +128,7 @@
   .slot .shint{font-size:.68rem;color:var(--muted);margin-top:.2rem}
   .slot.jump{border-color:var(--accent)} .slot.exit{border-color:var(--exit)}
   .slot.over{background:var(--accent-bg);border-style:solid}
+  .slot.reject{background:var(--warn-bg);border-color:var(--warn);border-style:solid}
   .slot.filled{border-style:solid;background:var(--paper-2);text-align:left;align-items:stretch}
   .slot.filled.jump{background:var(--accent-bg);border-color:var(--accent)}
   .slot.filled.exit{background:var(--exit-bg);border-color:var(--exit)}
@@ -139,6 +139,16 @@
   .notice{margin-top:.5rem;background:var(--warn-bg);border:1px solid var(--warn);color:var(--warn-ink);
     border-radius:var(--r-sm);padding:.4rem .55rem;font-size:.72rem;line-height:1.35}
   .notice b{color:var(--warn-ink)}
+  /* per-edge readouts (connections are first-class) */
+  .edges{margin-top:.7rem}
+  .edges .eh{font-family:var(--mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.35rem}
+  .edgerow{border:1px solid var(--line);border-left:3px solid var(--line-2);border-radius:var(--r-sm);background:var(--paper-2);
+    padding:.45rem .55rem;margin-bottom:.4rem}
+  .edgerow .ehead{font-weight:700;font-size:.76rem;display:flex;align-items:center;gap:.35rem;flex-wrap:wrap}
+  .edgerow .emetrics{font-family:var(--mono);font-size:.7rem;color:var(--ink-2);margin-top:.25rem;line-height:1.55}
+  .edgerow.entry{border-left-color:var(--accent)} .edgerow.entry.red{border-left-color:var(--warn);background:var(--warn-bg)}
+  .edgerow.link{border-left-color:var(--exit)}
+  .edgerow.egress{border-left-color:var(--exit)}
   /* traffic selector */
   .traffic{margin-top:.55rem;border-top:1px dashed var(--warn);padding-top:.5rem}
   .traffic .tl{font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.04em;color:var(--warn-ink);margin-bottom:.3rem}
@@ -149,21 +159,27 @@
   .chip.on{background:var(--warn);color:#fff;border-color:var(--warn)}
   .chip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
   .cyc{margin-top:.35rem;width:100%;font-family:var(--mono);font-size:.72rem;padding:.28rem .4rem;border:1px solid var(--line-2);border-radius:6px;background:#fff}
-  /* estimate panel */
+  /* estimate panel (5 metrics) */
   .est h4{margin-top:0}
   .est .row{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--line)}
   .est .row:last-of-type{border-bottom:none}
-  .est .k{font-size:.74rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.03em}
-  .est .v{font-family:var(--mono);font-weight:700;text-align:right}
-  .est .v .u{font-weight:400;font-size:.72rem;color:var(--muted)}
-  .est .big{font-size:1.5rem;font-family:var(--serif)}
-  .est .breakdown{font-family:var(--mono);font-size:.68rem;color:var(--muted);margin:.3rem 0 .1rem;line-height:1.5}
-  .est .estlabel{display:inline-block;font-family:var(--mono);font-size:.56rem;text-transform:uppercase;letter-spacing:.05em;
+  .est .k{font-size:.72rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.03em}
+  .est .k .i{color:var(--accent-ink);font-weight:700}
+  .est .v{font-family:var(--mono);font-weight:700;text-align:right;font-size:.82rem}
+  .est .v.big{font-size:1.4rem;font-family:var(--serif)}
+  .est .v .u{font-weight:400;font-size:.7rem;color:var(--muted)}
+  .est .breakdown{font-family:var(--mono);font-size:.66rem;color:var(--muted);margin:.15rem 0 .1rem;line-height:1.5}
+  .est .estlabel{display:inline-block;font-family:var(--mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.05em;
     color:var(--muted);border:1px dashed var(--line-2);border-radius:99px;padding:.02rem .38rem;margin-left:.3rem;vertical-align:middle}
-  .est .total{margin-top:.6rem;padding-top:.6rem;border-top:2px solid var(--line-2)}
+  .ph{color:var(--warn-ink)} .ph::after{content:" ⚑ph";font-size:.8em;opacity:.7}
   .kbdhint{font-size:.72rem;color:var(--muted);margin-top:.7rem;line-height:1.4}
   kbd{font-family:var(--mono);font-size:.72em;background:var(--paper-2);border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;padding:.05em .4em}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  /* example template block */
+  .tmpl{border:1.4px dashed var(--warn);background:var(--warn-bg);border-radius:var(--r);padding:.9rem 1rem;margin:1rem 0;font-size:.86rem}
+  .tmpl .tt{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;color:var(--warn-ink);font-weight:700;margin-bottom:.4rem}
+  .tmpl .line{font-family:var(--mono);font-size:.84rem;color:var(--ink);line-height:1.7;word-break:break-word}
+  .tmpl .ph2{font-weight:700;color:var(--warn-ink);text-decoration:underline dotted}
   /* choose.html mock table */
   .perf-ref{width:100%;border-collapse:collapse;font-size:.82rem;min-width:640px;margin:0}
   .perf-ref thead th{font-family:var(--mono);font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
@@ -186,73 +202,78 @@
 <div class="wrap">
 
 <header class="doc">
-  <div class="tag">DESIGN · SDD Workflow · Artifact 2 of 5 · Gate 1 target</div>
+  <div class="tag">DESIGN v2 · SDD Workflow · Artifact 2 of 5 · Gate 1</div>
   <h1>VPS Network Builder &amp; Cost-Performance</h1>
-  <p class="sub lede">The interaction &amp; UI design for the drag-and-drop network board that replaces the radio builder on <code>tool.html</code>, plus the cost-performance figure added to <code>choose.html</code> — built in the guide's own editorial-technical language (Fraunces + Inter, oklch paper/ink/accent).</p>
-  <p class="meta">residential-vps.daichenlab.com · Designer artifact · diagrams-first · interactive prototype embedded · verified 1440 / 390 / 320</p>
+  <p class="sub lede">A <b>connectable</b> network board that replaces the radio builder on <code>tool.html</code>: drag providers into the chain <code>you → jump → exit → internet</code>, wire them together, and read a <b>five-metric</b> estimate for the whole network and every edge — plus a cost-performance figure on <code>choose.html</code>.</p>
+  <p class="meta">v2 · Gate-1 refinements: role-capability roster · connect model · 5-metric estimate · per-edge readout · verified 1440 / 390 / 320</p>
 </header>
 
 <nav aria-label="Contents">
   <div class="tag" style="color:var(--muted)">On this page</div>
   <div class="toc">
     <a href="#glance">★ At a glance — screen map</a> ·
-    <a href="#direction">1 · Design direction</a> ·
-    <a href="#anatomy">2 · Board anatomy</a> ·
+    <a href="#direction">1 · Direction &amp; roster</a> ·
+    <a href="#anatomy">2 · Board anatomy — a connected chain</a> ·
     <a href="#inputs">3 · One affordance, three inputs</a> ·
-    <a href="#states">4 · Board state machine</a> ·
-    <a href="#guardrail">5 · China CN2-GIA guardrail</a> ·
-    <a href="#traffic">6 · Traffic-metered pricing</a> ·
-    <a href="#proto">7 · Interactive prototype</a> ·
-    <a href="#choose">8 · Cost-performance on Choose</a> ·
-    <a href="#open">9 · Open items</a> ·
-    <a href="#verify">10 · Accessibility &amp; verification</a>
+    <a href="#metrics">4 · Five-metric estimate &amp; per-edge</a> ·
+    <a href="#states">5 · Board state machine</a> ·
+    <a href="#guardrail">6 · China CN2-GIA guardrail</a> ·
+    <a href="#traffic">7 · Traffic-metered pricing</a> ·
+    <a href="#proto">8 · Interactive prototype</a> ·
+    <a href="#choose">9 · Cost-performance on Choose</a> ·
+    <a href="#open">10 · Open items</a> ·
+    <a href="#verify">11 · Accessibility &amp; verification</a>
   </div>
 </nav>
 
 <!-- ============================ AT A GLANCE ============================ -->
 <div class="fig glance" id="glance">
-  <svg viewBox="0 0 980 460" role="img" aria-label="Screen map: the tool.html board layout with palette, canvas, estimate panel, guardrail bar, and the choose.html figure.">
+  <svg viewBox="0 0 980 470" role="img" aria-label="Screen map: role-capable palette, a connectable canvas chain, a five-metric estimate, the guardrail bar, and the choose.html value column.">
     <text x="20" y="26" class="t" font-size="15">★ At a glance — the screen map</text>
 
-    <!-- tool.html frame -->
-    <rect class="b" x="16" y="42" width="700" height="300" rx="12"/>
-    <text x="32" y="66" class="t" font-size="12.5">tool.html · “Build your network” (replaces the radio builder)</text>
+    <rect class="b" x="16" y="42" width="700" height="316" rx="12"/>
+    <text x="32" y="66" class="t" font-size="12.5">tool.html · connect a network (replaces the radio builder)</text>
 
-    <!-- china guardrail bar -->
     <rect class="b w" x="32" y="76" width="668" height="30" rx="7"/>
     <text x="44" y="95" class="s" font-size="10">⚑ Building from mainland China?  <tspan class="m" font-size="9">auto geo-IP · [override toggle]</tspan>  → gate non-CN2-GIA entry</text>
 
-    <!-- palette -->
-    <rect class="b" x="32" y="116" width="150" height="216" rx="9"/>
-    <text x="107" y="134" class="s" font-size="9.5" text-anchor="middle">PROVIDER PALETTE</text>
-    <rect class="b a" x="44" y="142" width="126" height="34" rx="6"/><text x="52" y="156" class="t" font-size="8.5">BandwagonHost</text><text x="52" y="169" class="s" font-size="7">jump · CN2 GIA · $30</text>
-    <rect class="b e" x="44" y="180" width="126" height="34" rx="6"/><text x="52" y="194" class="t" font-size="8.5">SolaDrive</text><text x="52" y="207" class="s" font-size="7">exit · 163 · $40</text>
-    <rect class="b e" x="44" y="218" width="126" height="34" rx="6"/><text x="52" y="232" class="t" font-size="8.5">VirVM</text><text x="52" y="245" class="s" font-size="7">exit · 专线GIA · metered</text>
-    <rect class="b d" x="44" y="256" width="126" height="34" rx="6"/><text x="52" y="270" class="t" font-size="8.5">DMIT / QQ.pw</text><text x="52" y="283" class="s" font-size="7">reference · priced only</text>
-    <text x="107" y="308" class="lbl" font-size="8" text-anchor="middle">drag · tap · ⏎</text>
+    <!-- palette w/ role capability -->
+    <rect class="b" x="32" y="116" width="152" height="230" rx="9"/>
+    <text x="108" y="134" class="s" font-size="9.5" text-anchor="middle">PALETTE · by role</text>
+    <rect class="b a" x="44" y="142" width="128" height="30" rx="6"/><text x="52" y="155" class="t" font-size="8">BandwagonHost</text><text x="52" y="166" class="m" font-size="7">JUMP · GIA · $30</text>
+    <rect class="b a" x="44" y="176" width="128" height="30" rx="6"/><text x="52" y="189" class="t" font-size="8">DMIT <tspan class="s" font-size="6.5">ref</tspan></text><text x="52" y="200" class="m" font-size="7">JUMP · GIA · from $10.90</text>
+    <rect class="b" x="44" y="210" width="128" height="30" rx="6" style="fill:var(--paper-2)"/><text x="52" y="223" class="t" font-size="8">VirVM</text><text x="52" y="234" class="s" font-size="7">JUMP+EXIT · 163 / 专线GIA</text>
+    <rect class="b e" x="44" y="244" width="128" height="30" rx="6"/><text x="52" y="257" class="t" font-size="8">SolaDrive</text><text x="52" y="268" class="m" font-size="7" fill="var(--exit-ink)">EXIT · 163 · $40</text>
+    <rect class="b e" x="44" y="278" width="128" height="30" rx="6"/><text x="52" y="291" class="t" font-size="8">AaITR</text><text x="52" y="302" class="m" font-size="7" fill="var(--exit-ink)">EXIT · 163 · $21.88</text>
+    <rect class="b e" x="44" y="312" width="128" height="26" rx="6"/><text x="52" y="328" class="t" font-size="8">QQ.pw <tspan class="s" font-size="6.5">ref · exit</tspan></text>
 
-    <!-- canvas -->
-    <rect class="b d" x="196" y="116" width="330" height="216" rx="9"/>
-    <text x="212" y="134" class="s" font-size="9.5">CANVAS · your network</text>
-    <rect class="b" x="212" y="150" width="60" height="52" rx="7"/><text x="242" y="180" class="s" font-size="9" text-anchor="middle">you</text>
-    <line class="arw" x1="272" y1="176" x2="296" y2="176" marker-end="url(#a)"/>
-    <rect class="b a" x="296" y="150" width="92" height="52" rx="7"/><text x="342" y="172" class="t" font-size="9" text-anchor="middle">jump host</text><text x="342" y="186" class="m" font-size="7.5" text-anchor="middle">required · GIA</text>
-    <line class="arw e" x1="388" y1="176" x2="412" y2="176" marker-end="url(#ae)"/>
-    <rect class="b e" x="412" y="150" width="92" height="52" rx="7"/><text x="458" y="172" class="t" font-size="9" text-anchor="middle">exit</text><text x="458" y="186" class="s" font-size="7.5" text-anchor="middle">0…n · optional</text>
-    <line class="arw" x1="504" y1="176" x2="520" y2="176"/>
-    <text x="212" y="230" class="s" font-size="8">roles: exactly one jump (required) · zero-or-more exits (none = single host)</text>
-    <rect class="b w" x="212" y="244" width="300" height="34" rx="7"/><text x="222" y="258" class="s" font-size="8">gated hop → connector RED + “pick a CN2 GIA box” notice</text><text x="222" y="270" class="s" font-size="7.5">metered box → traffic package selector expands inline</text>
+    <!-- canvas: a connected chain -->
+    <rect class="b d" x="196" y="116" width="330" height="230" rx="9"/>
+    <text x="212" y="134" class="s" font-size="9.5">CANVAS · connect the chain</text>
+    <rect class="b" x="212" y="150" width="54" height="46" rx="7"/><text x="239" y="177" class="s" font-size="8.5" text-anchor="middle">you</text>
+    <line class="arw" x1="266" y1="173" x2="288" y2="173" marker-end="url(#a)"/>
+    <rect class="b a" x="288" y="150" width="82" height="46" rx="7"/><text x="329" y="170" class="t" font-size="8.5" text-anchor="middle">jump</text><text x="329" y="183" class="m" font-size="7" text-anchor="middle">required·GIA</text>
+    <line class="arw e" x1="370" y1="173" x2="392" y2="173" marker-end="url(#ae)"/>
+    <rect class="b e" x="392" y="150" width="82" height="46" rx="7"/><text x="433" y="170" class="t" font-size="8.5" text-anchor="middle">exit</text><text x="433" y="183" class="s" font-size="7" text-anchor="middle">0…n</text>
+    <line class="arw" x1="474" y1="173" x2="494" y2="173" marker-end="url(#a)"/>
+    <rect class="b" x="494" y="150" width="26" height="46" rx="6"/><text x="507" y="177" class="s" font-size="7" text-anchor="middle">net</text>
+    <text x="212" y="216" class="s" font-size="8">each <tspan font-weight="700">edge</tspan> is first-class &amp; carries a per-edge readout:</text>
+    <rect class="b e" x="212" y="224" width="300" height="34" rx="7"/><text x="222" y="238" class="m" font-size="7.5" fill="var(--exit-ink)">BWH → AaITR — $xx · 129–210ms · AT&amp;T(#1)</text><text x="222" y="250" class="m" font-size="7.5" fill="var(--exit-ink)">· purity high · bandwidth 50M (min hop)</text>
+    <text x="212" y="274" class="s" font-size="8">roles: 1 jump (required) · 0…n exits (none = single host)</text>
+    <rect class="b w" x="212" y="284" width="300" height="52" rx="7"/><text x="222" y="300" class="s" font-size="8">gated hop → connector RED + “pick a CN2 GIA box”</text><text x="222" y="313" class="s" font-size="8">metered exit → traffic package selector expands</text><text x="222" y="326" class="s" font-size="8">drop target accepts only a role-compatible box</text>
 
-    <!-- estimate -->
-    <rect class="b" x="540" y="116" width="160" height="216" rx="9"/>
-    <text x="620" y="134" class="s" font-size="9.5" text-anchor="middle">ESTIMATE PANEL</text>
-    <rect class="b a" x="552" y="142" width="136" height="40" rx="6"/><text x="560" y="158" class="s" font-size="8">Performance</text><text x="560" y="172" class="m" font-size="9">88 · estimated</text>
-    <rect class="b" x="552" y="188" width="136" height="40" rx="6"/><text x="560" y="204" class="s" font-size="8">Latency</text><text x="560" y="218" class="m" font-size="9">~129 ms · est</text>
-    <rect class="b e" x="552" y="234" width="136" height="52" rx="6"/><text x="560" y="250" class="s" font-size="8">Cost / mo</text><text x="560" y="266" class="m" font-size="10">$70 flat + traffic</text><text x="560" y="278" class="s" font-size="7">est · benchmark vs reference badged</text>
-    <text x="620" y="308" class="lbl" font-size="8" text-anchor="middle">recomputes live</text>
+    <!-- estimate: 5 metrics -->
+    <rect class="b" x="540" y="116" width="160" height="230" rx="9"/>
+    <text x="620" y="134" class="s" font-size="9.5" text-anchor="middle">ESTIMATE · 5 metrics</text>
+    <rect class="b e" x="552" y="142" width="136" height="30" rx="6"/><text x="560" y="155" class="s" font-size="7.5">① Price</text><text x="560" y="166" class="m" font-size="8">$xx/mo + traffic</text>
+    <rect class="b a" x="552" y="176" width="136" height="30" rx="6"/><text x="560" y="189" class="s" font-size="7.5">② Latency (range)</text><text x="560" y="200" class="m" font-size="8">129 ~ 210 ms</text>
+    <rect class="b" x="552" y="210" width="136" height="30" rx="6"/><text x="560" y="223" class="s" font-size="7.5">③ I/O (IOPS)</text><text x="560" y="234" class="m" font-size="8">2,018 (capped)</text>
+    <rect class="b" x="552" y="244" width="136" height="30" rx="6"/><text x="560" y="257" class="s" font-size="7.5">④ Bandwidth</text><text x="560" y="268" class="m" font-size="8">50M (min hop)</text>
+    <rect class="b" x="552" y="278" width="136" height="34" rx="6"/><text x="560" y="291" class="s" font-size="7.5">⑤ Route quality</text><text x="560" y="303" class="m" font-size="8">AT&amp;T(#1) · purity high</text>
+    <text x="620" y="332" class="lbl" font-size="8" text-anchor="middle">all “estimated” · live</text>
 
-    <!-- choose.html frame -->
-    <rect class="b" x="732" y="42" width="232" height="300" rx="12"/>
+    <!-- choose.html -->
+    <rect class="b" x="732" y="42" width="232" height="316" rx="12"/>
     <text x="748" y="66" class="t" font-size="12.5">choose.html</text>
     <text x="748" y="86" class="s" font-size="9.5">＋ one derived column on the</text>
     <text x="748" y="100" class="s" font-size="9.5">existing fleet table:</text>
@@ -260,182 +281,203 @@
     <rect class="b e" x="748" y="150" width="200" height="26" rx="6"/><text x="758" y="167" class="s" font-size="8.5">BandwagonHost · 2.77 pt/$  ★best</text>
     <rect class="b" x="748" y="180" width="200" height="26" rx="6"/><text x="758" y="197" class="s" font-size="8.5">SolaDrive · 2.20 pt/$</text>
     <rect class="b" x="748" y="210" width="200" height="26" rx="6"/><text x="758" y="227" class="s" font-size="8.5">AaITR · 0.82 pt/$</text>
-    <text x="748" y="258" class="s" font-size="9">best-value row highlighted; sortable.</text>
-    <text x="748" y="278" class="s" font-size="9">reuses <tspan class="mono" font-size="8">.perf-ref</tspan> styling —</text>
-    <text x="748" y="292" class="s" font-size="9">no new data, derived only.</text>
+    <text x="748" y="262" class="s" font-size="9">best-value row highlighted; sortable.</text>
+    <text x="748" y="284" class="s" font-size="9">reuses <tspan class="mono" font-size="8">.perf-ref</tspan> styling —</text>
+    <text x="748" y="298" class="s" font-size="9">derived only, no new data.</text>
+    <text x="748" y="326" class="s" font-size="9">metered box → “—” until a</text>
+    <text x="748" y="340" class="s" font-size="9">traffic package is chosen.</text>
 
-    <!-- footer strip -->
-    <rect class="b" x="16" y="356" width="948" height="86" rx="10"/>
-    <text x="32" y="380" class="t" font-size="11">Three input paths, one affordance</text>
-    <text x="32" y="398" class="s" font-size="9.5">A palette card is a real <tspan font-weight="700">button</tspan> that is also <tspan font-weight="700">draggable</tspan>:</text>
-    <rect class="b a" x="330" y="366" width="130" height="30" rx="7"/><text x="395" y="385" class="s" font-size="9" text-anchor="middle">🖱 drag → drop slot</text>
-    <rect class="b e" x="470" y="366" width="130" height="30" rx="7"/><text x="535" y="385" class="s" font-size="9" text-anchor="middle">👆 tap → place</text>
-    <rect class="b" x="610" y="366" width="150" height="30" rx="7"/><text x="685" y="385" class="s" font-size="9" text-anchor="middle">⌨ focus → Enter</text>
-    <text x="32" y="420" class="s" font-size="9.5">Estimates are always labelled <tspan class="m" font-weight="700">ESTIMATED</tspan>. Boxes we run carry real numbers; reference providers are priced-only and badged. No fabricated data — the site's standing honesty rule.</text>
+    <rect class="b" x="16" y="370" width="948" height="86" rx="10"/>
+    <text x="32" y="394" class="t" font-size="11">Connect, don’t just drop — one affordance, three inputs</text>
+    <text x="32" y="412" class="s" font-size="9.5">A palette card is a real <tspan font-weight="700">button</tspan> that is also <tspan font-weight="700">draggable</tspan>; drop targets accept only role-compatible boxes:</text>
+    <rect class="b a" x="560" y="378" width="120" height="26" rx="7"/><text x="620" y="395" class="s" font-size="8.5" text-anchor="middle">🖱 drag → slot</text>
+    <rect class="b e" x="686" y="378" width="110" height="26" rx="7"/><text x="741" y="395" class="s" font-size="8.5" text-anchor="middle">👆 tap → place</text>
+    <rect class="b" x="802" y="378" width="146" height="26" rx="7"/><text x="875" y="395" class="s" font-size="8.5" text-anchor="middle">⌨ focus → Enter</text>
+    <text x="32" y="432" class="s" font-size="9.5">Estimates are always labelled <tspan class="m" font-weight="700">ESTIMATED</tspan>; benchmarked boxes carry real numbers, reference boxes are priced-only, PM-pending values wear a <tspan class="m" font-weight="700">⚑ph</tspan> stamp. No fabricated data.</text>
 
     <defs>
       <marker id="a" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
       <marker id="ae" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
     </defs>
   </svg>
-  <figcaption>The whole design on one screen. <b>tool.html</b> gains a three-zone board — palette · canvas · estimate — under a China guardrail bar; <b>choose.html</b> gains one derived <i>Value</i> column. Every provider card is a single affordance that answers to mouse, touch, and keyboard alike.</figcaption>
+  <figcaption>The whole design on one screen. The palette is <b>role-capable</b> (a box declares which slot(s) it fits); the canvas is a <b>connected chain</b> whose edges each carry a readout; the estimate grew to <b>five metrics</b>; and <b>choose.html</b> gains one derived <i>Value</i> column.</figcaption>
 </div>
 
-<!-- ============================ 1 DIRECTION ============================ -->
-<h2 id="direction"><span class="n">1</span>Design direction — stay inside the guide</h2>
-<p>This is not a new visual system. It reuses the guide's existing tokens and components so the board looks native the moment it ships:</p>
+<!-- ============================ 1 DIRECTION + ROSTER ============================ -->
+<h2 id="direction"><span class="n">1</span>Direction &amp; the role-capable roster</h2>
+<p>Still the guide's own language — Fraunces + Inter, mono tabular numbers, indigo = jump/entry, teal = residential exit, rust = gating/danger. What changed at Gate 1: a provider now declares <b>which role(s)</b> it can fill, the palette shows it, and a drop target accepts only a compatible box.</p>
 <div class="tw"><table>
-  <tr><th>Element</th><th>Reuses</th><th>Design intent</th></tr>
-  <tr><td>Type</td><td><code>Fraunces</code> headings · <code>Inter</code> body · <code>ui-monospace</code> numbers</td><td>Same pairing as every page; numbers stay monospaced &amp; tabular so estimates line up.</td></tr>
-  <tr><td>Colour</td><td>accent = indigo (jump/entry) · teal <code>--exit</code> (residential) · rust <code>--warn</code> (gating/danger)</td><td>Roles read by colour, semantically — indigo = the datacenter relay, teal = the home exit, rust = "don't / blocked".</td></tr>
-  <tr><td>Provider card</td><td>evolves the current <code>.nb-opt</code> row</td><td>Same border/hover/selected language, now a draggable, placeable tile with role + benchmark badges.</td></tr>
-  <tr><td>Estimate + tables</td><td><code>.nb-sum</code>, <code>.callout</code>, <code>.tool-wrap</code>, <code>.perf-ref</code></td><td>The summary panel and the Choose column are the existing components with new fields — nothing exotic.</td></tr>
+  <tr><th>Provider</th><th>Role capability</th><th>Network / entry route</th><th>Pricing</th><th>Data</th></tr>
+  <tr><td><b>BandwagonHost</b></td><td>jump-only</td><td>CN2 GIA <span class="pill out">GIA</span></td><td>flat $30/mo</td><td><span class="pill in">benchmarked</span></td></tr>
+  <tr><td><b>DMIT</b></td><td>jump-only</td><td>CN2 GIA <span class="pill out">GIA</span> · out of stock</td><td>from $10.90/mo</td><td><span class="pill data">reference</span></td></tr>
+  <tr><td><b>VirVM</b></td><td><b>both</b> — jump &amp; exit</td><td>as jump: <b>163</b> (专线GIA upgrade avail.) · as exit: 专线GIA residential</td><td>metered (traffic pkg)</td><td><span class="pill in">benchmarked</span></td></tr>
+  <tr><td><b>SolaDrive</b></td><td>exit-only</td><td>163 · clean IP</td><td>flat $40/mo</td><td><span class="pill in">benchmarked</span></td></tr>
+  <tr><td><b>AaITR</b></td><td>exit-only</td><td>163 · clean IP, lossy route</td><td>flat $21.88/mo</td><td><span class="pill in">benchmarked</span></td></tr>
+  <tr><td><b>QQ.pw</b></td><td>exit-only</td><td>— · out of stock</td><td>from $35/mo</td><td><span class="pill data">reference</span></td></tr>
 </table></div>
-<div class="callout ok"><div class="ct">✓ Design principles that gate every screen</div>
-  <b>1 · Honesty is visible.</b> Estimated numbers wear an <span class="pill est">estimated</span> tag; benchmarked vs reference is a badge, never a guess. <b>2 · The guardrail is loud, not modal.</b> It colours the path in place rather than blocking a dialog. <b>3 · No input is second-class</b> — drag, tap and keyboard reach the same result. <b>4 · One-box is a first-class network</b>, not an error state.</div>
+<div class="callout"><div class="ct">▸ Why VirVM-as-jump is <span class="mono">163</span>, not GIA</div>
+  VirVM's real route to China is standard <b>163</b> (per the guide's route table); its <b>专线GIA</b> is a paid upgrade. So dropping VirVM into the <b>jump</b> slot yields a <b>non-CN2-GIA entry</b> — which is exactly what the China guardrail must catch. This keeps the red state reachable and <em>honest</em>: every other jump box (BWH, DMIT) is already GIA, so VirVM-jump is the teachable "your entry isn't GIA" case.</div>
+<div class="callout ok"><div class="ct">✓ Principles that gate every screen</div>
+  <b>1 · Connect, don't just drop</b> — the board is a wired chain, not a pair of dropdowns. <b>2 · Honesty is visible</b> — <span class="pill est">estimated</span> tags, benchmarked-vs-reference badges, and a <span class="mono" style="color:var(--warn-ink)">⚑ph</span> stamp on any PM-pending number. <b>3 · No input is second-class.</b> <b>4 · One-box is a first-class network.</b></div>
 
 <!-- ============================ 2 ANATOMY ============================ -->
-<h2 id="anatomy"><span class="n">2</span>Board anatomy</h2>
+<h2 id="anatomy"><span class="n">2</span>Board anatomy — a connected chain, not a form</h2>
 <div class="fig">
-  <svg viewBox="0 0 900 340" role="img" aria-label="Board anatomy: guardrail bar on top, then palette, canvas and estimate panel side by side.">
-    <rect class="b w" x="20" y="20" width="860" height="34" rx="8"/>
-    <text x="34" y="42" class="s" font-size="11">Ⓐ Guardrail bar — geo-detected China flag + override toggle, spans full width</text>
+  <svg viewBox="0 0 900 360" role="img" aria-label="Board anatomy: guardrail bar, role-capable palette, a connected canvas chain whose edges carry per-edge readouts, and a five-metric estimate.">
+    <rect class="b w" x="20" y="20" width="860" height="30" rx="8"/>
+    <text x="34" y="40" class="s" font-size="11">Ⓐ Guardrail bar — geo-detected China flag + override toggle</text>
 
     <!-- palette -->
-    <rect class="b" x="20" y="66" width="220" height="250" rx="10"/>
-    <text x="34" y="88" class="t" font-size="12">Ⓑ Palette</text>
-    <text x="34" y="106" class="s" font-size="10">grouped: jump hosts, then exits</text>
-    <rect class="b a" x="34" y="116" width="192" height="52" rx="7"/>
-    <text x="44" y="134" class="t" font-size="10">BandwagonHost <tspan class="lbl" font-size="8">JUMP</tspan></text>
-    <text x="44" y="149" class="s" font-size="8.5">4C·4GB · CN2 GIA · 129 ms · perf 83</text>
-    <text x="44" y="162" class="m" font-size="9">$30/mo</text><text x="196" y="162" class="lbl" font-size="7.5">bench · gia</text>
-    <rect class="b e" x="34" y="176" width="192" height="52" rx="7"/>
-    <text x="44" y="194" class="t" font-size="10">VirVM <tspan class="lbl" font-size="8">EXIT</tspan></text>
-    <text x="44" y="209" class="s" font-size="8.5">4C·8GB · 专线GIA · 158 ms · perf 38</text>
-    <text x="44" y="222" class="m" font-size="9">metered</text><text x="196" y="222" class="lbl" font-size="7.5">bench · gia</text>
-    <rect class="b d" x="34" y="236" width="192" height="52" rx="7"/>
-    <text x="44" y="254" class="t" font-size="10">DMIT <tspan class="lbl" font-size="8">JUMP · REF</tspan></text>
-    <text x="44" y="269" class="s" font-size="8.5">CN2 GIA · out of stock</text>
-    <text x="44" y="282" class="m" font-size="9">from $10.90</text><text x="196" y="282" class="lbl" font-size="7.5">reference</text>
+    <rect class="b" x="20" y="62" width="212" height="278" rx="10"/>
+    <text x="34" y="84" class="t" font-size="12">Ⓑ Palette · role-capable</text>
+    <rect class="b a" x="34" y="94" width="184" height="46" rx="7"/>
+    <text x="44" y="111" class="t" font-size="9.5">BandwagonHost <tspan class="lbl" font-size="7">JUMP</tspan></text>
+    <text x="44" y="125" class="s" font-size="8">CN2 GIA · 129 ms · perf 83</text>
+    <text x="44" y="136" class="m" font-size="8">$30/mo · bench · gia</text>
+    <rect class="b" x="34" y="146" width="184" height="52" rx="7" style="fill:var(--paper-2)"/>
+    <text x="44" y="163" class="t" font-size="9.5">VirVM <tspan class="lbl" font-size="7">JUMP + EXIT</tspan></text>
+    <text x="44" y="177" class="s" font-size="8">jump: 163 (non-GIA) · exit: 专线GIA</text>
+    <text x="44" y="189" class="m" font-size="8">metered · bench · fits both slots</text>
+    <rect class="b e" x="34" y="204" width="184" height="46" rx="7"/>
+    <text x="44" y="221" class="t" font-size="9.5">AaITR <tspan class="lbl" font-size="7">EXIT</tspan></text>
+    <text x="44" y="235" class="s" font-size="8">163 · clean IP · lossy · perf 18</text>
+    <text x="44" y="246" class="m" font-size="8" fill="var(--exit-ink)">$21.88/mo · bench</text>
+    <rect class="b d" x="34" y="256" width="184" height="46" rx="7"/>
+    <text x="44" y="273" class="t" font-size="9.5">DMIT / QQ.pw <tspan class="lbl" font-size="7">REF</tspan></text>
+    <text x="44" y="287" class="s" font-size="8">priced only · not benchmarked</text>
+    <text x="44" y="298" class="m" font-size="8">from $10.90 / $35</text>
+    <text x="126" y="322" class="lbl" font-size="8" text-anchor="middle">drag · tap · ⏎ → compatible slot</text>
 
-    <!-- canvas -->
-    <rect class="b d" x="256" y="66" width="410" height="250" rx="10"/>
-    <text x="270" y="88" class="t" font-size="12">Ⓒ Canvas — the assembled path</text>
-    <rect class="b" x="270" y="104" width="66" height="60" rx="8"/><text x="303" y="138" class="s" font-size="10" text-anchor="middle">you</text>
-    <line class="arw e" x1="336" y1="134" x2="360" y2="134" marker-end="url(#a2e)"/>
-    <rect class="b a" x="360" y="104" width="120" height="60" rx="8"/><text x="420" y="128" class="t" font-size="10.5" text-anchor="middle">jump-host slot</text><text x="420" y="144" class="m" font-size="8.5" text-anchor="middle">required · 1 only</text><text x="420" y="157" class="s" font-size="8" text-anchor="middle">drop target</text>
-    <line class="arw e" x1="480" y1="134" x2="504" y2="134" marker-end="url(#a2e)"/>
-    <rect class="b e" x="504" y="104" width="86" height="60" rx="8"/><text x="547" y="130" class="t" font-size="10" text-anchor="middle">exit slot</text><text x="547" y="145" class="s" font-size="8" text-anchor="middle">0…n</text><text x="547" y="157" class="s" font-size="8" text-anchor="middle">＋ add</text>
-    <line class="arw" x1="590" y1="134" x2="612" y2="134" marker-end="url(#a2)"/>
-    <rect class="b" x="612" y="104" width="44" height="60" rx="8"/><text x="634" y="138" class="s" font-size="8" text-anchor="middle">net</text>
-    <rect class="b" x="270" y="184" width="384" height="52" rx="8"/>
-    <text x="282" y="204" class="s" font-size="9.5">empty slot = dashed outline + hint “drop or tap a provider”.</text>
-    <text x="282" y="220" class="s" font-size="9.5">filled slot = solid card w/ specs, remove ✕, inline config (traffic).</text>
-    <rect class="b w" x="270" y="248" width="384" height="52" rx="8"/>
-    <text x="282" y="268" class="s" font-size="9.5">connector states: neutral (grey) · ✓ ok (teal) · ⚑ gated (rust, arrowed).</text>
-    <text x="282" y="284" class="s" font-size="9.5">a red connector carries the “pick a CN2 GIA box” notice beneath it.</text>
+    <!-- canvas chain -->
+    <rect class="b d" x="244" y="62" width="420" height="278" rx="10"/>
+    <text x="258" y="84" class="t" font-size="12">Ⓒ Canvas — wire the chain</text>
+    <rect class="b" x="258" y="98" width="56" height="52" rx="8"/><text x="286" y="128" class="s" font-size="9.5" text-anchor="middle">you</text>
+    <line class="arw a" x1="314" y1="124" x2="340" y2="124" marker-end="url(#a2a)"/><text x="327" y="116" class="lbl" font-size="7" text-anchor="middle">edge①</text>
+    <rect class="b a" x="340" y="98" width="104" height="52" rx="8"/><text x="392" y="120" class="t" font-size="9.5" text-anchor="middle">jump-host slot</text><text x="392" y="135" class="m" font-size="8" text-anchor="middle">required · 1 only</text>
+    <line class="arw e" x1="444" y1="124" x2="470" y2="124" marker-end="url(#a2e)"/><text x="457" y="116" class="lbl" font-size="7" text-anchor="middle">edge②</text>
+    <rect class="b e" x="470" y="98" width="90" height="52" rx="8"/><text x="515" y="120" class="t" font-size="9" text-anchor="middle">exit slot</text><text x="515" y="135" class="s" font-size="8" text-anchor="middle">0…n · ＋ add</text>
+    <line class="arw e" x1="560" y1="124" x2="586" y2="124" marker-end="url(#a2e)"/><text x="573" y="116" class="lbl" font-size="7" text-anchor="middle">edge③</text>
+    <rect class="b" x="586" y="98" width="42" height="52" rx="8"/><text x="607" y="128" class="s" font-size="8" text-anchor="middle">net</text>
 
-    <!-- estimate -->
-    <rect class="b" x="682" y="66" width="198" height="250" rx="10"/>
-    <text x="696" y="88" class="t" font-size="12">Ⓓ Estimate</text>
-    <rect class="b a" x="696" y="100" width="170" height="40" rx="7"/><text x="706" y="116" class="s" font-size="9">Performance <tspan class="lbl" font-size="7">EST</tspan></text><text x="706" y="132" class="m" font-size="11">88 / 100</text>
-    <rect class="b" x="696" y="146" width="170" height="40" rx="7"/><text x="706" y="162" class="s" font-size="9">Latency to CN <tspan class="lbl" font-size="7">EST</tspan></text><text x="706" y="178" class="m" font-size="11">~129 ms · 0% loss</text>
-    <rect class="b e" x="696" y="192" width="170" height="64" rx="7"/><text x="706" y="208" class="s" font-size="9">Cost / month <tspan class="lbl" font-size="7">EST</tspan></text><text x="706" y="226" class="m" font-size="12">$70.00</text><text x="706" y="240" class="s" font-size="7.5">$30 jump + $40 exit</text><text x="706" y="250" class="s" font-size="7.5">+ traffic pkg if metered</text>
-    <text x="781" y="278" class="lbl" font-size="8" text-anchor="middle">live recompute</text>
-    <text x="696" y="298" class="s" font-size="8">reference hops listed</text>
-    <text x="696" y="309" class="s" font-size="8">separately, not summed blind</text>
+    <text x="258" y="176" class="t" font-size="10">Ⓔ Every edge carries its own readout:</text>
+    <rect class="b a" x="258" y="184" width="392" height="26" rx="7"/><text x="268" y="201" class="m" font-size="8">edge① you→jump: 129–156 ms · CN2 GIA ✓ (or 163 → RED)</text>
+    <rect class="b e" x="258" y="214" width="392" height="26" rx="7"/><text x="268" y="231" class="m" font-size="8" fill="var(--exit-ink)">edge② jump→exit: + private hop · bandwidth 50M (min)</text>
+    <rect class="b e" x="258" y="244" width="392" height="26" rx="7"/><text x="268" y="261" class="m" font-size="8" fill="var(--exit-ink)">edge③ exit→internet: outbound AT&amp;T (#1) · IP purity high</text>
+    <rect class="b w" x="258" y="278" width="392" height="50" rx="7"/>
+    <text x="268" y="295" class="s" font-size="8.5">empty slot = dashed hint · filled = card w/ specs + remove ✕</text>
+    <text x="268" y="309" class="s" font-size="8.5">connector: grey neutral · teal ✓ ok · rust ⚑ gated (+ notice)</text>
+    <text x="268" y="323" class="s" font-size="8.5">incompatible drop is rejected (rust flash, no place)</text>
+
+    <!-- estimate 5-metric -->
+    <rect class="b" x="676" y="62" width="204" height="278" rx="10"/>
+    <text x="690" y="84" class="t" font-size="12">Ⓓ Estimate · 5</text>
+    <rect class="b e" x="690" y="92" width="176" height="30" rx="7"/><text x="700" y="105" class="s" font-size="8">① Price <tspan class="lbl" font-size="6.5">EST</tspan></text><text x="700" y="117" class="m" font-size="9">$51.88/mo</text>
+    <rect class="b a" x="690" y="126" width="176" height="30" rx="7"/><text x="700" y="139" class="s" font-size="8">② Latency range</text><text x="700" y="151" class="m" font-size="9">129 ~ 210 ms</text>
+    <rect class="b" x="690" y="160" width="176" height="30" rx="7"/><text x="700" y="173" class="s" font-size="8">③ I/O disk IOPS</text><text x="700" y="185" class="m" font-size="9">2,018 (capped)</text>
+    <rect class="b" x="690" y="194" width="176" height="30" rx="7"/><text x="700" y="207" class="s" font-size="8">④ Bandwidth (min hop)</text><text x="700" y="219" class="m" font-size="9">50M</text>
+    <rect class="b" x="690" y="228" width="176" height="40" rx="7"/><text x="700" y="241" class="s" font-size="8">⑤ Route quality</text><text x="700" y="253" class="m" font-size="8.5">AT&amp;T (#1)</text><text x="700" y="263" class="s" font-size="7.5">IP purity high</text>
+    <text x="778" y="286" class="lbl" font-size="8" text-anchor="middle">live recompute</text>
+    <text x="690" y="306" class="s" font-size="7.5">whole-network summary;</text>
+    <text x="690" y="317" class="s" font-size="7.5">edges expand the detail.</text>
+    <text x="690" y="330" class="s" font-size="7.5">reference hops listed apart.</text>
 
     <defs>
-      <marker id="a2" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="a2a" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker>
       <marker id="a2e" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
     </defs>
   </svg>
-  <figcaption>Four regions. On desktop they sit side-by-side (palette · canvas · estimate) under a full-width guardrail bar; below 900px they stack vertically in that reading order, and the estimate panel becomes a sticky summary at the foot.</figcaption>
+  <figcaption>Four regions plus the edges. The user <b>connects</b> boxes into <code>you → jump → exit → internet</code>; each <b>edge is a first-class object</b> carrying its own readout (entry route, private-hop bandwidth, egress ISP/purity), while the estimate panel rolls them up into the five whole-network metrics. Below 900px the columns stack and the estimate becomes a sticky foot summary.</figcaption>
 </div>
 
 <!-- ============================ 3 INPUTS ============================ -->
 <h2 id="inputs"><span class="n">3</span>One affordance, three inputs <span class="pill data">accessibility · non-negotiable</span></h2>
-<p>The central accessibility decision: a palette card is <b>a native <code>&lt;button&gt;</code> that is <em>also</em> <code>draggable</code></b>. Its button semantics are the baseline that touch and keyboard use; drag-and-drop is a progressive enhancement layered on top. No path is exclusive, and drag is never the only way to do anything.</p>
+<p>A palette card is <b>a native <code>&lt;button&gt;</code> that is <em>also</em> <code>draggable</code></b>. Button semantics are the baseline for touch and keyboard; drag is a progressive enhancement. New at v2: because roles are typed, <b>a drop target only accepts a compatible provider</b> — an exit-only box dragged onto the jump slot gets a rust "reject" flash and is not placed (announced to screen readers).</p>
 <div class="fig">
-  <svg viewBox="0 0 900 250" role="img" aria-label="Three input paths converging on the same place action.">
-    <rect class="b a" x="20" y="34" width="240" height="66" rx="10"/>
-    <text x="140" y="60" class="t" font-size="12" text-anchor="middle">🖱 Pointer — drag</text>
-    <text x="140" y="80" class="s" font-size="9.5" text-anchor="middle">grab card → drop on a slot;</text>
-    <text x="140" y="93" class="s" font-size="9.5" text-anchor="middle">slot highlights on dragover</text>
-    <rect class="b e" x="20" y="110" width="240" height="66" rx="10"/>
-    <text x="140" y="136" class="t" font-size="12" text-anchor="middle">👆 Touch — tap</text>
-    <text x="140" y="156" class="s" font-size="9.5" text-anchor="middle">tap card → drops into its</text>
-    <text x="140" y="169" class="s" font-size="9.5" text-anchor="middle">recommended role slot</text>
-    <rect class="b" x="20" y="186" width="240" height="52" rx="10"/>
-    <text x="140" y="210" class="t" font-size="12" text-anchor="middle">⌨ Keyboard</text>
-    <text x="140" y="228" class="s" font-size="9.5" text-anchor="middle">Tab to card → <tspan font-weight="700">Enter/Space</tspan> places it</text>
+  <svg viewBox="0 0 900 250" role="img" aria-label="Three input paths converge on one place action, gated by role compatibility.">
+    <rect class="b a" x="20" y="34" width="240" height="60" rx="10"/>
+    <text x="140" y="58" class="t" font-size="12" text-anchor="middle">🖱 Pointer — drag</text>
+    <text x="140" y="78" class="s" font-size="9.5" text-anchor="middle">grab card → drop on a slot</text>
+    <rect class="b e" x="20" y="102" width="240" height="60" rx="10"/>
+    <text x="140" y="126" class="t" font-size="12" text-anchor="middle">👆 Touch — tap</text>
+    <text x="140" y="146" class="s" font-size="9.5" text-anchor="middle">tap → drops into its role slot</text>
+    <rect class="b" x="20" y="170" width="240" height="56" rx="10"/>
+    <text x="140" y="194" class="t" font-size="12" text-anchor="middle">⌨ Keyboard</text>
+    <text x="140" y="213" class="s" font-size="9.5" text-anchor="middle">Tab → <tspan font-weight="700">Enter/Space</tspan> places it</text>
 
-    <path class="arw" d="M260 67 C 330 67, 340 130, 410 130" marker-end="url(#a3)"/>
-    <path class="arw" d="M260 143 L 410 133" marker-end="url(#a3)"/>
-    <path class="arw" d="M260 212 C 330 212, 340 145, 410 138" marker-end="url(#a3)"/>
+    <path class="arw" d="M260 64 C 330 64, 340 120, 400 120" marker-end="url(#a3)"/>
+    <path class="arw" d="M260 132 L 400 124" marker-end="url(#a3)"/>
+    <path class="arw" d="M260 198 C 330 198, 340 132, 400 128" marker-end="url(#a3)"/>
 
-    <rect class="b" x="410" y="96" width="180" height="72" rx="12"/>
-    <text x="500" y="126" class="t" font-size="12.5" text-anchor="middle">place(provider, role)</text>
-    <text x="500" y="146" class="s" font-size="9.5" text-anchor="middle">one function · one result</text>
-    <line class="arw" x1="590" y1="132" x2="628" y2="132" marker-end="url(#a3)"/>
-
-    <rect class="b e" x="628" y="96" width="250" height="72" rx="12"/>
-    <text x="753" y="122" class="t" font-size="12" text-anchor="middle">canvas updates + estimate recomputes</text>
-    <text x="753" y="142" class="s" font-size="9.5" text-anchor="middle">focus moves to the placed card;</text>
-    <text x="753" y="155" class="s" font-size="9.5" text-anchor="middle">a live-region announces the change</text>
-    <defs><marker id="a3" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker></defs>
+    <path class="b w" d="M400 96 L470 78 L540 96 L470 114 Z"/>
+    <text x="470" y="94" class="t" font-size="9.5" text-anchor="middle">role fits slot?</text>
+    <text x="470" y="106" class="s" font-size="7.5" text-anchor="middle">roles.includes(target)</text>
+    <line class="arw w" x1="470" y1="114" x2="470" y2="150" marker-end="url(#a3w)"/><text x="484" y="136" class="lbl" font-size="8">no</text>
+    <rect class="b w" x="392" y="150" width="156" height="34" rx="9"/><text x="470" y="171" class="s" font-size="9" text-anchor="middle" fill="var(--warn-ink)">reject flash + announce</text>
+    <line class="arw e" x1="540" y1="96" x2="600" y2="110" marker-end="url(#a3e)"/><text x="576" y="92" class="lbl" font-size="8">yes</text>
+    <rect class="b" x="600" y="88" width="150" height="44" rx="11"/><text x="675" y="108" class="t" font-size="10.5" text-anchor="middle">place(box, role)</text><text x="675" y="123" class="s" font-size="8" text-anchor="middle">one result</text>
+    <line class="arw" x1="750" y1="110" x2="778" y2="110" marker-end="url(#a3)"/>
+    <rect class="b e" x="620" y="150" width="258" height="40" rx="10"/><text x="749" y="168" class="t" font-size="9.5" text-anchor="middle">canvas + edges + estimate recompute</text><text x="749" y="182" class="s" font-size="8.5" text-anchor="middle">focus moves to placed card · aria-live announces</text>
+    <defs>
+      <marker id="a3" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
+      <marker id="a3w" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
+      <marker id="a3e" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
+    </defs>
   </svg>
-  <figcaption>All three inputs funnel through one <code>place()</code> call. The prototype below is wired for every path — try dragging a card, tapping one, or tabbing to it and pressing Enter.</figcaption>
+  <figcaption>All three inputs funnel through one <code>place()</code> guarded by a role-compatibility check. Live-region announcements, visible focus, ≥40px targets, and reduced-motion fallbacks apply to every control — nothing is drag-only.</figcaption>
 </div>
-<h3>Accessibility specifics</h3>
-<ul>
-  <li><b>Roles &amp; labels.</b> Palette = a labelled list of buttons (<code>aria-label="Add BandwagonHost as jump host"</code>). Slots are <code>role="group"</code> with an accessible name ("Jump host, empty" / "Jump host: BandwagonHost").</li>
-  <li><b>Live region.</b> An off-screen <code>aria-live="polite"</code> node announces every place / remove / gating change ("Added SolaDrive as exit. Estimated cost $70 per month.").</li>
-  <li><b>Keyboard remove/config.</b> A placed card's ✕ and its traffic chips are all focusable buttons; <kbd>Delete</kbd> on a focused placed card removes it.</li>
-  <li><b>Focus visible &amp; reduced-motion.</b> 2px accent outline on every interactive element; drag ghosting and slot pulse honour <code>prefers-reduced-motion</code>.</li>
-  <li><b>Touch targets.</b> Cards and chips are ≥ 40px tall; the whole card is the hit area, not a tiny handle.</li>
-</ul>
 
-<!-- ============================ 4 STATES ============================ -->
-<h2 id="states"><span class="n">4</span>Board state machine</h2>
+<!-- ============================ 4 METRICS ============================ -->
+<h2 id="metrics"><span class="n">4</span>Five-metric estimate &amp; the per-edge readout</h2>
+<p>The estimate grew from three to <b>five</b> metrics, shown for the <b>assembled network</b> (the panel) and expanded <b>per edge</b> (the connections list beside the chain):</p>
+<div class="tw"><table>
+  <tr><th>#</th><th>Metric</th><th>Definition</th><th>Source</th></tr>
+  <tr><td>①</td><td><b>Price</b></td><td>$/mo — flat hops summed + traffic package (effective $/mo) for metered</td><td>flat = measured; traffic base = <span class="pill data">PM-pending</span></td></tr>
+  <tr><td>②</td><td><b>Latency</b></td><td>a <b>range</b> <code>xxx ms ~ yyy ms</code> — entry RTT low → +private-hop high</td><td>entry = measured; hop add = <span class="pill data">illustrative</span></td></tr>
+  <tr><td>③</td><td><b>I/O</b></td><td>disk IOPS — the exit's (chain bottleneck), flagged if capped</td><td>measured (fleet)</td></tr>
+  <tr><td>④</td><td><b>Bandwidth</b></td><td><b>min(bandwidth across all hops)</b> — the bottleneck, e.g. <code>50M (min hop)</code></td><td>measured; some hops <span class="pill data">PM-pending</span></td></tr>
+  <tr><td>⑤</td><td><b>Route quality</b></td><td>outbound <b>ISP + rank</b> (e.g. <code>AT&amp;T (#1)</code>) + outbound <b>IP purity</b> (high/med/low)</td><td>purity = measured; ISP rank = <span class="pill data">PM-pending</span></td></tr>
+</table></div>
+<p>The exact per-edge readout the PM asked us to carry, shown here as the target format — placeholder values are stamped, real fleet numbers replace them live:</p>
+<div class="tmpl">
+  <div class="tt">⛁ Per-edge readout — format template (dotted = PM-pending placeholder)</div>
+  <div class="line"><b>BandwagonHost → AaITR</b> — <span class="ph2">$xx/mo</span> · 129–210 ms · outbound <span class="ph2">AT&amp;T (#1)</span> · IP purity high · bandwidth <span class="ph2">50M</span> (= min hop)</div>
+  <p style="margin:.5rem 0 0;font-size:.78rem;color:var(--warn-ink)">In the live prototype below this same edge resolves to real fleet numbers where we have them (BWH $30 + AaITR $21.88 = <b>$51.88/mo</b>, latency <b>129–210 ms</b>, IP purity <b>high</b>, I/O <b>2,018 IOPS capped</b>); the ISP <b>rank</b> stays PM-pending until supplied. The <b>50M</b> above is the PM's illustrative figure — AaITR actually measures ~102 Mbps, so the prototype shows the real min hop rather than fabricate 50.</p>
+</div>
+
+<!-- ============================ 5 STATES ============================ -->
+<h2 id="states"><span class="n">5</span>Board state machine</h2>
 <div class="fig">
-  <svg viewBox="0 0 900 320" role="img" aria-label="State machine of the board from empty through single-host, two-box, gated and metered states.">
-    <!-- empty -->
+  <svg viewBox="0 0 900 320" role="img" aria-label="State machine from empty through single-host, two-box, gated, reference and traffic states, with per-edge readouts throughout.">
     <rect class="b d" x="30" y="30" width="150" height="60" rx="10"/><text x="105" y="56" class="t" font-size="11" text-anchor="middle">① Empty</text><text x="105" y="74" class="s" font-size="8.5" text-anchor="middle">jump slot dashed · CTA</text>
-    <line class="arw" x1="180" y1="60" x2="228" y2="60" marker-end="url(#a4)"/><text x="204" y="50" class="lbl" font-size="8">place jump</text>
-    <!-- single -->
+    <line class="arw" x1="180" y1="60" x2="228" y2="60" marker-end="url(#a4)"/><text x="204" y="50" class="lbl" font-size="8">connect jump</text>
     <rect class="b a" x="228" y="30" width="160" height="60" rx="10"/><text x="308" y="52" class="t" font-size="11" text-anchor="middle">② Single-host</text><text x="308" y="70" class="s" font-size="8.5" text-anchor="middle">you→jump→internet · valid</text>
-    <line class="arw" x1="388" y1="60" x2="436" y2="60" marker-end="url(#a4)"/><text x="412" y="50" class="lbl" font-size="8">add exit</text>
-    <!-- two-box -->
+    <line class="arw" x1="388" y1="60" x2="436" y2="60" marker-end="url(#a4)"/><text x="412" y="50" class="lbl" font-size="8">connect exit</text>
     <rect class="b e" x="436" y="30" width="160" height="60" rx="10"/><text x="516" y="52" class="t" font-size="11" text-anchor="middle">③ Two-box</text><text x="516" y="70" class="s" font-size="8.5" text-anchor="middle">jump→exit→home IP</text>
-    <line class="arw" x1="516" y1="90" x2="516" y2="128" marker-end="url(#a4)"/><text x="528" y="112" class="lbl" font-size="8">add exit(s)</text>
-    <rect class="b e" x="436" y="128" width="160" height="52" rx="10"/><text x="516" y="150" class="t" font-size="11" text-anchor="middle">③′ Multi-exit</text><text x="516" y="167" class="s" font-size="8.5" text-anchor="middle">chain 0…n exits</text>
+    <line class="arw" x1="516" y1="90" x2="516" y2="126" marker-end="url(#a4)"/><text x="528" y="112" class="lbl" font-size="8">＋ more exits</text>
+    <rect class="b e" x="436" y="126" width="160" height="50" rx="10"/><text x="516" y="147" class="t" font-size="11" text-anchor="middle">③′ Multi-exit</text><text x="516" y="164" class="s" font-size="8.5" text-anchor="middle">chain 0…n exits</text>
 
-    <!-- china overlay -->
-    <line class="arw w" x1="308" y1="90" x2="308" y2="210" marker-end="url(#a4w)"/><text x="318" y="150" class="lbl" font-size="8" fill="var(--warn-ink)">China ON + entry ≠ GIA</text>
-    <rect class="b w" x="210" y="210" width="200" height="66" rx="10"/><text x="310" y="234" class="t" font-size="11" text-anchor="middle" fill="var(--warn-ink)">④ Gated-red</text><text x="310" y="252" class="s" font-size="8.5" text-anchor="middle">entry connector RED</text><text x="310" y="266" class="s" font-size="8.5" text-anchor="middle">+ “pick a CN2 GIA box”</text>
+    <line class="arw w" x1="308" y1="90" x2="308" y2="210" marker-end="url(#a4w)"/><text x="318" y="150" class="lbl" font-size="8" fill="var(--warn-ink)">China ON + VirVM-jump (163)</text>
+    <rect class="b w" x="208" y="210" width="204" height="66" rx="10"/><text x="310" y="234" class="t" font-size="11" text-anchor="middle" fill="var(--warn-ink)">④ Gated-red</text><text x="310" y="252" class="s" font-size="8.5" text-anchor="middle">edge① RED · non-GIA entry</text><text x="310" y="266" class="s" font-size="8.5" text-anchor="middle">“pick a CN2 GIA box”</text>
 
-    <!-- reference -->
     <line class="arw" x1="596" y1="60" x2="644" y2="60" marker-end="url(#a4)"/><text x="620" y="50" class="lbl" font-size="8">ref box</text>
     <rect class="b d" x="644" y="30" width="150" height="60" rx="10"/><text x="719" y="52" class="t" font-size="11" text-anchor="middle">⑤ Reference</text><text x="719" y="70" class="s" font-size="8.5" text-anchor="middle">priced · “not benchmarked”</text>
 
-    <!-- metered -->
-    <line class="arw" x1="596" y1="154" x2="644" y2="154" marker-end="url(#a4)"/><text x="620" y="144" class="lbl" font-size="8">metered exit</text>
-    <rect class="b w" x="644" y="128" width="150" height="66" rx="10"/><text x="719" y="150" class="t" font-size="11" text-anchor="middle">⑥ Traffic pkg</text><text x="719" y="167" class="s" font-size="8.5" text-anchor="middle">selector expands inline</text><text x="719" y="181" class="s" font-size="8.5" text-anchor="middle">cost folds into total</text>
+    <line class="arw" x1="596" y1="151" x2="644" y2="151" marker-end="url(#a4)"/><text x="620" y="141" class="lbl" font-size="8">metered exit</text>
+    <rect class="b w" x="644" y="126" width="150" height="66" rx="10"/><text x="719" y="148" class="t" font-size="11" text-anchor="middle">⑥ Traffic pkg</text><text x="719" y="165" class="s" font-size="8.5" text-anchor="middle">selector expands inline</text><text x="719" y="179" class="s" font-size="8.5" text-anchor="middle">cost folds into total</text>
 
-    <text x="450" y="304" class="s" font-size="9" text-anchor="middle">Every transition recomputes the estimate; ✕ on any card walks the machine backwards. Guardrail &amp; traffic are orthogonal overlays that can co-exist with states ②–③′.</text>
+    <text x="450" y="300" class="s" font-size="9" text-anchor="middle">Every transition recomputes the five metrics and re-draws each edge readout. Guardrail &amp; traffic are orthogonal overlays on states ②–③′; ✕ walks the machine backwards.</text>
     <defs>
       <marker id="a4" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
       <marker id="a4w" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
     </defs>
   </svg>
-  <figcaption>Six named states, all reachable in the prototype's preset row. The <b>empty → single-host → two-box</b> spine is the happy path; <b>gated-red</b>, <b>reference</b> and <b>traffic-package</b> are overlays that decorate whichever spine state you're in.</figcaption>
+  <figcaption>Seven named states, all reachable in the prototype's preset row (including a dedicated <b>BWH → AaITR</b> preset that renders the PM's exact per-edge example). Gated-red is now triggered honestly by <b>VirVM-as-jump on 163</b>, since every purpose-built jump box is already CN2 GIA.</figcaption>
 </div>
 
-<!-- ============================ 5 GUARDRAIL ============================ -->
-<h2 id="guardrail"><span class="n">5</span>China CN2-GIA guardrail</h2>
+<!-- ============================ 6 GUARDRAIL ============================ -->
+<h2 id="guardrail"><span class="n">6</span>China CN2-GIA guardrail</h2>
 <div class="fig">
-  <svg viewBox="0 0 900 250" role="img" aria-label="Guardrail flow from geo-IP detection to red connector.">
+  <svg viewBox="0 0 900 250" role="img" aria-label="Guardrail flow from geo-IP detection to a red entry connector.">
     <rect class="b" x="20" y="30" width="176" height="52" rx="10"/><text x="108" y="54" class="t" font-size="10.5" text-anchor="middle">page load</text><text x="108" y="70" class="s" font-size="9" text-anchor="middle">client geo-IP lookup</text>
     <line class="arw" x1="196" y1="56" x2="236" y2="56" marker-end="url(#a5)"/>
     <path class="b" d="M236 56 L306 26 L376 56 L306 86 Z"/><text x="306" y="52" class="t" font-size="9.5" text-anchor="middle">in CN?</text><text x="306" y="66" class="s" font-size="8" text-anchor="middle">+ manual toggle</text>
@@ -447,35 +489,31 @@
     <line class="arw w" x1="520" y1="82" x2="520" y2="122" marker-end="url(#a5w)"/>
     <path class="b w" d="M440 122 L520 100 L600 122 L520 144 Z"/><text x="520" y="126" class="t" font-size="9" text-anchor="middle">entry = GIA?</text>
     <line class="arw w" x1="600" y1="132" x2="668" y2="132" marker-end="url(#a5w)"/><text x="636" y="122" class="lbl" font-size="8">no</text>
-    <rect class="b w" x="668" y="106" width="212" height="54" rx="10"/><text x="774" y="128" class="t" font-size="10.5" text-anchor="middle" fill="var(--warn-ink)">connector → RED + notice</text><text x="774" y="145" class="s" font-size="8.5" text-anchor="middle">“pick a CN2 GIA box (e.g. BWH)”</text>
+    <rect class="b w" x="668" y="106" width="212" height="54" rx="10"/><text x="774" y="128" class="t" font-size="10.5" text-anchor="middle" fill="var(--warn-ink)">edge① → RED + notice</text><text x="774" y="145" class="s" font-size="8" text-anchor="middle">“pick a CN2 GIA box, or add 专线GIA”</text>
     <line class="arw e" x1="520" y1="144" x2="520" y2="192" marker-end="url(#a5e)"/><text x="533" y="172" class="lbl" font-size="8">yes</text>
-    <rect class="b e" x="430" y="192" width="180" height="40" rx="10"/><text x="520" y="217" class="s" font-size="9.5" text-anchor="middle">connector normal (teal ✓)</text>
+    <rect class="b e" x="430" y="192" width="180" height="40" rx="10"/><text x="520" y="217" class="s" font-size="9.5" text-anchor="middle">entry connector teal ✓</text>
     <defs>
       <marker id="a5" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-2)"/></marker>
       <marker id="a5w" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--warn)"/></marker>
       <marker id="a5e" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--exit)"/></marker>
     </defs>
   </svg>
-  <figcaption>Geo-IP runs client-side with a graceful fallback: if the lookup fails, gating defaults <b>off</b> and the toggle stays visible so a China user can switch it on manually. The gate never blocks — it <b>recolours the entry connector rust and prints a notice</b>, leaving the user free to ignore it.</figcaption>
+  <figcaption>Geo-IP runs client-side with a graceful fallback (fails → gating off, toggle visible). The gate never blocks — it <b>recolours the entry edge rust and prints a notice</b>. With the v2 roster the natural trigger is <b>VirVM dropped as the jump host</b> (its 163 line isn't GIA); the notice offers both fixes — swap to BandwagonHost/DMIT, or buy VirVM's 专线GIA upgrade.</figcaption>
 </div>
-<div class="callout"><div class="ct">▸ Toggle copy &amp; behaviour</div>
-  Bar reads: <i>"Building from mainland China? <b>Auto-detected: yes</b> · your route to China is gated to CN2 GIA."</i> with a switch. Flipping it off relabels to <i>"Gating off"</i> and clears red states. The detected value seeds the switch but the user always wins. Detected country shows as a muted <span class="mono">geo: CN (auto)</span> stamp so the decision is transparent, never silent.</div>
 
-<!-- ============================ 6 TRAFFIC ============================ -->
-<h2 id="traffic"><span class="n">6</span>Traffic-metered pricing <span class="pill data">prices PM-pending</span></h2>
-<p>When a metered provider (VirVM on its 专线/CN2-GIA residential plan) lands on the canvas, its card grows an inline selector — it does not open a dialog. Two controls fold into one monthly figure:</p>
+<!-- ============================ 7 TRAFFIC ============================ -->
+<h2 id="traffic"><span class="n">7</span>Traffic-metered pricing <span class="pill data">prices PM-pending</span></h2>
+<p>When VirVM lands on the canvas <b>as the exit</b> (its 专线/CN2-GIA residential plan), its card grows an inline selector — no dialog. Two controls fold into one effective $/mo that feeds metric ①:</p>
 <div class="tw"><table>
-  <tr><th>Control</th><th>Options</th><th>Effect on cost</th></tr>
-  <tr><td><b>Traffic package</b></td><td>chips: <code>100</code> · <code>300</code> · <code>500</code> · <code>1000</code> GB</td><td>sets the package base price for the chosen tier (PM-pending numbers).</td></tr>
-  <tr><td><b>Billing cycle</b></td><td>select: 1 mo · 3 mo <span class="pill">−5%</span> · 6 mo <span class="pill">−10%</span> · 1 yr <span class="pill">−20%</span> · 2 yr <span class="pill">−25%</span></td><td>applies the cycle discount, shown as an <b>effective $/mo</b> so it compares to flat boxes.</td></tr>
+  <tr><th>Control</th><th>Options</th><th>Effect</th></tr>
+  <tr><td><b>Traffic package</b></td><td>chips <code>100</code> · <code>300</code> · <code>500</code> · <code>1000</code> GB</td><td>sets the package base (PM-pending numbers, stamped).</td></tr>
+  <tr><td><b>Billing cycle</b></td><td>1 mo · 3 mo <span class="pill">−5%</span> · 6 mo <span class="pill">−10%</span> · 1 yr <span class="pill">−20%</span> · 2 yr <span class="pill">−25%</span></td><td>applies the discount, shown as an <b>effective $/mo</b> so it compares to flat boxes.</td></tr>
 </table></div>
-<p>The estimate panel then shows the fold-in explicitly, e.g. <span class="mono">300 GB pkg $28 × 12 mo −20% = $268.80/yr → <b>$22.40/mo</b> effective</span>, summed with any flat hops. Placeholder prices in the prototype are visibly stamped <span class="pill est">placeholder</span> so nobody mistakes them for measured data. The tier + cycle <b>structure</b> is final; only the dollar amounts wait on the PM.</p>
-<div class="callout data"><div class="ct">⛁ What the build needs from the PM</div>
-  For each metered provider: the <b>base price per package</b> — <code>VirVM: 100GB=$?, 300GB=$?, 500GB=$?, 1000GB=$?</code> — and whether the cycle discounts (−5/−10/−20/−25%) are provider-wide or per-package. The data model already carries these as fields; the UI renders whatever numbers arrive.</div>
+<p>The estimate shows the fold-in explicitly, e.g. <span class="mono">300 GB $18 × 12 mo −20% = $172.80/yr → <b>$14.40/mo</b> effective</span>. The tier + cycle <b>structure</b> is final; only the dollar amounts wait on the PM.</p>
 
-<!-- ============================ 7 PROTOTYPE ============================ -->
-<h2 id="proto"><span class="n">7</span>Interactive prototype</h2>
-<p>A working board — drag a card, tap a card, or Tab + <kbd>Enter</kbd>. Toggle China to see gating; drop VirVM as the exit to see the traffic selector. The <b>preset row</b> jumps straight to each of the six required states.</p>
+<!-- ============================ 8 PROTOTYPE ============================ -->
+<h2 id="proto"><span class="n">8</span>Interactive prototype</h2>
+<p>Drag a card, tap a card, or Tab + <kbd>Enter</kbd> — drop targets accept only a compatible role. Toggle China with <b>VirVM in the jump slot</b> to see gating; drop VirVM as the exit for the traffic selector. The <b>preset row</b> jumps to each state, including the exact <b>BWH → AaITR</b> example.</p>
 
 <div class="proto" id="board">
   <div class="bar">
@@ -486,6 +524,7 @@
     <button class="preset" data-preset="gated">④ Gated-red</button>
     <button class="preset" data-preset="ref">⑤ Reference</button>
     <button class="preset" data-preset="traffic">⑥ Traffic pkg</button>
+    <button class="preset" data-preset="example">⑦ BWH→AaITR</button>
     <button class="preset" data-preset="reset" style="margin-left:auto">↺ Reset</button>
   </div>
 
@@ -499,25 +538,23 @@
   </div>
 
   <div class="pbody">
-    <!-- palette -->
     <div class="col">
-      <h4>Provider palette</h4>
+      <h4>Jump hosts</h4>
       <div id="paletteJump" aria-label="Jump host providers"></div>
       <h4 style="margin-top:.8rem">Residential exits</h4>
       <div id="paletteExit" aria-label="Residential exit providers"></div>
-      <p class="kbdhint">Drag onto the canvas, tap a card, or focus it and press <kbd>Enter</kbd>. Placed cards: <kbd>Delete</kbd> removes.</p>
+      <p class="kbdhint">Drag onto the canvas, tap a card, or focus it and press <kbd>Enter</kbd>. Placed cards: <kbd>Delete</kbd> removes. A box only drops into a slot it fits.</p>
     </div>
 
-    <!-- canvas -->
     <div class="col">
-      <h4>Your network</h4>
+      <h4>Your network — connect the chain</h4>
       <div class="canvas">
         <div class="path" id="path"></div>
         <div id="canvasNotice"></div>
+        <div class="edges" id="edges"></div>
       </div>
     </div>
 
-    <!-- estimate -->
     <div class="col est">
       <h4>Estimate <span class="estlabel">all values estimated</span></h4>
       <div id="estimate"></div>
@@ -525,11 +562,11 @@
   </div>
   <div class="sr" id="live" aria-live="polite"></div>
 </div>
-<figcaption class="fig" style="border:none;box-shadow:none;background:none;padding:.2rem 0;text-align:center;color:var(--muted);font-size:.8rem">Fully interactive. This is the same board proposed for <code>tool.html</code>, rendered here for review; the production build (Frontend artifact) will wire it to the live roster + real geo-IP.</figcaption>
+<p style="text-align:center;color:var(--muted);font-size:.8rem">Fully interactive. This is the board proposed for <code>tool.html</code>; the production build wires it to the live roster + real geo-IP + the PM's final prices.</p>
 
-<!-- ============================ 8 CHOOSE ============================ -->
-<h2 id="choose"><span class="n">8</span>Cost-performance on <code>choose.html</code></h2>
-<p>One derived column joins the existing fleet <code>.perf-ref</code> table — <b>Value = Overall ÷ $/mo</b>, in "points per dollar." No new measurement; it's arithmetic on the two columns already there. The best-value row is tinted teal with a <span class="bestbadge">★ best value</span> badge, and the column is sortable. Mock of the augmented table:</p>
+<!-- ============================ 9 CHOOSE ============================ -->
+<h2 id="choose"><span class="n">9</span>Cost-performance on <code>choose.html</code></h2>
+<p>One derived column joins the existing fleet <code>.perf-ref</code> table — <b>Value = Overall ÷ $/mo</b> in "points per dollar." No new measurement; the best-value row is tinted teal with a <span class="bestbadge">★ best value</span> badge, and the column is sortable.</p>
 <div class="tw">
   <table class="perf-ref">
     <thead><tr>
@@ -549,62 +586,75 @@
   <span><span class="sw" style="background:var(--accent-bg);border-color:var(--accent)"></span> value column</span>
   <span>* metered box shows “—” for a single $/mo; value resolves once a traffic package is chosen on the builder.</span>
 </div>
-<p style="font-size:.9rem;color:var(--muted)">The metric is deliberately blunt and explainable — highest performance-per-dollar wins — so a value shopper reads it at a glance, exactly the gap the PRD calls out. It reuses <code>.perf-ref</code> tints (<code>.hi</code>/<code>.lo</code> language) so it looks like it was always there. Metered providers can't yield a single $/mo, so they show "—" and defer their value to the builder where a package is chosen.</p>
+<p style="font-size:.9rem;color:var(--muted)">Deliberately blunt and explainable — highest performance-per-dollar wins — reusing <code>.perf-ref</code> tints so it looks like it was always there.</p>
 
-<!-- ============================ 9 OPEN ============================ -->
-<h2 id="open"><span class="n">9</span>Open items for the PM</h2>
+<!-- ============================ 10 OPEN ============================ -->
+<h2 id="open"><span class="n">10</span>Open items for the PM</h2>
 <ol>
-  <li><span class="pill data">price</span> <b>Traffic-package base prices</b> for VirVM (and any other metered provider): 100 / 300 / 500 / 1000 GB, plus the base, and whether cycle discounts are provider-wide or per-package.</li>
-  <li><span class="pill data">roster</span> <b>Additional palette providers</b> (name · link · specs · flat price or reference). The palette is data-driven and will render whatever roster ships.</li>
-  <li><span class="pill out">decision</span> <b>Multi-exit scope for v1</b> — the model supports 0…n exits; do we expose "＋ add another exit" in v1 or ship 0-or-1 first? (Design covers both; recommend 0-or-1 visible, n-ready underneath.)</li>
-  <li><span class="pill out">decision</span> <b>Geo-IP provider</b> — which free client-side lookup (e.g. a Cloudflare trace or a free JSON endpoint), and the fallback copy when it's unreachable.</li>
-  <li><span class="pill out">copy</span> <b>Value column tooltip</b> — confirm the one-line explanation of "pt/$" shown on hover/tap for the Choose table.</li>
+  <li><span class="pill data">price</span> <b>Traffic-package base prices</b> for VirVM (100 / 300 / 500 / 1000 GB + base), and whether cycle discounts are provider-wide or per-package.</li>
+  <li><span class="pill data">route</span> <b>Outbound ISP rank</b> (metric ⑤) — the <code>(#n)</code> ranking source per exit, plus any exits whose <b>bandwidth</b> is not yet measured (metric ④). Purity high/med/low derives from the existing IP-purity table.</li>
+  <li><span class="pill data">latency</span> <b>Private-hop latency add</b> — confirm the illustrative jump→exit additions (currently stamped) or supply measured numbers for the latency <b>range</b> upper bound.</li>
+  <li><span class="pill out">decision</span> <b>Multi-exit in v1</b> — model supports 0…n; ship 0-or-1 visible with n-ready underneath? (recommended)</li>
+  <li><span class="pill out">decision</span> <b>Geo-IP provider</b> + fallback copy for the guardrail.</li>
 </ol>
 
-<!-- ============================ 10 VERIFY ============================ -->
-<h2 id="verify"><span class="n">10</span>Accessibility &amp; responsive verification</h2>
+<!-- ============================ 11 VERIFY ============================ -->
+<h2 id="verify"><span class="n">11</span>Accessibility &amp; responsive verification</h2>
 <ul>
-  <li><b>Widths checked:</b> 1440 (desktop three-column), 390 (mobile stack), 320 (smallest) — no horizontal overflow; wide SVGs and tables live inside <code>overflow-x:auto</code> containers.</li>
-  <li><b>Contrast:</b> text on rust/teal/indigo backgrounds uses the darker <code>-ink</code> token pairs (WCAG AA), matching the site's own convention.</li>
-  <li><b>Keyboard:</b> every place / remove / toggle / chip is a focusable control with a visible 2px focus ring; nothing is drag-only.</li>
-  <li><b>Motion:</b> drag ghost + slot highlight collapse to instant under <code>prefers-reduced-motion</code>.</li>
-  <li><b>Honesty:</b> estimated values tagged; benchmarked vs reference badged; placeholder traffic prices stamped — no number is presented as measured unless it is.</li>
+  <li><b>Widths checked:</b> 1440 (three-column) · 390 (stack) · 320 (smallest) — no horizontal overflow; wide SVGs/tables sit in <code>overflow-x:auto</code> containers.</li>
+  <li><b>Contrast:</b> text on rust/teal/indigo uses the darker <code>-ink</code> pairs (WCAG AA), per the site convention.</li>
+  <li><b>Keyboard:</b> place / remove / toggle / chip / cycle are focusable with a 2px focus ring; role-incompatible placement is blocked and announced; nothing is drag-only.</li>
+  <li><b>Motion:</b> drag ghost + slot highlight collapse under <code>prefers-reduced-motion</code>.</li>
+  <li><b>Honesty:</b> estimated values tagged; benchmarked vs reference badged; PM-pending numbers wear a <span class="mono" style="color:var(--warn-ink)">⚑ph</span> stamp — no number reads as measured unless it is.</li>
 </ul>
-<p class="meta">Designer artifact for Gate 1. On approval → Tech Document (Frontend/Backend), then build against this board, its states, and the Choose column.</p>
+<p class="meta">Designer artifact v2 for Gate 1. On approval → Tech Document (Frontend/Backend), then build against this roster, the connect model, the five-metric estimate + per-edge readouts, the guardrail, and the Choose column.</p>
 
 </div><!-- /wrap -->
 
 <script>
 (function(){
-  /* ---------- roster (from PRD §7 + tool.html) ---------- */
+  /* ---------- roster (Gate-1 role-capable) ---------- */
+  /* roles: which slot(s) a provider fits. jumpGia: is the entry CN2 GIA when used as jump. */
   var R = {
-    bwh:   {id:'bwh',   nm:'BandwagonHost', role:'jump', net:'CN2 GIA', gia:true,  perf:83, lat:'129 ms · 0% loss',
-            sp:'4C·4GB · CN2 GIA · perf 83', price:{type:'flat',mo:30}, bench:true},
-    dmit:  {id:'dmit',  nm:'DMIT',          role:'jump', net:'CN2 GIA', gia:true,  perf:null, lat:'CN2 GIA route',
-            sp:'LAX Pro · CN2 GIA · out of stock', price:{type:'ref',from:10.90}, bench:false},
-    sola:  {id:'sola',  nm:'SolaDrive',     role:'exit', net:'163',     gia:false, perf:88, lat:'175 ms · 0% loss',
-            sp:'4C·4GB · clean IP · perf 88', price:{type:'flat',mo:40}, bench:true},
-    virvm: {id:'virvm', nm:'VirVM',         role:'exit', net:'专线GIA', gia:true,  perf:38, lat:'158 ms · 0% loss',
-            sp:'4C·8GB · 专线GIA clean IP · perf 38',
+    bwh:   {id:'bwh',   nm:'BandwagonHost', roles:['jump'], jumpGia:true,
+            net:'CN2 GIA', perf:83, lat:{lo:129,hi:156}, iops:57318, bw:2280,
+            price:{type:'flat',mo:30}, bench:true},
+    dmit:  {id:'dmit',  nm:'DMIT',          roles:['jump'], jumpGia:true,
+            net:'CN2 GIA', perf:null, lat:null, iops:null, bw:null,
+            price:{type:'ref',from:10.90}, bench:false, note:'out of stock'},
+    virvm: {id:'virvm', nm:'VirVM',         roles:['jump','exit'], jumpGia:false, /* jump default = 163, not GIA */
+            jumpNet:'163 (专线GIA upgrade avail.)', exitNet:'专线GIA residential',
+            perf:38, lat:{lo:158,hi:201}, iops:38813, bw:94, hopAdd:50,
+            route:{isp:'AT&T',rank:2,purity:'high',phRank:true},
             price:{type:'metered', pkgs:{100:8,300:18,500:28,1000:48}}, bench:true},
-    aaitr: {id:'aaitr', nm:'AaITR',         role:'exit', net:'163 (lossy)', gia:false, perf:18, lat:'137 ms · 40–70% loss',
-            sp:'2C·2GB · clean IP · lossy route · perf 18', price:{type:'flat',mo:21.88}, bench:true},
-    qqpw:  {id:'qqpw',  nm:'QQ.pw',         role:'exit', net:'—',        gia:false, perf:null, lat:'—',
-            sp:'Hawaii · 2C·3GB · out of stock', price:{type:'ref',from:35}, bench:false}
+    sola:  {id:'sola',  nm:'SolaDrive',     roles:['exit'],
+            exitNet:'163 · clean IP', perf:88, lat:{lo:175,hi:199}, iops:109775, bw:569, hopAdd:46,
+            route:{isp:'consumer ISP',rank:2,purity:'high',phRank:true},
+            price:{type:'flat',mo:40}, bench:true},
+    aaitr: {id:'aaitr', nm:'AaITR',         roles:['exit'],
+            exitNet:'163 · clean IP · lossy', perf:18, lat:{lo:137,hi:285}, iops:2018, iopsCapped:true, bw:102, hopAdd:81,
+            route:{isp:'AT&T',rank:1,purity:'high',phRank:true}, lossy:true,
+            price:{type:'flat',mo:21.88}, bench:true},
+    qqpw:  {id:'qqpw',  nm:'QQ.pw',         roles:['exit'],
+            exitNet:'—', perf:null, lat:null, iops:null, bw:null,
+            price:{type:'ref',from:35}, bench:false, note:'out of stock'}
   };
   var CYCLES = [ {mo:1,d:0,l:'1 month'}, {mo:3,d:.05,l:'3 months −5%'}, {mo:6,d:.10,l:'6 months −10%'},
                  {mo:12,d:.20,l:'1 year −20%'}, {mo:24,d:.25,l:'2 years −25%'} ];
 
-  /* ---------- state ---------- */
-  var S = { jump:'bwh', exit:'none', china:true, pkg:300, cycle:12 };
+  var S = { jump:'bwh', exit:'sola', china:false, pkg:300, cycle:12 };
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function money(n){ return '$'+n.toFixed(2); }
+  function commas(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function netOf(o,role){ return role==='jump' ? (o.jumpNet||o.net||'—') : (o.exitNet||o.net||'—'); }
+  function giaOfJump(o){ return !!o.jumpGia; }
 
   /* ---------- palette ---------- */
-  function badges(o){
+  function badges(o, role){
     var b = o.bench ? '<span class="badge bench">benchmarked</span>' : '<span class="badge ref">reference</span>';
-    if(o.gia) b += ' <span class="badge gia">CN2 GIA</span>';
-    if(o.price.type==='metered') b += ' <span class="badge mtr">metered</span>';
+    if(role==='jump' && giaOfJump(o)) b += ' <span class="badge gia">CN2 GIA</span>';
+    if(role==='jump' && !giaOfJump(o)) b += ' <span class="badge i163">163 · non-GIA</span>';
+    if(role==='exit' && o.price.type==='metered') b += ' <span class="badge mtr">metered · 专线GIA</span>';
     return b;
   }
   function priceLabel(o){
@@ -612,176 +662,216 @@
     if(o.price.type==='metered') return '<span style="color:var(--warn-ink)">traffic pkg</span>';
     return 'from '+money(o.price.from)+'<span style="font-weight:400;color:var(--muted)">/mo</span>';
   }
-  function pcard(o){
-    var roleCls = o.role==='exit'?'ex':'';
-    var roleLbl = o.role==='jump'?'JUMP':'EXIT';
-    return '<button class="pcard" draggable="true" data-id="'+o.id+'" data-role="'+o.role+'" '+
-      'aria-label="Add '+esc(o.nm)+' as '+(o.role==='jump'?'jump host':'residential exit')+'">'+
-      '<span class="pc-top"><span class="nm">'+esc(o.nm)+'</span><span class="role '+roleCls+'">'+roleLbl+'</span></span>'+
-      '<span class="sp">'+esc(o.sp)+'</span>'+
-      '<span class="pc-foot"><span>'+badges(o)+'</span><span class="pr">'+priceLabel(o)+'</span></span>'+
+  function roleTag(o, role){
+    var both = o.roles.length>1;
+    var cls = both ? 'both' : (role==='exit'?'ex':'');
+    var lbl = both ? 'JUMP + EXIT' : (role==='jump'?'JUMP':'EXIT');
+    return '<span class="role '+cls+'">'+lbl+'</span>';
+  }
+  function pcard(o, role){
+    var sp = (role==='jump'? netOf(o,'jump') : netOf(o,'exit'));
+    if(o.perf!=null) sp += ' · perf '+o.perf; else if(o.note) sp += ' · '+o.note;
+    return '<button class="pcard" draggable="true" data-id="'+o.id+'" data-role="'+role+'" '+
+      'aria-label="Add '+esc(o.nm)+' as '+(role==='jump'?'jump host':'residential exit')+
+      (o.roles.length>1?' (fits both roles)':'')+'">'+
+      '<span class="pc-top"><span class="nm">'+esc(o.nm)+'</span>'+roleTag(o,role)+'</span>'+
+      '<span class="sp">'+esc(sp)+'</span>'+
+      '<span class="pc-foot"><span>'+badges(o,role)+'</span><span class="pr">'+priceLabel(o)+'</span></span>'+
       '</button>';
   }
   function buildPalette(){
-    document.getElementById('paletteJump').innerHTML = Object.keys(R).filter(function(k){return R[k].role==='jump';}).map(function(k){return pcard(R[k]);}).join('');
-    document.getElementById('paletteExit').innerHTML = Object.keys(R).filter(function(k){return R[k].role==='exit';}).map(function(k){return pcard(R[k]);}).join('');
+    document.getElementById('paletteJump').innerHTML =
+      Object.keys(R).filter(function(k){return R[k].roles.indexOf('jump')>=0;}).map(function(k){return pcard(R[k],'jump');}).join('');
+    document.getElementById('paletteExit').innerHTML =
+      Object.keys(R).filter(function(k){return R[k].roles.indexOf('exit')>=0;}).map(function(k){return pcard(R[k],'exit');}).join('');
     wireCards();
   }
 
-  /* ---------- place / remove ---------- */
+  /* ---------- place / remove (role-guarded) ---------- */
   function place(id, role){
     var o = R[id]; if(!o) return;
-    if(role==='jump'){ S.jump = id; }
-    else { S.exit = id; if(o.price.type==='metered' && !S.pkg){ S.pkg = 300; } }
+    if(o.roles.indexOf(role)<0){ announce(o.nm+' can’t be a '+(role==='jump'?'jump host':'residential exit')+'.'); return; }
+    if(role==='jump'){ S.jump = id; } else { S.exit = id; if(o.price.type==='metered' && !S.pkg) S.pkg=300; }
     render();
-    announce('Added '+o.nm+' as '+(role==='jump'?'jump host':'residential exit')+'. '+estText());
+    announce('Connected '+o.nm+' as '+(role==='jump'?'jump host':'residential exit')+'. '+estText());
   }
   function remove(role){
-    if(role==='jump'){ S.jump = null; announce('Removed jump host.'); }
-    else { S.exit = 'none'; announce('Removed exit. Single-host network.'); }
+    if(role==='jump'){ S.jump=null; announce('Removed jump host.'); }
+    else { S.exit='none'; announce('Removed exit. Single-host network.'); }
     render();
   }
   function announce(t){ document.getElementById('live').textContent = t; }
 
-  /* ---------- estimate math ---------- */
+  /* ---------- estimate math (5 metrics) ---------- */
   function meteredMonthly(){
     var o = R[S.exit]; if(!o || o.price.type!=='metered') return null;
     var base = o.price.pkgs[S.pkg];
     var cyc = CYCLES.filter(function(c){return c.mo===S.cycle;})[0] || CYCLES[0];
-    var eff = base*(1-cyc.d);
-    return { base:base, cyc:cyc, eff:eff };
+    return { base:base, cyc:cyc, eff:base*(1-cyc.d) };
   }
-  function estData(){
+  function priceOf(o){
+    if(!o) return {mo:0,ref:null};
+    if(o.price.type==='flat') return {mo:o.price.mo,ref:null};
+    if(o.price.type==='ref') return {mo:0,ref:o.nm+' (from '+money(o.price.from)+')'};
+    var m=meteredMonthly(); return {mo:m?m.eff:0,ref:null};
+  }
+  function metrics(){
     var j = S.jump?R[S.jump]:null, e = (S.exit&&S.exit!=='none')?R[S.exit]:null;
-    var perf = null, perfSrc='';
-    if(e && e.perf!=null){ perf=e.perf; perfSrc='exit'; }
-    else if(e && e.perf==null){ perf=null; perfSrc='ref'; }
-    else if(j && j.perf!=null){ perf=j.perf; perfSrc='jump'; }
-    else if(j && j.perf==null){ perf=null; perfSrc='ref'; }
-    var flat=0, lines=[], refs=[];
-    [j,e].forEach(function(o){ if(!o) return;
-      if(o.price.type==='flat'){ flat+=o.price.mo; lines.push({nm:o.nm,amt:money(o.price.mo)}); }
-      else if(o.price.type==='ref'){ refs.push(o.nm+' (from '+money(o.price.from)+')'); lines.push({nm:o.nm,amt:'from '+money(o.price.from)}); }
-      else if(o.price.type==='metered'){ var m=meteredMonthly(); if(m){ flat+=m.eff; lines.push({nm:o.nm+' · '+S.pkg+'GB '+m.cyc.l, amt:money(m.eff)+' eff'}); } }
+    /* price */
+    var flat=0, refs=[], lines=[];
+    [{o:j,role:'jump'},{o:e,role:'exit'}].forEach(function(h){ var o=h.o; if(!o) return; var p=priceOf(o);
+      if(p.ref){ refs.push(o.nm+' (from '+money(o.price.from)+')'); lines.push(o.nm+' — from '+money(o.price.from)); }
+      else if(o.price.type==='metered' && h.role==='exit'){ var m=meteredMonthly(); flat+=p.mo; lines.push(o.nm+' · '+S.pkg+'GB '+m.cyc.l+' — '+money(p.mo)+' eff'); }
+      else if(o.price.type==='metered'){ refs.push(o.nm+' (metered — priced as exit)'); lines.push(o.nm+' — 专线GIA metered (see exit pricing)'); }
+      else { flat+=p.mo; lines.push(o.nm+' — '+money(p.mo)); }
     });
-    return { j:j, e:e, perf:perf, perfSrc:perfSrc, flat:flat, lines:lines, refs:refs, metered:meteredMonthly() };
+    /* latency range */
+    var lat=null, latPh=false;
+    if(j && j.lat){
+      if(e && e.lat){ lat={lo:j.lat.lo, hi:j.lat.lo + (e.hopAdd||0)}; latPh=true; } /* +hop is illustrative */
+      else { lat={lo:j.lat.lo, hi:j.lat.hi}; }
+    }
+    /* io — exit's (bottleneck), else jump's */
+    var io = e && e.iops!=null ? {v:e.iops,cap:!!e.iopsCapped} : (j && j.iops!=null ? {v:j.iops,cap:!!j.iopsCapped} : null);
+    var ioRef = (e && e.iops==null) ? true : (!e && j && j.iops==null);
+    /* bandwidth = min across hops */
+    var bws=[]; [j,e].forEach(function(o){ if(o && o.bw!=null) bws.push(o.bw); });
+    var bw = bws.length? Math.min.apply(null,bws) : null;
+    var bwRef = (e && e.bw==null) || (!e && j && j.bw==null);
+    /* route quality — exit egress */
+    var route=null;
+    if(e){ route = e.route ? {isp:e.route.isp,rank:e.route.rank,purity:e.route.purity,ph:!!e.route.phRank} : {ref:true}; }
+    else if(j){ route = {dc:true}; } /* single host egresses on datacenter IP */
+    return { j:j, e:e, flat:flat, refs:refs, lines:lines, lat:lat, latPh:latPh, io:io, ioRef:ioRef, bw:bw, bwRef:bwRef, route:route, metered:meteredMonthly() };
   }
-  function estText(){
-    var d=estData(); return 'Estimated cost '+money(d.flat)+' per month'+(d.refs.length?' plus reference boxes':'')+'.';
-  }
+  function estText(){ var d=metrics(); return 'Estimated '+money(d.flat)+' per month'+(d.lat?', latency '+d.lat.lo+' to '+d.lat.hi+' ms':'')+'.'; }
 
   /* ---------- render ---------- */
   function nodeYou(){ return '<div class="node you"><span class="nlab">origin</span><span class="nnm">you</span></div>'; }
   function nodeNet(){ return '<div class="node net"><span class="nlab">→</span><span class="nnm">internet</span></div>'; }
-  function connEl(kind){ return '<div class="conn '+kind+'" aria-hidden="true"></div>'; }
-
+  function connEl(k){ return '<div class="conn '+(k||'')+'" aria-hidden="true"></div>'; }
+  function trafficUI(){
+    var chips=[100,300,500,1000].map(function(g){ return '<button class="chip'+(S.pkg===g?' on':'')+'" data-pkg="'+g+'" aria-pressed="'+(S.pkg===g)+'">'+g+' GB</button>'; }).join('');
+    var opts=CYCLES.map(function(c){ return '<option value="'+c.mo+'"'+(S.cycle===c.mo?' selected':'')+'>'+c.l+'</option>'; }).join('');
+    return '<div class="traffic"><div class="tl">Traffic package <span class="badge ref">placeholder $ · PM-pending</span></div>'+
+      '<div class="chips">'+chips+'</div><select class="cyc" id="cycSel" aria-label="Billing cycle">'+opts+'</select></div>';
+  }
   function filledSlot(o, role){
     var cls = role==='jump'?'jump':'exit';
-    var html = '<div class="slot filled '+cls+'" role="group" tabindex="0" data-role="'+role+'" aria-label="'+(role==='jump'?'Jump host':'Exit')+': '+esc(o.nm)+'. Press Delete to remove.">'+
+    var html='<div class="slot filled '+cls+'" role="group" tabindex="0" data-role="'+role+'" aria-label="'+(role==='jump'?'Jump host':'Exit')+': '+esc(o.nm)+'. Press Delete to remove.">'+
       '<span class="fnm">'+esc(o.nm)+' <button class="x" data-remove="'+role+'" aria-label="Remove '+esc(o.nm)+'">×</button></span>'+
-      '<span class="fsub">'+esc(o.sp)+'</span>';
-    if(role==='jump' && S.china && !o.gia){
-      html += '<span class="badge ref" style="margin-top:.3rem">not CN2 GIA</span>';
-    }
-    if(role==='exit' && o.price.type==='metered'){ html += trafficUI(o); }
-    html += '</div>';
-    return html;
+      '<span class="fsub">'+esc(netOf(o,role))+(o.perf!=null?' · perf '+o.perf:'')+'</span>';
+    if(role==='jump' && S.china && !giaOfJump(o)) html+='<span class="badge i163" style="margin-top:.3rem">163 · non-GIA entry</span>';
+    if(role==='exit' && o.price.type==='metered') html+=trafficUI();
+    return html+'</div>';
   }
   function emptySlot(role){
-    var cls = role==='jump'?'jump':'exit';
-    var title = role==='jump'?'Jump host':'Residential exit';
-    var hint = role==='jump'?'required · drop or tap':'optional · drop or tap';
-    return '<div class="slot '+cls+'" data-slot="'+role+'" role="group" tabindex="0" aria-label="'+title+', empty. Drop or activate a provider to fill.">'+
-      '<span class="stitle">'+title+'</span><span class="shint">'+hint+'</span></div>';
+    var cls=role==='jump'?'jump':'exit', title=role==='jump'?'Jump host':'Residential exit';
+    return '<div class="slot '+cls+'" data-slot="'+role+'" role="group" tabindex="0" aria-label="'+title+', empty. Drop or activate a compatible provider.">'+
+      '<span class="stitle">'+title+'</span><span class="shint">'+(role==='jump'?'required · drop or tap':'optional · drop or tap')+'</span></div>';
   }
-  function trafficUI(o){
-    var chips = [100,300,500,1000].map(function(g){
-      return '<button class="chip'+(S.pkg===g?' on':'')+'" data-pkg="'+g+'" aria-pressed="'+(S.pkg===g)+'">'+g+' GB</button>';
-    }).join('');
-    var opts = CYCLES.map(function(c){ return '<option value="'+c.mo+'"'+(S.cycle===c.mo?' selected':'')+'>'+c.l+'</option>'; }).join('');
-    return '<div class="traffic"><div class="tl">Traffic package <span class="badge ref">placeholder $ · PM-pending</span></div>'+
-      '<div class="chips">'+chips+'</div>'+
-      '<select class="cyc" id="cycSel" aria-label="Billing cycle">'+opts+'</select></div>';
+
+  function edgeRows(d){
+    if(!d.j) return '';
+    var rows='<div class="eh">Connections — per-edge readout</div>';
+    /* edge 1: you -> jump */
+    var gia = giaOfJump(d.j);
+    var e1cls = (S.china && !gia) ? 'entry red' : 'entry';
+    var e1metrics = d.j.lat ? (d.j.lat.lo+'–'+d.j.lat.hi+' ms · ') : '';
+    e1metrics += gia ? 'CN2 GIA ✓' : ('163 · non-GIA'+(S.china?' — gated':''));
+    rows += '<div class="edgerow '+e1cls+'"><div class="ehead">you → '+esc(d.j.nm)+'</div><div class="emetrics">'+e1metrics+'</div></div>';
+    if(d.e){
+      /* edge 2: jump -> exit (private hop, bandwidth min) */
+      var bwTxt = d.bw!=null ? (d.bw+'M (min hop)') : 'n/a';
+      var ioTxt = d.io ? (commas(d.io.v)+(d.io.cap?' IOPS capped':' IOPS')) : (d.ioRef?'not benchmarked':'—');
+      rows += '<div class="edgerow link"><div class="ehead">'+esc(d.j.nm)+' → '+esc(d.e.nm)+'</div><div class="emetrics">+ private hop · bandwidth '+bwTxt+' · I/O '+ioTxt+'</div></div>';
+      /* edge 3: exit -> internet (egress route) */
+      var rq;
+      if(d.route&&d.route.isp) rq = esc(d.route.isp)+' (#'+d.route.rank+(d.route.ph?'·ph':'')+')';
+      else if(d.route&&d.route.ref) rq='not benchmarked';
+      else rq='—';
+      var pur = d.route&&d.route.purity ? ' · IP purity '+d.route.purity : '';
+      rows += '<div class="edgerow egress"><div class="ehead">'+esc(d.e.nm)+' → internet</div><div class="emetrics">outbound '+rq+pur+'</div></div>';
+    } else {
+      rows += '<div class="edgerow egress"><div class="ehead">'+esc(d.j.nm)+' → internet</div><div class="emetrics">egress on datacenter IP · no residential exit</div></div>';
+    }
+    return rows;
   }
 
   function render(){
-    /* path */
-    var p = [ nodeYou() ];
-    var j = S.jump?R[S.jump]:null;
-    var entryKind = 'ok';
-    if(!j){ entryKind='neutral'; }
-    else if(S.china && !j.gia){ entryKind='red'; }
-    else if(S.china && j.gia){ entryKind='ok'; }
-    else { entryKind='neutral'; }
-    p.push(connEl(entryKind==='neutral'?'':entryKind));
+    var p=[nodeYou()];
+    var j=S.jump?R[S.jump]:null;
+    var entryKind = !j ? '' : (S.china ? (giaOfJump(j)?'ok':'red') : '');
+    p.push(connEl(entryKind));
     p.push(j?filledSlot(j,'jump'):emptySlot('jump'));
-    var e = (S.exit&&S.exit!=='none')?R[S.exit]:null;
-    if(e){
-      p.push(connEl('')); /* private hop jump→exit, never gated */
-      p.push(filledSlot(e,'exit'));
-      p.push(connEl(''));
-    } else {
-      /* offer an add-exit slot only when a jump exists */
-      if(j){ p.push(connEl('')); p.push(emptySlot('exit')); p.push(connEl('')); }
-    }
+    var e=(S.exit&&S.exit!=='none')?R[S.exit]:null;
+    if(e){ p.push(connEl('')); p.push(filledSlot(e,'exit')); p.push(connEl('')); }
+    else if(j){ p.push(connEl('')); p.push(emptySlot('exit')); p.push(connEl('')); }
     p.push(nodeNet());
-    document.getElementById('path').innerHTML = p.join('');
+    document.getElementById('path').innerHTML=p.join('');
 
-    /* notice */
-    var notice = '';
-    if(!j){
-      notice = '<div class="notice" style="background:var(--accent-bg);border-color:var(--accent);color:var(--accent-ink)">Start by adding a <b>jump host</b> — it\'s the required entry box.</div>';
-    } else if(S.china && !j.gia){
-      notice = '<div class="notice">⚑ <b>'+esc(j.nm)+'</b> reaches China over <b>'+esc(j.net)+'</b>, not CN2 GIA. From the mainland this route is slow/blocked — <b>pick a CN2 GIA box</b> for the entry (e.g. BandwagonHost).</div>';
-    } else if(!e){
-      notice = '<div class="notice" style="background:var(--exit-bg);border-color:var(--exit);color:var(--exit-ink)">Single-host network — traffic egresses on the jump host\'s datacenter IP. Add a residential exit for a clean home IP, or keep it as-is to run a service here.</div>';
-    }
-    document.getElementById('canvasNotice').innerHTML = notice;
+    var notice='';
+    if(!j) notice='<div class="notice" style="background:var(--accent-bg);border-color:var(--accent);color:var(--accent-ink)">Start by connecting a <b>jump host</b> — the required entry box.</div>';
+    else if(S.china && !giaOfJump(j)) notice='<div class="notice">⚑ <b>'+esc(j.nm)+'</b> reaches China over <b>'+esc(netOf(j,'jump'))+'</b>, not CN2 GIA. From the mainland this route is slow/blocked — <b>pick a CN2 GIA box</b> (BandwagonHost / DMIT)'+(j.id==='virvm'?', or add VirVM’s 专线GIA upgrade':'')+'.</div>';
+    else if(!e) notice='<div class="notice" style="background:var(--exit-bg);border-color:var(--exit);color:var(--exit-ink)">Single-host network — egress on the jump host’s datacenter IP. Add a residential exit for a clean home IP, or keep it to run a service here.</div>';
+    document.getElementById('canvasNotice').innerHTML=notice;
 
-    /* estimate */
-    var d = estData();
-    var perfHtml = d.perf!=null
-      ? '<span class="big">'+d.perf+'</span><span class="u"> / 100</span>'
-      : '<span class="big" style="font-size:1rem">not benchmarked</span>';
-    var latHtml = d.j ? (d.china&&!d.j.gia?'<span style="color:var(--warn-ink)">'+esc(d.j.lat)+' · non-GIA</span>':esc(d.j.lat)) : '—';
-    var costLines = d.lines.map(function(l){ return l.nm+' — '+l.amt; }).join('<br>') || 'add a box';
-    var totalHtml = money(d.flat)+'<span class="u">/mo'+(d.refs.length?' + ref':'')+'</span>';
-    var perfNote = d.perfSrc==='jump'?'from jump host score':(d.perfSrc==='exit'?'from exit score':(d.perfSrc==='ref'?'reference box — no score':''));
+    var d=metrics();
+    document.getElementById('edges').innerHTML = edgeRows(d);
+
+    /* estimate panel — 5 metrics */
+    var priceHtml = '<span class="big">'+money(d.flat)+'</span><span class="u">/mo'+(d.refs.length?' + ref':'')+'</span>';
+    var latHtml = d.lat ? (d.lat.lo+' ~ '+d.lat.hi+' <span class="u">ms</span>') : '—';
+    var ioHtml = d.ioRef ? 'not benchmarked' : (d.io ? commas(d.io.v)+(d.io.cap?' <span class="u">capped</span>':'')+' <span class="u">IOPS</span>' : '—');
+    var bwHtml = d.bwRef ? '<span class="ph">pending</span>' : (d.bw!=null ? d.bw+'M <span class="u">min hop</span>' : '—');
+    var routeHtml;
+    if(!d.route) routeHtml='—';
+    else if(d.route.dc) routeHtml='datacenter IP <span class="u">no residential</span>';
+    else if(d.route.ref) routeHtml='not benchmarked';
+    else routeHtml=esc(d.route.isp)+' (#'+d.route.rank+')<span class="u"> · purity '+d.route.purity+'</span>';
 
     document.getElementById('estimate').innerHTML =
-      '<div class="row"><span class="k">Performance</span><span class="v">'+perfHtml+'</span></div>'+
-      (perfNote?'<div class="breakdown">'+perfNote+'</div>':'')+
-      '<div class="row"><span class="k">Latency to CN</span><span class="v">'+latHtml+'</span></div>'+
-      (d.e?'<div class="breakdown">+ private hop to exit adds a little</div>':'')+
-      '<div class="row total"><span class="k">Cost / month</span><span class="v">'+totalHtml+'</span></div>'+
-      '<div class="breakdown">'+costLines+'</div>'+
-      (d.metered?'<div class="breakdown" style="color:var(--warn-ink)">'+S.pkg+'GB base '+money(d.metered.base)+' × '+d.metered.cyc.mo+'mo −'+(d.metered.cyc.d*100)+'% = '+money(d.metered.eff)+'/mo effective (placeholder)</div>':'')+
+      '<div class="row"><span class="k"><span class="i">①</span> Price</span><span class="v big">'+priceHtml+'</span></div>'+
+      '<div class="breakdown">'+(d.lines.join('<br>')||'connect a box')+'</div>'+
+      (d.metered?'<div class="breakdown ph">'+S.pkg+'GB base '+money(d.metered.base)+' × '+d.metered.cyc.mo+'mo −'+(d.metered.cyc.d*100)+'% = '+money(d.metered.eff)+'/mo eff</div>':'')+
+      '<div class="row"><span class="k"><span class="i">②</span> Latency</span><span class="v">'+latHtml+'</span></div>'+
+      (d.latPh?'<div class="breakdown">entry RTT measured · +private-hop upper bound illustrative</div>':'')+
+      '<div class="row"><span class="k"><span class="i">③</span> I/O disk</span><span class="v">'+ioHtml+'</span></div>'+
+      '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">'+bwHtml+'</span></div>'+
+      '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v" style="font-size:.74rem">'+routeHtml+'</span></div>'+
+      (d.route&&d.route.ph?'<div class="breakdown ph">ISP rank pending PM</div>':'')+
       (d.refs.length?'<div class="breakdown">reference (not summed): '+d.refs.map(esc).join(', ')+'</div>':'')+
       '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">estimated</span> not a quote</div>';
 
-    /* china toggle reflect */
-    document.getElementById('chinaToggle').checked = S.china;
-
+    document.getElementById('chinaToggle').checked=S.china;
     wireSlots(); wireTraffic();
   }
 
   /* ---------- wiring ---------- */
   function wireCards(){
     document.querySelectorAll('.pcard').forEach(function(el){
-      var id = el.dataset.id, role = el.dataset.role;
-      el.addEventListener('click', function(){ place(id, role); });
-      el.addEventListener('keydown', function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); place(id, role); } });
-      el.addEventListener('dragstart', function(ev){ el.classList.add('dragging'); ev.dataTransfer.setData('text/plain', id+'|'+role); ev.dataTransfer.effectAllowed='copy'; });
+      var id=el.dataset.id, role=el.dataset.role;
+      el.addEventListener('click', function(){ place(id,role); });
+      el.addEventListener('keydown', function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); place(id,role); } });
+      el.addEventListener('dragstart', function(ev){ el.classList.add('dragging'); ev.dataTransfer.setData('text/plain', id); ev.dataTransfer.effectAllowed='copy'; });
       el.addEventListener('dragend', function(){ el.classList.remove('dragging'); });
     });
   }
+  function compatible(id, role){ var o=R[id]; return o && o.roles.indexOf(role)>=0; }
   function wireSlots(){
     document.querySelectorAll('.slot[data-slot], .slot[data-role]').forEach(function(el){
-      var role = el.dataset.slot || el.dataset.role;
-      el.addEventListener('dragover', function(ev){ ev.preventDefault(); el.classList.add('over'); ev.dataTransfer.dropEffect='copy'; });
-      el.addEventListener('dragleave', function(){ el.classList.remove('over'); });
-      el.addEventListener('drop', function(ev){ ev.preventDefault(); el.classList.remove('over');
-        var d=(ev.dataTransfer.getData('text/plain')||'').split('|'); if(d[0]) place(d[0], role); });
+      var role=el.dataset.slot||el.dataset.role;
+      el.addEventListener('dragover', function(ev){ ev.preventDefault();
+        var id=(ev.dataTransfer.getData('text/plain')||'');
+        el.classList.remove('over','reject');
+        el.classList.add(id&&!compatible(id,role)?'reject':'over');
+        ev.dataTransfer.dropEffect='copy';
+      });
+      el.addEventListener('dragleave', function(){ el.classList.remove('over','reject'); });
+      el.addEventListener('drop', function(ev){ ev.preventDefault(); el.classList.remove('over','reject');
+        var id=(ev.dataTransfer.getData('text/plain')||''); if(!id) return;
+        if(compatible(id,role)) place(id,role); else announce(R[id].nm+' can’t be a '+(role==='jump'?'jump host':'residential exit')+'.');
+      });
     });
     document.querySelectorAll('.slot.filled').forEach(function(el){
       el.addEventListener('keydown', function(ev){ if(ev.key==='Delete'||ev.key==='Backspace'){ ev.preventDefault(); remove(el.dataset.role); } });
@@ -800,26 +890,26 @@
 
   /* ---------- presets ---------- */
   var PRESETS = {
-    empty:   function(){ S.jump=null; S.exit='none'; S.china=false; },
-    single:  function(){ S.jump='bwh'; S.exit='none'; S.china=false; },
-    two:     function(){ S.jump='bwh'; S.exit='sola'; S.china=false; },
-    gated:   function(){ S.jump='sola'; S.exit='none'; S.china=true; }, /* residential box as entry from China → red */
-    ref:     function(){ S.jump='dmit'; S.exit='qqpw'; S.china=false; },
-    traffic: function(){ S.jump='bwh'; S.exit='virvm'; S.china=false; S.pkg=300; S.cycle=12; }
+    empty:   function(){ S.jump=null;    S.exit='none';  S.china=false; },
+    single:  function(){ S.jump='bwh';   S.exit='none';  S.china=false; },
+    two:     function(){ S.jump='bwh';   S.exit='sola';  S.china=false; },
+    gated:   function(){ S.jump='virvm'; S.exit='none';  S.china=true;  }, /* VirVM-jump = 163 → red from CN */
+    ref:     function(){ S.jump='dmit';  S.exit='qqpw';  S.china=false; },
+    traffic: function(){ S.jump='bwh';   S.exit='virvm'; S.china=false; S.pkg=300; S.cycle=12; },
+    example: function(){ S.jump='bwh';   S.exit='aaitr'; S.china=false; } /* the PM's BWH→AaITR readout */
   };
   document.querySelectorAll('.preset').forEach(function(b){
     b.addEventListener('click', function(){
       var p=b.dataset.preset;
       if(p==='reset'){ S={jump:'bwh',exit:'sola',china:false,pkg:300,cycle:12}; p='two'; }
-      else if(PRESETS[p]){ PRESETS[p](); }
+      else if(PRESETS[p]) PRESETS[p]();
       document.querySelectorAll('.preset').forEach(function(x){ x.classList.toggle('on', x.dataset.preset===p); });
       render(); announce('Preset: '+b.textContent.trim()+'. '+estText());
     });
   });
-
   document.getElementById('chinaToggle').addEventListener('change', function(e){
     S.china=e.target.checked; render();
-    announce(S.china?'China gating on. Route must be CN2 GIA.':'China gating off.');
+    announce(S.china?'China gating on. Entry must be CN2 GIA.':'China gating off.');
   });
 
   buildPalette(); render();
