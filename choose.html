@@ -86,10 +86,7 @@
             <tr><td>Just a clean IP, speed irrelevant</td><td><strong>AaITR</strong></td><td>Genuinely residential and clean, but <strong>low I/O and lossy routes</strong> — pick it only when throughput and latency don't matter.</td></tr>
           </tbody>
         </table>
-        <div class="callout tip">
-          <div class="ct">▲ The short version</div>
-          From China: <strong>BandwagonHost</strong> (GIA jump host) → <strong>SolaDrive</strong> or <strong>VirVM</strong> (clean residential exit). Reach for AaITR only when all you need is a clean address. Everything below is how to verify each of these choices for yourself.
-        </div>
+        <p>That chain — <strong>BandwagonHost</strong> jump host → <strong>SolaDrive</strong> or <strong>VirVM</strong> exit — is the whole recommendation. Everything below is how to verify each of these choices for yourself.</p>
       </section>
 
       <section id="fork">
@@ -211,7 +208,8 @@
             </tbody>
           </table>
         </div>
-        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>Overall</strong> is the equal-weight 0&ndash;100 average of all seven columns, each scored against the best box (exactly what the <a href="tool.html">score tool</a> does). Now the score is explainable: <strong>SolaDrive</strong> — a residential line — wins outright on <em>disk</em> (110k IOPS) and holds its own on CPU, so it tops the fleet; <strong>AaITR</strong> is pinned near a <strong>~2,000-IOPS cap</strong> on both reads and writes and starved on network; <strong>BandwagonHost</strong> is the balanced datacenter pick (strong network + CPU). Cheap isn&#x27;t slow and residential isn&#x27;t weak — measure every axis on the actual box. <strong>Value = Overall &divide; official list $/mo</strong> (points per dollar). Each benchmarked box pairs with <em>its own plan&#x27;s</em> list price: SolaDrive $40, BWH 4C&middot;4GB $56.99, BWH 3C&middot;2GB $30, AaITR $21.90 (&asymp;&yen;149), and VirVM $65.99 (its 100 Mbps tier). On that measure, <strong>BWH 3C&middot;2GB wins on cost-performance at 2.50 pt/$</strong>. <strong>VirVM</strong> lands last at <strong>0.58 pt/$</strong> — a flat <strong>$65.99/mo</strong> for its 100 Mbps tier, while its cheaper 50 Mbps tier runs <strong>$35.99</strong> on the <a href="tool.html">builder</a>; both include unlimited traffic.</p>
+        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>Overall</strong> is the equal-weight 0&ndash;100 average of all seven columns, each scored against the best box (exactly what the <a href="tool.html">score tool</a> does). That makes the ranking explainable: <strong>SolaDrive</strong> — a residential line — wins outright on <em>disk</em> (110k IOPS) and holds its own on CPU, so it tops the fleet; <strong>AaITR</strong> is pinned near a <strong>~2,000-IOPS cap</strong> on both reads and writes and starved on network; <strong>BandwagonHost</strong> is the balanced datacenter pick (strong network + CPU). Cheap isn&#x27;t slow and residential isn&#x27;t weak — measure every axis on the actual box.</p>
+        <p style="font-size:.9rem;color:var(--ink-soft)"><strong>Value = Overall &divide; list $/mo</strong> (points per dollar), each box against its own plan&#x27;s price. On that measure <strong>BWH 3C&middot;2GB wins on cost-performance at 2.50 pt/$</strong>, while <strong>VirVM</strong> lands last at <strong>0.58 pt/$</strong> — a flat <strong>$65.99/mo</strong> for its 100 Mbps tier, where the cheaper 50 Mbps tier runs <strong>$35.99</strong> on the <a href="tool.html">builder</a> (both include unlimited traffic).</p>
 
         <h3 style="margin-top:2.2rem">Network quality — routes to China</h3>
         <p>Raw throughput isn&#x27;t the whole story for China access — the <strong>route</strong> is. Measured from each box (ping + <span class="mono">nexttrace</span>, 2026-07-02): the path class to China&#x27;s three networks and the round-trip latency + packet loss. Lower latency tints blue; loss is red.</p>
