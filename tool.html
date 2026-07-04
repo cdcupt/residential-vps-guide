@@ -81,32 +81,35 @@
   .nbx .badge.gia{background:var(--accent-bg); color:var(--accent-ink); border:1px solid var(--accent)}
   .nbx .badge.i163{background:var(--paper-2); color:var(--ink-2); border:1px solid var(--line-2)}
   .nbx .badge.out{background:var(--warn-bg); color:var(--warn-ink); border:1px solid var(--warn)}
-  /* canvas + fan-out */
-  .nbx .canvas{min-height:150px; position:relative; --you-w:5rem}
-  .nbx .fan{display:flex; flex-direction:column; gap:.6rem}
-  /* entry = compact top cluster: small origin chip → wide jump card near the origin */
-  .nbx .entryrow{display:flex; align-items:center; flex-wrap:wrap; gap:.15rem}
-  .nbx .node{flex:1 1 84px; min-width:84px; border:1.4px solid var(--line-2); border-radius:var(--r-sm); background:var(--paper-2); padding:.5rem; text-align:center; display:flex; flex-direction:column; justify-content:center; min-height:74px}
-  /* origin ("you") + internet are compact fixed-width chips — not big tall boxes */
-  .nbx .node.you,.nbx .node.net{background:var(--card); color:var(--ink-soft); flex:0 0 var(--you-w); min-width:0; min-height:0; padding:.5rem .3rem; align-self:center}
+  /* ============ canvas — vertical top-down flow (you down jump down exit down egress) ============ */
+  .nbx .canvas{min-height:150px; position:relative}
+  /* the whole route reads top -> bottom as a centered vertical spine */
+  .nbx .fan{display:flex; flex-direction:column; align-items:center; gap:.14rem}
+  /* wide cards span the canvas column; compact chips (you / internet) stay centered */
+  .nbx .fan > .slot{flex:none; width:100%}
+  .nbx .fan > .addexit{flex:none; width:100%; margin-top:.4rem}
+  .nbx .fan > .branches{width:100%; margin-top:.85rem}
+  .nbx .fan > .branches::before{top:-.85rem; height:calc(.85rem + 2px)}
+  /* node chips */
+  .nbx .node{border:1.4px solid var(--line-2); border-radius:var(--r-sm); background:var(--paper-2); padding:.5rem; text-align:center; display:flex; flex-direction:column; justify-content:center}
+  .nbx .fan > .node{flex:none; width:auto; min-width:6rem; min-height:0; padding:.42rem .95rem; align-self:center; background:var(--card); color:var(--ink-soft)}
   .nbx .node .nlab{font-family:var(--mono); font-size:.58rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
-  .nbx .node .nnm{font-weight:700; font-size:.82rem; margin-top:.15rem}
+  .nbx .node .nnm{font-weight:700; font-size:.82rem; margin-top:.15rem; color:var(--ink)}
+  .nbx .node.net .nnm{color:var(--ink-soft)}
+  /* single-exit egress chip is exit-tinted — internet reached over the residential IP */
+  .nbx .fan > .node.egress{border-color:var(--exit); background:var(--exit-bg)}
+  .nbx .node.egress .nlab,.nbx .node.egress .nnm{color:var(--exit-ink)}
+  /* vertical connector — the main downward flow; entry edge recolors on gating */
+  .nbx .connv{flex:none; align-self:center; width:2px; height:20px; background:var(--ink-2); position:relative; margin:.02rem 0}
+  .nbx .connv::after{content:""; position:absolute; left:-3px; bottom:-1px; border-top:7px solid var(--ink-2); border-left:4px solid transparent; border-right:4px solid transparent}
+  .nbx .connv.red{background:var(--warn); width:3px} .nbx .connv.red::after{border-top-color:var(--warn); left:-2.5px}
+  .nbx .connv.ok{background:var(--exit)} .nbx .connv.ok::after{border-top-color:var(--exit)}
+  /* horizontal connector — used only inside a fan branch (exit -> its egress IP) */
   .nbx .conn{align-self:center; flex:0 0 22px; height:2px; background:var(--ink-2); position:relative; min-width:18px}
   .nbx .conn::after{content:""; position:absolute; right:-1px; top:-3px; border-left:7px solid var(--ink-2); border-top:4px solid transparent; border-bottom:4px solid transparent}
-  .nbx .conn.red{background:var(--warn); height:3px} .nbx .conn.red::after{border-left-color:var(--warn)}
-  .nbx .conn.ok{background:var(--exit)} .nbx .conn.ok::after{border-left-color:var(--exit)}
-  /* fan-out roots at the JUMP host: fanlead + a hidden conn spacer mirror the you→jump
-     columns, so the dashed exit bus and every branch line up directly under the jump
-     node — never under the origin ("you"). */
-  /* fan-out roots under the jump: fanlead+spacer are a FIXED offset that mirrors the
-     you→conn columns, so the dashed bus starts at the jump's left edge — but the
-     branches now GROW to the full remaining width instead of splitting it 50/50 with
-     the (empty) lead, so the exits use the whole canvas, not a right-side sliver. */
-  .nbx .fanout{display:flex; align-items:flex-start; flex-wrap:nowrap; gap:.15rem}
-  .nbx .fanlead{flex:0 0 var(--you-w); min-width:0}
-  .nbx .conn.spacer{background:none}
-  .nbx .conn.spacer::after{display:none}
-  .nbx .branches{flex:1 1 auto; min-width:0; position:relative; border-left:2px dashed var(--exit); padding-left:.7rem; display:flex; flex-direction:column; gap:.6rem}
+  /* fan-out (2+ exits): a dashed rail drops from the jump host and every exit tees off
+     it, stacked vertically, each -> its own egress IP. Reads as a fan FROM THE JUMP. */
+  .nbx .branches{width:100%; min-width:0; position:relative; border-left:2px dashed var(--exit); padding-left:.7rem; display:flex; flex-direction:column; gap:.6rem}
   /* vertical drop from the jump host's underside into the head of the fan-out bus */
   .nbx .branches::before{content:""; position:absolute; left:-2px; top:calc(-.6rem - 2px); width:2px; height:calc(.6rem + 4px); background:var(--exit)}
   .nbx .branch{display:flex; align-items:stretch; flex-wrap:wrap; position:relative; gap:.15rem}
@@ -726,9 +729,11 @@
 
   /* ---- canvas pieces ---- */
   function nodeYou(){ return '<div class="node you"><span class="nlab">origin</span><span class="nnm">you</span></div>'; }
-  function nodeNet(){ return '<div class="node net"><span class="nlab">→</span><span class="nnm">internet</span></div>'; }
+  function nodeNet(){ return '<div class="node net"><span class="nlab">egress &middot; datacenter</span><span class="nnm">internet</span></div>'; }
   function conn(k){ return '<div class="conn '+(k||'')+'" aria-hidden="true"></div>'; }
+  function connV(k){ return '<div class="connv '+(k||'')+'" aria-hidden="true"></div>'; }
   function ipNode(i){ return '<div class="ipnode" aria-hidden="true"><span class="il">egress</span><span class="iv">exit IP '+(i+1)+'</span></div>'; }
+  function egressNode(i){ return '<div class="node net egress" aria-hidden="true"><span class="nlab">egress &middot; exit IP '+(i+1)+'</span><span class="nnm">internet</span></div>'; }
   function stockBadge(pl){ return pl.stock==='out' ? ' · <span class="badge out">out of stock</span>' : ''; }
   function benchTag(pl){ return pl.bench ? '' : ' · <span class="badge ref">not benchmarked</span>'; }
 
@@ -788,20 +793,24 @@
     var jump = resolveNode(state.jump);
     var exits = state.exits.map(resolveNode).filter(Boolean);
     var entryKind = !jump ? '' : (est.gating.entryBlocked ? 'red' : (state.gatingOn ? 'ok' : ''));
-    var html = '<div class="fan"><div class="entryrow">'+ nodeYou() + conn(entryKind) + jumpSlot(jump);
-    if(jump && exits.length===0) html += conn('') + nodeNet();
-    html += '</div>';
+    // Vertical top-down flow: you down jump down (exit down egress | internet | fan-out).
+    // The entry connector (you -> jump) carries the gating red-state.
+    var html = '<div class="fan">'+ nodeYou() + connV(entryKind) + jumpSlot(jump);
     if(jump){
-      var rows = '';
-      exits.forEach(function(ex, i){ rows += '<div class="branch">'+conn('')+exitSlot(ex,i,exits.length)+conn('')+ipNode(i)+'</div>'; });
-      rows += '<div class="branch">'+addExitTarget()+'</div>';
-      // Fan-out hangs off the JUMP host, not the origin: the fanlead + hidden conn spacer
-      // reproduce the you→jump column widths, so the dashed bus starts at the jump's edge.
-      html += '<div class="fanout">'+
-        '<div class="fanlead" aria-hidden="true"></div>'+
-        '<div class="conn spacer" aria-hidden="true"></div>'+
-        '<div class="branches" aria-label="Residential exits — fan-out from the jump host">'+rows+'</div>'+
-      '</div>';
+      if(exits.length===0){
+        // single-host — the jump egresses on its own datacenter IP, then invite a fan-out
+        html += connV('') + nodeNet() + addExitTarget();
+      } else if(exits.length===1){
+        // clean vertical chain — you down jump down exit down egress (the default, primary case)
+        html += connV('') + exitSlot(exits[0],0,1) + connV('') + egressNode(0) + addExitTarget();
+      } else {
+        // 2+ exits — the jump fans out: a dashed rail drops from the jump and each exit
+        // tees off it, stacked vertically, each -> its own egress IP. Never a single chain.
+        var rows = '';
+        exits.forEach(function(ex, i){ rows += '<div class="branch">'+exitSlot(ex,i,exits.length)+conn('')+ipNode(i)+'</div>'; });
+        rows += '<div class="branch">'+addExitTarget()+'</div>';
+        html += '<div class="branches" aria-label="Residential exits — fan-out from the jump host">'+rows+'</div>';
+      }
     }
     els.canvas.innerHTML = html+'</div>';
   }
