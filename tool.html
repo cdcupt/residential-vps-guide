@@ -93,7 +93,16 @@
   .nbx .conn::after{content:""; position:absolute; right:-1px; top:-3px; border-left:7px solid var(--ink-2); border-top:4px solid transparent; border-bottom:4px solid transparent}
   .nbx .conn.red{background:var(--warn); height:3px} .nbx .conn.red::after{border-left-color:var(--warn)}
   .nbx .conn.ok{background:var(--exit)} .nbx .conn.ok::after{border-left-color:var(--exit)}
-  .nbx .branches{margin:.15rem 0 0 .9rem; border-left:2px dashed var(--exit); padding-left:.7rem; display:flex; flex-direction:column; gap:.5rem}
+  /* fan-out roots at the JUMP host: fanlead + a hidden conn spacer mirror the you→jump
+     columns, so the dashed exit bus and every branch line up directly under the jump
+     node — never under the origin ("you"). */
+  .nbx .fanout{display:flex; align-items:flex-start; flex-wrap:wrap; gap:.15rem}
+  .nbx .fanlead{flex:1 1 84px; min-width:84px}
+  .nbx .conn.spacer{background:none}
+  .nbx .conn.spacer::after{display:none}
+  .nbx .branches{flex:1 1 96px; min-width:96px; position:relative; border-left:2px dashed var(--exit); padding-left:.7rem; display:flex; flex-direction:column; gap:.5rem}
+  /* vertical drop from the jump host's underside into the head of the fan-out bus */
+  .nbx .branches::before{content:""; position:absolute; left:-2px; top:calc(-.5rem - 2px); width:2px; height:calc(.5rem + 4px); background:var(--exit)}
   .nbx .branch{display:flex; align-items:stretch; flex-wrap:wrap; position:relative; gap:.15rem}
   .nbx .branch::before{content:""; position:absolute; left:-0.72rem; top:50%; width:.6rem; height:2px; background:var(--exit)}
   .nbx .ipnode{align-self:center; border:1.2px solid var(--line-2); border-radius:var(--r-sm); background:var(--card); padding:.35rem .45rem; text-align:center; min-width:74px; flex:0 0 auto}
@@ -780,7 +789,13 @@
       var rows = '';
       exits.forEach(function(ex, i){ rows += '<div class="branch">'+conn('')+exitSlot(ex,i,exits.length)+conn('')+ipNode(i)+'</div>'; });
       rows += '<div class="branch">'+addExitTarget()+'</div>';
-      html += '<div class="branches" aria-label="Residential exits — fan-out from the jump host">'+rows+'</div>';
+      // Fan-out hangs off the JUMP host, not the origin: the fanlead + hidden conn spacer
+      // reproduce the you→jump column widths, so the dashed bus starts at the jump's edge.
+      html += '<div class="fanout">'+
+        '<div class="fanlead" aria-hidden="true"></div>'+
+        '<div class="conn spacer" aria-hidden="true"></div>'+
+        '<div class="branches" aria-label="Residential exits — fan-out from the jump host">'+rows+'</div>'+
+      '</div>';
     }
     els.canvas.innerHTML = html+'</div>';
   }
