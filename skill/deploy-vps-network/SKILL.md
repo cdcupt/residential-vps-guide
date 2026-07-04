@@ -201,6 +201,10 @@ RestartSec=3
 WantedBy=multi-user.target
 EOF
 
+# If the exit box has MULTIPLE egress IPs/interfaces, pin the one you want by editing
+# the ExecStart above to:  ${GOST} -L "http://0.0.0.0:${EXIT_PORT}?interface=EGRESS_IP"
+# (EGRESS_IP = the home-ISP address you want the outbound call to leave from).
+
 # LOCK THE FIREWALL BEFORE STARTING THE PROXY — and ONLY start gost if the lock is confirmed
 # (a failed/inactive firewall must never leave a 0.0.0.0 proxy world-open)
 safe_ufw "$EXIT_SSH" "$EXIT_SSH_PORT" "allow from ${RELAY} to any port ${EXIT_PORT} proto tcp" \
@@ -295,6 +299,51 @@ v2rayN / Nekoray / sing-box. `sid` must exactly equal the server's `shortIds` en
   # exit:  ssh ... "systemctl disable --now gost; ufw delete allow from ${RELAY} to any port ${EXIT_PORT} proto tcp"
   ```
   If ever locked out, use the provider console/VNC to fix `ufw`.
+
+---
+
+## 8 · Benchmark a candidate VPS (run BEFORE you commit to a box)
+
+Spin up an hourly/trial box, run the **identical** four tests on every candidate, then
+destroy it — same params each time is what makes numbers comparable. Prefix the heavy
+tests with `nice`/`ionice` so a benchmark can't starve a live service, and **benchmark
+disks against a temp file, never a raw block device.**
+
+```bash
+# CPU — single- then all-core; "events per second" is the score
+sudo apt install -y sysbench
+nice -n19 sysbench cpu --cpu-max-prime=20000 --threads=1        --time=10 run
+nice -n19 sysbench cpu --cpu-max-prime=20000 --threads=$(nproc) --time=10 run
+
+# Memory bandwidth — read then write
+sysbench memory --memory-block-size=1M --memory-total-size=10G --memory-oper=read  run
+sysbench memory --memory-block-size=1M --memory-total-size=10G --memory-oper=write run
+
+# Disk — 4K random IOPS against a TEMP FILE (where budget tiers hide a ~2000-IOPS cap)
+sudo apt install -y fio
+nice -n19 ionice -c3 fio --name=r --filename=./t --size=256M --direct=1 --ioengine=libaio \
+    --iodepth=16 --bs=4k --rw=randread  --runtime=10 --time_based --group_reporting
+nice -n19 ionice -c3 fio --name=w --filename=./t --size=256M --direct=1 --ioengine=libaio \
+    --iodepth=16 --bs=4k --rw=randwrite --runtime=10 --time_based --group_reporting
+rm -f ./t
+# OpenVZ/LXC (no libaio/O_DIRECT): swap `--ioengine=psync` and drop `--direct=1`
+# (page cache flatters the result — read it as a ceiling, not real speed).
+
+# Network — real download throughput (bytes/sec ×8 ÷ 1e6 = Mbps); big payload, run 2–3×
+curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
+     'https://speed.cloudflare.com/__down?bytes=524288000'
+
+# Route quality — latency + loss, then the path class (which backbone it rides).
+# Target = the network you care about (e.g. a China CT/CU/CM endpoint); 203.0.113.1 is a placeholder.
+ping -c 20 203.0.113.1                          # round-trip latency + packet loss %
+curl nexttrace.io/nt -Lo nt && sudo bash nt     # install nexttrace once
+nexttrace -M 203.0.113.1                        # traced hops → premium (e.g. CN2) vs standard route
+```
+
+Score each metric as a **% of the best box you've tested**, then average for one 0–100
+rating (`value ÷ column-best × 100`). Disk read AND write both pinned near a flat
+~2,000 IOPS is a provider QoS cap, not real speed — a genuine NVMe allowance does tens
+of thousands. Re-run CPU at a few different hours to catch an oversubscribed host.
 
 ---
 
