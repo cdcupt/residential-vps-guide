@@ -1,95 +1,135 @@
-# Provider dataset — network builder
+# Provider dataset — network builder (FULL official catalogs)
 
-Source of truth for the builder's roster + prices. **Benchmarked** = a box we run and
-measured (real perf/latency/IO/route). **Reference** = official price/spec only, not
-benchmarked by us. Prices are curated snapshots ("as of 2026-07-03"); mark stock.
+Policy (PM, 2026-07-04): **list ALL official plan options per provider**, not just the boxes we run.
+**Benchmarked** = a box we run + measured (real perf/latency/IO/route) — only a few rows.
+Everything else = official price/spec, **not benchmarked** (priced-only). Mark stock.
 
-Currencies: USD unless noted. VMISS is **CAD** (≈0.73 USD). AaITR is CNY (¥, ≈0.147 USD).
-
----
-
-## JUMP HOSTS (datacenter · CN2 GIA)
-
-### BandwagonHost  — benchmarked (US-LA) + reference (other regions)
-All plans are CN2 GIA (US-LA GIA-E; SG/HK/JP show "China Telecom CN2 GIA" in DC highlights).
-Our fleet's bwh-prod (US-LA 4C/4GB, **perf 83**) and bwh-vpn (US-LA 3C/2GB, **perf 75**)
-are the benchmarked rows; latency 129 ms / 0% loss measured; disk ~57k IOPS.
-
-| Region (DC) | Plan | Disk | RAM | CPU | Transfer | Link | Price/mo | Note |
-|---|---|---|---|---|---|---|---|---|
-| US-LA · GIA-E | — | 20GB | 1GB | 2 | 1TB | 2.5G | **$16.66** ($49.99/3mo) | ref |
-| US-LA · GIA-E | bwh-vpn | 40GB | 2GB | 3 | 2TB | 2.5G | **$30.00** ($89.99/3mo) | **benchmarked perf 75** |
-| US-LA · GIA-E | bwh-prod | 80GB | 4GB | 4 | 3TB | 2.5G | **$56.99** | **benchmarked perf 83** |
-| US-LA · GIA-E | — | 160GB | 8GB | 6 | 5TB | 5G | **$86.99** | ref |
-| Singapore · SG_8 (Equinix SG1) | — | 40GB | 2GB | 2 | 500GB | 1.5G | **$49.99** | ref (CN2 GIA · CMIN2 · Unicom Premium) |
-| Singapore | — | 80GB | 4GB | 4 | 1TB | 1.5G | **$86.99** | ref |
-| Singapore | — | 160GB | 8GB | 6 | 2TB | 2.5G | **$165.99** | ref |
-| Singapore | — | 320GB | 16GB | 8 | 4TB | 2.5G | **$329.99** | ref |
-| Singapore | — | 640GB | 32GB | 10 | 6TB | 5G | **$549.99** | ref |
-| Hong Kong · HKHK_8 (Equinix HK2) | — | 40GB | 2GB | 2 | 500GB | 1G | **$89.99** | ref (CN2 GIA peering) |
-| Hong Kong | — | 80GB | 4GB | 4 | 1TB | 1G | **$155.99** | ref |
-| Hong Kong | — | 160GB | 8GB | 6 | 2TB | 1G | **$299.99** | ref |
-| Hong Kong | — | 320GB | 16GB | 8 | 4TB | 1G | **$589.99** | ref |
-| Hong Kong | — | 640GB | 32GB | 10 | 6TB | 1G | **$989.99** | ref |
-| Japan-Osaka · JPOS_6 (Equinix OS1) | — | 40GB | 2GB | 2 | 500GB | 1.5G | **$49.99** | ref (CN2 GIA peering) |
-| Japan-Osaka | — | 80GB | 4GB | 4 | 1TB | 1.5G | **$86.99** | ref |
-| Japan-Osaka | — | 160GB | 8GB | 6 | 2TB | 1.5G | **$165.99** | ref |
-| Japan-Osaka | — | 320GB | 16GB | 8 | 4TB | 1.5G | **$329.99** | ref |
-| Japan-Osaka | — | 640GB | 32GB | 10 | 6TB | 1.5G | **$549.99** | ref |
-
-### DMIT — reference (CN2 GIA "Pro" line, perpetually out of stock)
-Source: local dmit-watch panel (`localhost:7331/api/state`) for LAX; PM screenshots for HK/JP.
-
-| Region | Plan | Specs | Transfer | Price/mo | Stock |
-|---|---|---|---|---|---|
-| US-LA | LAX.AS3.Pro.TINY | 1C/512M-ish | — | **$10.90** | out |
-| US-LA | LAX.AS3.Pro.STARTER | — | — | **$34.90** | out |
-| US-LA | LAX.AS3.Pro (range) | — | — | $10.90–$199.90 | out |
-| Hong Kong | HKG.AS3.Pro.TINY | 1 vCore · 1GB · 20GB SSD · Premium | 500GB @ 1Gbps | **$39.90** | out |
-| Japan-Tokyo | TYO.AS3.Pro.TINY | 1 vCore · 1GB · 20GB SSD · Premium | 500GB @ 1Gbps | **$21.90** | out |
-
-### VMISS — reference (US-LA CN2 GIA, prices in CAD, out of stock)
-`app.vmiss.com/store/us-los-angeles-cn2` — many other regions exist (HK-BGP, JP-Osaka/Tokyo, KR, US-LA TRI/9929/CMIN2); PM referenced US-LA CN2 GIA.
-
-| Plan | Specs | Port | Bandwidth | Price/mo | Stock |
-|---|---|---|---|---|---|
-| US.LA.CN2.Basic | 1C · 1GB · 10GB SSD | 200Mbps | 300GB | **$6 CAD** (~$4.40) | out |
-| US.LA.CN2.Core | 1C · 1GB · 15GB SSD | 200Mbps | 600GB | **$12 CAD** (~$8.80) | out |
-| US.LA.CN2.Pro | 1C · 2GB · 20GB SSD | 500Mbps | 1000GB | **$20 CAD** (~$14.60) | out |
-| US.LA.CN2.Elite | 2C · 4GB · 40GB SSD | 500Mbps | 1600GB | **$38 CAD** (~$27.70) | out |
-| US.LA.CN2.Ultra | 4C · 8GB · 80GB SSD | 1000Mbps | 2800GB | **$75 CAD** (~$54.75) | out |
-
-### VirVM (as jump host) — benchmarked (163 line; 专线GIA is a paid upgrade)
-Our box: 4C/8GB, **perf 38**, 163 route (NOT CN2 GIA unless the 专线GIA upgrade is bought). Flat bandwidth-tier pricing ($35.99/$65.99) — see residential.
+Currencies: USD unless noted. VMISS = **CAD** (≈0.73 USD). AaITR = **CNY ¥** (≈0.147 USD).
+Cycle discounts where a provider offers them: 3mo −5% · 6mo −10% · 1yr −20% · 2yr −25%.
 
 ---
 
-## RESIDENTIAL EXITS
+## BandwagonHost — CN2 GIA · 4 regions (all reference except the 2 US-LA rows we run)
+Order page: bandwagonhost.com. All plans RAID-10 SSD, CN2 GIA.
 
-| Provider | Bench? | Specs | Network | Perf | Price | Stock |
+### US-LA · USCA_9 Coresite LA2 (CN2 GIA · CMIN2 · Unicom Premium)
+| Disk | RAM | CPU | Transfer | Link | Price/mo | Note |
 |---|---|---|---|---|---|---|
-| **VirVM** | ✅ | 4C/8GB · 50GB | 163 · 专线GIA avail | 38 | **$35.99 (50M) / $65.99 (100M)** flat · unlimited traffic | in |
-| **SolaDrive** | ✅ | 4C/4GB · 48GB | 163 · clean IP · 0% loss | 88 | **$40.00/mo** | in |
-| **AaITR** | ✅ | 2C/2GB · 25GB | 163 · AT&T/Frontier · lossy (40–70%) | 18 | **~$21.88/mo** (¥149) | in |
-| **QQ.pw** | ref | from 2C/3GB | Hawaii · residential | — | **$35–55/mo** | out |
+| 20GB | 1GB | 2 | 1TB | 2.5G | $16.66 ($49.99/3mo) | ref |
+| 40GB | 2GB | 3 | 2TB | 2.5G | **$30.00** ($89.99/3mo) | **benchmarked bwh-vpn · perf 75** |
+| 80GB | 4GB | 4 | 3TB | 2.5G | **$56.99** | **benchmarked bwh-prod · perf 83** |
+| 160GB | 8GB | 6 | 5TB | 5G | $86.99 | ref |
+| 320GB | 16GB | 8 | 8TB | 5G | $159.99 | ref |
+| 640GB | 32GB | 10 | 10TB | 10G | $289.99 | ref |
+| 1TB | 64GB | 12 | 12TB | 10G | $549.99 | ref |
+| 1TB | 64GB | 12 | 15TB | 10G | $679.00 | ref |
+| 1TB | 64GB | 12 | 20TB | 10G | $899.00 | ref |
 
-### VirVM pricing — flat, bandwidth-tiered (RESOLVED 2026-07-03; corrects the earlier "traffic-metered" assumption)
-VirVM's residential VPS (Standard plan: 4C/8GB/50GB NVMe, static residential IP, **unlimited traffic**) is priced
-flat by **bandwidth tier**, NOT by traffic package:
-- **50 Mbps → $35.99/mo**
-- **100 Mbps → $65.99/mo**
-Our benchmarked box (perf 38) = the **100 Mbps** tier → **$65.99/mo** (matches the fleet record). So on
-choose.html: Value = 38 ÷ 65.99 = **0.58**. In the builder, a placed VirVM shows a **bandwidth selector**
-(50M $35.99 / 100M $65.99), default 100M; it's in-stock so it's summed like any flat box.
-(VirVM separately sells a "Dedicated Tunnel" GIA SKU with a 100GB traffic package + 300Mbps — a different
-product, not what we run.)
+### Hong Kong · HKHK_8 Equinix HK2 (CN2 GIA peering)
+| 40GB/2GB/2C/500GB/1G $89.99 · 80GB/4GB/4C/1TB/1G $155.99 · 160GB/8GB/6C/2TB/1G $299.99 · 320GB/16GB/8C/4TB/1G $589.99 · 640GB/32GB/10C/6TB/1G $989.99 · 1TB/64GB/12C/8TB/1G $1,889.99 | (all ref, all /mo) |
+|---|---|
+
+### Japan-Osaka · JPOS_6 Equinix OS1 (CN2 GIA peering)
+| 40GB/2GB/2C/500GB/1.5G $49.99 · 80GB/4GB/4C/1TB/1.5G $86.99 · 160GB/8GB/6C/2TB/1.5G $165.99 · 320GB/16GB/8C/4TB/1.5G $329.99 · 640GB/32GB/10C/6TB/1.5G $549.99 · 1TB/64GB/12C/8TB/1.5G $1,059.99 | (all ref, /mo) |
+|---|---|
+
+### Singapore · SG_8 Equinix SG1 (CN2 GIA · CMIN2 · Unicom Premium)
+| 40GB/2GB/2C/500GB/1.5G $49.99 · 80GB/4GB/4C/1TB/1.5G $86.99 · 160GB/8GB/6C/2TB/2.5G $165.99 · 320GB/16GB/8C/4TB/2.5G $329.99 · 640GB/32GB/10C/6TB/5G $549.99 · 1TB/64GB/12C/8TB/5G $1,059.99 | (all ref, /mo) |
+|---|---|
 
 ---
 
-## Notes for the build
-- **Multi-location/plan scale:** BandwagonHost/DMIT/VMISS each span regions × plans. Proposed
-  UX (reuses the inline-configurator pattern): palette = one **provider** card; a placed jump
-  node grows a **region + plan** selector (like VirVM's traffic selector), price + specs update live.
-- **Benchmarked rows** carry real perf/latency/IO/route; every other row is **priced-only, "not benchmarked"** badged.
-- **Stock:** DMIT + VMISS + QQ.pw currently out of stock → show an "out of stock" badge but still price them.
-- Convert CAD/CNY to USD for the total (show native + ≈USD), like the fleet dashboard.
+## DMIT — CN2 GIA "Pro" line · reference (perpetually out of stock). Source: dmit-watch panel.
+### US-LA (AS3 / AN4 / AN5 generations)
+| Plan | Price/mo |
+|---|---|
+| LAX.AS3.Pro.TINY | $10.90 |
+| LAX.AS3.Pro.POCKET | $16.90 |
+| LAX.AS3.Pro.STARTER | $34.90 |
+| LAX.AS3.Pro.MINI | $62.90 |
+| LAX.AS3.Pro.MICRO | $87.90 |
+| LAX.AS3.Pro.MEDIUM | $199.90 |
+| LAX.AN4.Pro.MINI→GIANT | $72.90 / $102.90 / $239.90 / $459.90 / $929.90 |
+| LAX.AN5.Pro.MINI→GIANT | $79.90 / $110.90 / $289.90 / $499.90 / $1009.90 |
+
+### Hong Kong (AS3): TINY $39.90 · STARTER $79.90 · MINI $126.90 · MICRO $179.90 (+larger)
+### Japan-Tokyo (AS3): TINY $21.90 (+larger tiers)
+All DMIT = out of stock. TINY tiers are 1 vCore / 1GB / 20GB SSD / Premium routing / 500GB @ 1Gbps.
+
+---
+
+## VMISS — US-LA CN2 GIA only (CAD, out of stock). app.vmiss.com/store/us-los-angeles-cn2
+| Plan | Specs | Port | Bandwidth | Price/mo |
+|---|---|---|---|---|
+| US.LA.CN2.Basic | 1C·1GB·10GB | 200Mbps | 300GB | $6 CAD (~$4.40) |
+| US.LA.CN2.Core | 1C·1GB·15GB | 200Mbps | 600GB | $12 CAD (~$8.80) |
+| US.LA.CN2.Pro | 1C·2GB·20GB | 500Mbps | 1000GB | $20 CAD (~$14.60) |
+| US.LA.CN2.Elite | 2C·4GB·40GB | 500Mbps | 1600GB | $38 CAD (~$27.70) |
+| US.LA.CN2.Ultra | 4C·8GB·80GB | 1000Mbps | 2800GB | $75 CAD (~$54.75) |
+All reference · out of stock. (PM: focus ONLY on US-LA CN2 GIA; ignore VMISS's other regions.)
+
+---
+
+## QQ.pw — Hawaii · residential · reference. qq.pw/store/residential-vds-with-dedicated-ip
+### Hawaii Dedicated VDS (dedicated residential IP, AMD 7940HS) — all 0 available (out of stock)
+| Plan | Specs | Data | Price |
+|---|---|---|---|
+| Dedicate IP VDS Intern | 2vCore·3GB·20GB NVMe | 1TB@400Mbps + Unlim 35Mbps | $35.00/mo |
+| Dedicate IP VDS Reliable | 3vCore·4GB·30GB | 2TB@400Mbps + Unlim 35Mbps | $35.00/mo |
+| Dedicate IP VDS Hardcore | 4vCore·4GB·40GB | 4TB@400Mbps + Unlim 35Mbps | $45.00/mo |
+| Dedicate IP VDS Elite | 5vCore·8GB·50GB | 5TB@400Mbps + Unlim 35Mbps | $165.00/quarterly |
+
+### Hawaii Residential NAT VPS ("ideal for AI tools") — in stock
+| Plan | Specs | Data | Net | Price |
+|---|---|---|---|---|
+| NAT Tiny | 1vCore·238MB·4GB | 1GB/mo | 10Mbps sym | $12/yr |
+| NAT Lite | 1vCore·256MB·4GB | 6GB/mo | 50Mbps | $2/mo |
+| NAT Basic | 1vCore·512MB·4GB | 20GB/mo | 100Mbps | $4/mo |
+| NAT Basic2 | 1vCore·512MB·4GB | 50GB/mo | 150Mbps | $6/mo |
+| NAT Basic3 | 1vCore·512MB·4GB | 100GB/mo | 200Mbps | $8/mo |
+| NAT Standard | 1vCore·512MB·4GB | 200GB/mo | 250Mbps | $10/mo |
+| NAT Booster | 1vCore·1GB·10GB | 512GB/mo | 300Mbps | $16/mo |
+| NAT Plus | 2vCore·1.5GB·15GB | 1TB/mo | 350Mbps | $22/mo |
+| NAT Premium | 2vCore·2GB·20GB | 2TB/mo | 400Mbps | from $28/mo |
+| NAT Extreme | 8vCore·8GB·80GB | 40TB/mo | 1Gbps · dedicated NAT range | $690/mo |
+
+---
+
+## AaITR — CA/JP residential · CNY ¥149/mo ≈ **$21.88** (aaitr site)
+### Static residential VPS (独享静态 · 2vCPU·2GB·25GB SSD·100Mbps·2000GB) — SOLD OUT
+| US AT&T static ¥149 (真实民宅, CA multi-city) · US Frontier static ¥149 | **benchmarked: our AaITR box = this line, perf 18** |
+|---|---|
+
+### Residential NAT VPS (共享动态 · 1vCPU·512MB·8GB SSD·1000GB · port-forward ×10) — in stock
+| US Frontier NAT ¥149 (100Mbps, CA, daily IP rotate) · JP SoftBank NAT ¥149 (50Mbps, Tokyo) |
+|---|
+
+---
+
+## VirVM (vircs) — TWO product lines (vircs.com). Our box = residential 100M tier (perf 38).
+### VirVM Residential (节点K · trusted-IP/port-forward · unlimited traffic · flat bandwidth tier)
+| Bandwidth | Price/mo |
+|---|---|
+| 50 Mbps | **$35.99** |
+| 100 Mbps | **$65.99** ← benchmarked (our box) |
+| 200 Mbps | **$115.99** |
+| 300 Mbps | **$160.99** |
+Cycle discounts apply (3mo −5% … 2yr −25%). Specs: 4C·8GB·50GB NVMe, 1 IPv4, AT&T SF residential.
+
+### VirVM GIA (专线隧道B · relay-ready no-whitelist · 300M dedicated · TRAFFIC-METERED)
+| Traffic package | Price/mo |
+|---|---|
+| 100 GB | **$59.98** |
+| 300 GB | **$99.98** |
+| 500 GB | **$139.98** |
+| 1000 GB | **$239.98** |
+Cycle discounts apply. Specs: 300M dedicated, 1 IPv4, VLESS+Reality, Asia-Pacific↔NA corridor.
+
+---
+
+## Roster roles (which slot each fills in the builder)
+- **Jump host (datacenter CN2 GIA):** BandwagonHost, DMIT, VMISS.
+- **Residential exit:** VirVM (residential + GIA), SolaDrive, AaITR, QQ.pw.
+- **Benchmarked (our fleet, real metrics):** BWH US-LA 3C/2GB (75) & 4C/4GB (83); VirVM residential 100M (38); SolaDrive $40 (88); AaITR static ¥149 (18). Everything else = priced-only / not benchmarked.
+- **Pricing models the engine must handle:** flat $/mo · flat + billing-cycle-discount · **bandwidth-tiered** (VirVM residential) · **traffic-metered** (VirVM GIA — bring the metered model back for this SKU) · currency conversion (CAD, CNY→USD).
+- **Stock:** DMIT, VMISS, QQ.pw-dedicated, AaITR-static currently out → badge but still price; out-of-stock excluded from the buildable total (reference), only in-stock summed.
