@@ -534,11 +534,17 @@
         { id:'virvm-gia-1000', label:'1000 GB · 300M dedicated', bench:false, stock:'in', pricing:{ type:'flat', amount:239.98, currency:'USD' }, linkMbps:300, metrics:null }
       ]}
     ]},
+    // SolaDrive "Residential IP" line (US-LA, 163 · clean IP, 1Gbps port). FOUR official
+    // options; only SD-4 is our fleet box (benchmarked, perf 88) so it carries metrics and
+    // stays the default placement (bench:true). The other three are priced-only with linkMbps
+    // set so the min-hop bandwidth still resolves (no "pending"). buyUrl empty until the PM supplies it.
     { id:'sola', name:'SolaDrive', roles:['exit'], buyUrl:'', regions:[
       { id:'us-la', name:'US-LA', network:'163 · clean IP', exitNetwork:'163 · clean IP', jumpGia:false, plans:[
-        { id:'sola-1', label:'4C · 4GB · 48GB', bench:true, stock:'in',
-          pricing:{ type:'flat', amount:40, currency:'USD' },
-          metrics:{ perf:88, latencyMs:{lo:175,hi:199}, iops:109775, iopsCapped:false, bandwidthMbps:569, hopAddMs:46, route:{ isp:'consumer ISP', purity:'high' } } }
+        { id:'sola-sd2', label:'SD-2 · 2C·2GB·25GB · 2TB · 1 res-IP',   bench:false, stock:'in', pricing:{ type:'flat', amount:25,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'sola-1',   label:'SD-4 · 4C·4GB·50GB · 4TB · 2 res-IP',   bench:true,  stock:'in', pricing:{ type:'flat', amount:40,  currency:'USD' },
+          metrics:{ perf:88, latencyMs:{lo:175,hi:199}, iops:109775, iopsCapped:false, bandwidthMbps:569, hopAddMs:46, route:{ isp:'consumer ISP', purity:'high' } } },
+        { id:'sola-10',  label:'10 VPS · 10×(2GB·25GB) · 10 res-IP · 15TB', bench:false, stock:'in', pricing:{ type:'flat', amount:195, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'sola-250', label:'250 VPS Node · 24C/48T·512GB·2×8TB · 254 res-IP · 30TB', bench:false, stock:'in', pricing:{ type:'flat', amount:795, currency:'USD' }, linkMbps:1000, metrics:null }
       ]}
     ]},
     { id:'aaitr', name:'AaITR', roles:['exit'], groupLabel:'Product', buyUrl:'', regions:[

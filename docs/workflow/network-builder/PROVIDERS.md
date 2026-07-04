@@ -129,9 +129,20 @@ Cycle discounts apply. Specs: 300M dedicated, 1 IPv4, VLESS+Reality, Asia-Pacifi
 
 ---
 
+## SolaDrive — US-LA residential (163 · clean IP · 1Gbps port). "Residential IP" line. Our box = SD-4 (perf 88).
+| Plan | Specs | Res IP | Transfer | Price/mo |
+|---|---|---|---|---|
+| SD-2 | 2C @3.0GHz+ · 2GB · 25GB Raid-10 NVMe | 1 | 2TB | $25.00 |
+| SD-4 | 4C @3.0GHz+ · 4GB · 50GB NVMe | 2 | 4TB | **$40.00** ← benchmarked (our box · perf 88) |
+| Residential IP - 10 VPS | 10× (2GB · 25GB NVMe each) | 10 | 15TB | $195.00 |
+| Residential 250 VPS Node | 24C/48T @3.3GHz · 512GB DDR4 · 2×8TB SSD Raid-1 · SolusVM/ESXi · fully managed | 254 | 30TB | $795.00 |
+All in stock · 1Gbps port. Only SD-4 is benchmarked (our fleet exit); the other three are priced-only / not benchmarked.
+
+---
+
 ## Roster roles (which slot each fills in the builder)
 - **Jump host (datacenter CN2 GIA):** BandwagonHost, DMIT, VMISS.
 - **Residential exit:** VirVM (residential + GIA), SolaDrive, AaITR, QQ.pw.
-- **Benchmarked (our fleet, real metrics):** BWH US-LA 3C/2GB (75) & 4C/4GB (83); VirVM residential 100M (38); SolaDrive $40 (88); AaITR static ¥149 (18). Everything else = priced-only / not benchmarked.
+- **Benchmarked (our fleet, real metrics):** BWH US-LA 3C/2GB (75) & 4C/4GB (83); VirVM residential 100M (38); SolaDrive SD-4 $40 (88); AaITR static ¥149 (18). Everything else = priced-only / not benchmarked.
 - **Pricing models the engine must handle:** flat $/mo · flat + billing-cycle-discount · **bandwidth-tiered** (VirVM residential) · **traffic-metered** (VirVM GIA — bring the metered model back for this SKU) · currency conversion (CAD, CNY→USD).
 - **Stock:** DMIT, VMISS, QQ.pw-dedicated, AaITR-static currently out → badge but still price; out-of-stock excluded from the buildable total (reference), only in-stock summed.
