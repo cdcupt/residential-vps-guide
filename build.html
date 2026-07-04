@@ -82,13 +82,8 @@
             <text class="dg-t"  x="833" y="97"  text-anchor="middle" font-size="13">The internet</text>
             <text class="dg-s"  x="833" y="115" text-anchor="middle" font-size="10">sees a home IP</text>
           </svg>
-          <figcaption>The client only ever talks to the relay. The relay forwards over a private hop to the exit, which makes the final connection — so the site sees the exit's <strong>home-ISP address</strong>, never the datacenter or you.</figcaption>
+          <figcaption>The client only ever talks to the relay — the single public entry point. The relay forwards your decrypted traffic over a private hop to the exit, which makes the final outbound connection, so the site sees the exit's <strong>home-ISP address</strong>, never the datacenter or you.</figcaption>
         </figure>
-        <ul>
-          <li>Your client only ever connects to the <strong>relay</strong> — a fast, stable datacenter box on a good backbone. It's the single public entry point.</li>
-          <li>The relay forwards your decrypted traffic over a private hop to a <strong>residential exit</strong>, which makes the final outbound connection.</li>
-          <li>The website sees the <strong>exit's home-ISP address</strong> — never the datacenter, never you.</li>
-        </ul>
         <div class="callout tip">
           <div class="ct">▲ Why not connect straight to the residential box?</div>
           Residential IPs change, sit behind flaky home uplinks, and are often unreachable from the outside (CGNAT, inbound firewalls, provider whitelists). The datacenter relay gives you one stable, always-reachable front door; the residential box only ever has to make <em>outbound</em> connections.
@@ -101,7 +96,7 @@
         <h3>Reality, briefly</h3>
         <ul>
           <li><strong>Vision flow</strong> (<span class="mono">xtls-rprx-vision</span>) — reduces the "TLS-in-TLS" tell that naive proxies leak.</li>
-          <li><strong>Borrowed handshake</strong> — Reality proxies the TLS handshake of a real, popular HTTPS site that isn't yours. In config the target is <span class="mono">dest</span> (the site whose handshake is borrowed) and <span class="mono">serverNames</span> is the SNI your client presents — point both at the same real, unrelated site that stays up. A strong choice matters: weak or suspicious ones get probed and blocked faster on hostile networks.</li>
+          <li><strong>Borrowed handshake</strong> — Reality mimics the TLS handshake of a real, popular HTTPS site that isn't yours: <span class="mono">dest</span> is that site, <span class="mono">serverNames</span> the matching SNI your client presents — point both at the same real, unrelated site that stays up. The choice matters: weak or obscure ones get probed and blocked faster on hostile networks.</li>
           <li><strong>One inbound per exit</strong> — give each exit its own port + keypair on the relay, and a routing rule sending that inbound's traffic to that exit. Clean, and you can add/remove exits independently.</li>
         </ul>
         <figure class="fig">
@@ -132,12 +127,7 @@
 
       <section id="exit">
         <h2><span class="n">03</span>The residential exit</h2>
-        <p>The exit's only job is to receive traffic from the relay and make the outbound connection from its home IP. Keep it dead simple: a single lightweight forward proxy.</p>
-        <pre><span class="c"># a minimal HTTP forward proxy, listening only for the relay</span>
-gost -L "http://0.0.0.0:<span class="k">PROXY_PORT</span>"
-
-<span class="c"># if the box exposes more than one egress interface/IP, bind to the one you want</span>
-gost -L "http://0.0.0.0:PROXY_PORT?interface=<span class="k">EGRESS_IP</span>"</pre>
+        <p>The exit's only job is to receive traffic from the relay and make the outbound connection from its home IP. Keep it dead simple: a single lightweight forward proxy such as <span class="mono">gost</span>, listening only for the relay. If the box exposes more than one egress IP, bind the proxy to the one you want.</p>
         <p>A single-process proxy like <span class="mono">gost</span> multiplexes connections and won't fall over under the pool of idle tunnels a relay holds open — unlike fork-per-connection proxies, which starve their worker pool and hang. Run it under a supervisor that restarts on failure.</p>
         <div class="callout tip">
           <div class="ct">▲ TCP only</div>
@@ -145,11 +135,9 @@ gost -L "http://0.0.0.0:PROXY_PORT?interface=<span class="k">EGRESS_IP</span>"</
         </div>
         <div class="callout dont">
           <div class="ct">✕ Never leave the proxy open to the world</div>
-          A no-auth proxy on a public IP will be found and abused within hours. Firewall the proxy port to <strong>accept only the relay's IP</strong> — nothing else should ever reach it.
+          A no-auth proxy on a public IP will be found and abused within hours. Firewall the proxy port to <strong>accept only the relay's IP</strong> — nothing else should ever reach it. Open your SSH port <em>first</em>, or enabling the firewall locks you out.
         </div>
-        <pre>ufw allow 22/tcp
-ufw allow from <span class="k">RELAY_IP</span> to any port PROXY_PORT proto tcp
-ufw --force enable   <span class="c"># allow SSH FIRST, or you lock yourself out</span></pre>
+        <p>The <a href="setup.html">deploy skill</a> has the exact commands — the <span class="mono">gost</span> proxy unit and the lockout-safe firewall sequence (allow SSH, allow only the relay to the proxy port, enable, then prove a fresh login still works).</p>
       </section>
 
       <section id="security">
@@ -182,9 +170,7 @@ ufw --force enable   <span class="c"># allow SSH FIRST, or you lock yourself out
             <li><strong>Expect a brief blip.</strong> Any tunnel reload drops live connections for a second or two; they reconnect. Do it when you're not mid-session on that exit.</li>
           </ul>
         </div>
-        <p><strong>Verify from a clean vantage.</strong> Don't trust <span class="mono">ping</span>/<span class="mono">nc</span> from a machine behind its own tunnel or fake-IP proxy — they can report success that isn't real; run those from a neutral box. To prove the <em>egress IP</em>, curl through the proxy — but that has to run <strong>from the relay</strong> (the only host the exit's firewall admits), or temporarily whitelist your test box first:</p>
-        <pre><span class="c"># run FROM the relay: prove traffic really exits on the home IP</span>
-curl -x http://EXIT_IP:PROXY_PORT https://api.ipify.org</pre>
+        <p><strong>Verify from a clean vantage.</strong> Don't trust <span class="mono">ping</span>/<span class="mono">nc</span> from a machine behind its own tunnel or fake-IP proxy — they can report success that isn't real; run those from a neutral box. To prove the <em>egress IP</em>, curl through the proxy <strong>from the relay</strong> (the only host the exit's firewall admits) — if it returns the exit's home IP, the chain works. The <a href="setup.html">deploy skill</a> runs this egress check for you.</p>
       </section>
 
       <section id="lessons">

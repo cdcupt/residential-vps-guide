@@ -68,16 +68,16 @@
 
       <section id="start">
         <h2><span class="n">0</span>Start here — a VPN network from China</h2>
-        <p>Building your own VPN or residential-exit network from mainland China? The right decision order isn't specs or price — it's this. Here's the sequence, and the actual boxes we run for each role.</p>
+        <p>Building your own VPN or residential-exit network from mainland China? The right order isn't specs or price — it's this, with the actual boxes we run for each role.</p>
 
         <h3>1 · In China, the network comes first</h3>
-        <p>Latency and route quality beat cores and RAM — if the route is bad, no amount of CPU saves it. So the first question for any box is <em>how it reaches China</em>, ideally over the premium <strong>CN2 GIA</strong> backbone (see the <a href="#bench">route table</a> below).</p>
+        <p>Latency and route quality beat cores and RAM — if the route is bad, no CPU saves it. So the first question for any box is <em>how it reaches China</em>, ideally over the premium <strong>CN2 GIA</strong> backbone (see the <a href="#bench">route table</a> below).</p>
 
         <h3>2 · The jump host — a GIA datacenter box</h3>
-        <p>Your encrypted entry point (the <a href="build.html">relay</a>) should be a datacenter box on a real GIA route. Two obvious options, both CN2 GIA: <strong>BandwagonHost</strong> and <strong>DMIT</strong>. DMIT is usually <strong>out of stock</strong>, so BandwagonHost is the practical pick — comparable performance, cheaper, and a touch more powerful. It's what our fleet runs (129&nbsp;ms to China, 0% loss).</p>
+        <p>Your encrypted entry point (the <a href="build.html">relay</a>) should be a datacenter box on a real GIA route. Two obvious CN2 GIA options: <strong>BandwagonHost</strong> and <strong>DMIT</strong>. DMIT is usually <strong>out of stock</strong>, so BandwagonHost is the practical pick — comparable, cheaper, a touch more powerful — and it's what our fleet runs (129&nbsp;ms to China, 0% loss).</p>
 
         <h3>3 · The residential exit — pick by what you need</h3>
-        <p>The second box is the <a href="build.html">residential exit</a>, where you egress on a real home IP. All three we run are <strong>genuinely clean residential IPs</strong> (<a href="#ip">purity table</a>) — they differ on speed and route:</p>
+        <p>The second box is the <a href="build.html">residential exit</a>, where you egress on a real home IP. All three we run are <strong>genuinely clean residential IPs</strong> (<a href="#ip">purity table</a>); they differ on speed and route:</p>
         <table class="mtable">
           <thead><tr><th>If you want…</th><th>Pick</th><th>Why</th></tr></thead>
           <tbody>
@@ -168,30 +168,17 @@
 
       <section id="bench">
         <h2><span class="n">04</span>Benchmark before you buy — the ten-minute method</h2>
-        <p>Most providers offer an hourly or trial box. Spin one up, run the same four tests you'd run on every candidate, then destroy it. Identical commands each time is the whole trick — that's what makes numbers <em>comparable</em>.</p>
-
-        <h3>CPU — single- and multi-core</h3>
-        <pre><span class="c"># same params every time; "events per second" is your score</span>
-sudo apt install -y sysbench
-sysbench cpu --cpu-max-prime=20000 --threads=<span class="k">1</span> --time=10 run   <span class="c"># single-core</span>
-sysbench cpu --cpu-max-prime=20000 --threads=<span class="k">$(nproc)</span> --time=10 run <span class="c"># all-core</span></pre>
-
-        <h3>Memory bandwidth</h3>
-        <pre>sysbench memory --memory-block-size=1M --memory-total-size=10G --memory-oper=read  run
-sysbench memory --memory-block-size=1M --memory-total-size=10G --memory-oper=write run</pre>
-
-        <h3>Disk — 4K random IOPS (where the caps hide)</h3>
-        <pre>sudo apt install -y fio
-fio --name=r --filename=./t --size=256M --direct=1 --ioengine=libaio \
-    --iodepth=16 --bs=4k --rw=<span class="k">randread</span>  --runtime=10 --time_based --group_reporting
-<span class="c"># repeat with --rw=randwrite, then: rm -f ./t</span></pre>
-        <p style="font-size:.92rem;color:var(--ink-2)">That's for <strong>KVM</strong>. On container-virtualized boxes (OpenVZ/LXC — common in the cheap-residential tier), <span class="mono">libaio</span> or <span class="mono">O_DIRECT</span> are often missing and fio will abort; swap <span class="mono">--ioengine=psync</span> and drop <span class="mono">--direct=1</span> (page-cache will flatter the numbers, so read them as a ceiling).</p>
-
-        <h3>Network — real download throughput</h3>
-        <pre><span class="c"># bytes/sec ×8 ÷ 1e6 = Mbps</span>
-curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
-     'https://speed.cloudflare.com/__down?bytes=524288000'</pre>
-        <p style="font-size:.92rem;color:var(--ink-2)">Use a big payload (500&nbsp;MB+) and run it 2–3 times. On a gigabit box a small download finishes in a fraction of a second — too fast to escape TCP slow-start, so it <em>under</em>-reports exactly the fast links you're trying to rank.</p>
+        <p>Most providers rent an hourly or trial box. Spin one up, run the same four tests on every candidate, then destroy it — identical commands each time is what makes numbers <em>comparable</em>. Four axes are worth measuring:</p>
+        <ul>
+          <li><strong>CPU, single- and multi-core.</strong> <span class="mono">sysbench</span> events/second — one thread, then all cores.</li>
+          <li><strong>Memory bandwidth.</strong> A <span class="mono">sysbench</span> read + write pass, in GB/s.</li>
+          <li><strong>Disk, 4K random IOPS.</strong> Where the caps hide — test <span class="mono">fio</span> against a temp file, never a raw device.</li>
+          <li><strong>Network throughput.</strong> Pull 500&nbsp;MB+ so TCP slow-start can't <em>under</em>-report exactly the fast links you're ranking.</li>
+        </ul>
+        <div class="callout tip">
+          <div class="ct">▲ The exact commands live in the skill</div>
+          The <span class="mono">sysbench</span>, <span class="mono">fio</span> and <span class="mono">curl</span> one-liners — with the OpenVZ fallback and safe <span class="mono">nice</span>/<span class="mono">ionice</span> deprioritization — are all in the <a href="setup.html">deploy skill</a>'s benchmarking section, ready to hand to your agent. This page stays command-free on purpose.
+        </div>
 
         <div class="callout do">
           <div class="ct">✓ Turn it into one number</div>
@@ -199,7 +186,7 @@ curl -o /dev/null -w '%{speed_download}\n' --max-time 30 \
         </div>
 
         <h3 style="margin-top:2.2rem">Example: our real fleet, every axis</h3>
-        <p>The same uniform pass on the actual boxes we run — <strong>CPU, memory, network and disk</strong>, one row per box, real measured numbers (only the IPs are withheld). Best per column tints blue, worst red; scroll the table sideways for every axis.</p>
+        <p>The same uniform pass on the boxes we run — <strong>CPU, memory, network and disk</strong>, one row per box, real measured numbers (only the IPs are withheld). Best per column tints blue, worst red; scroll sideways for every axis.</p>
         <div class="tool-wrap">
           <table class="perf-ref" id="fleet-table">
             <thead><tr>
