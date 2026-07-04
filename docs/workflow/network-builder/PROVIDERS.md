@@ -146,3 +146,18 @@ All in stock · 1Gbps port. Only SD-4 is benchmarked (our fleet exit); the other
 - **Benchmarked (our fleet, real metrics):** BWH US-LA 3C/2GB (75) & 4C/4GB (83); VirVM residential 100M (38); SolaDrive SD-4 $40 (88); AaITR static ¥149 (18). Everything else = priced-only / not benchmarked.
 - **Pricing models the engine must handle:** flat $/mo · flat + billing-cycle-discount · **bandwidth-tiered** (VirVM residential) · **traffic-metered** (VirVM GIA — bring the metered model back for this SKU) · currency conversion (CAD, CNY→USD).
 - **Stock:** DMIT, VMISS, QQ.pw-dedicated, AaITR-static currently out → badge but still price; out-of-stock excluded from the buildable total (reference), only in-stock summed.
+
+## IP quality (meowvps + our measurements)
+The builder's **⑥ IP QUALITY** metric rates the **egress IP** — which is always the **exit's** IP, never the jump's. Unified scale: `excellent > good > average` (or `null` = unrated). Each rating carries a **source**: `measured` = our own fleet test (Scamalytics / Netflix / ISP checks on a box we run); `ref · meowvps` = a reference rating from **[meowvps.com](https://meowvps.com)** for a box we have **not** benchmarked ourselves. A meowvps opinion is always shown as a reference, never as our measurement.
+
+| Provider | Rating | Source | Basis |
+|----------|--------|--------|-------|
+| **SolaDrive** (163 · clean IP) | excellent | measured | our SD-4 box — Scamalytics low, Netflix Native |
+| **VirVM** (residential + GIA) | excellent | measured | our box measured clean; meowvps notes "buy fresh segments" |
+| **AaITR** (static/NAT residential) | excellent | measured | our box measured clean; meowvps "excellent" |
+| **QQ.pw** (Hawaii residential) | excellent | ref · meowvps | meowvps "top-tier residential" — not benchmarked by us |
+| **BandwagonHost** (datacenter) | average | ref · meowvps | datacenter IP |
+| **DMIT** (datacenter) | average | ref · meowvps | datacenter IP |
+| **VMISS** (datacenter) | unrated | ref · meowvps | meowvps gives no explicit rating |
+
+Reference ratings for the non-measured providers credit **meowvps.com** as the source. In the builder: **single exit** → that exit's rating + source tag; **multiple exits** → the **worst** rating across exits (tagged `mixed` if they differ, `incl. unrated` if any is null); **zero exits** (single-host) → `datacenter IP · no residential exit` (the jump's own datacenter egress, not scored against the exit scale).
