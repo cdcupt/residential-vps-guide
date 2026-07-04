@@ -157,7 +157,7 @@
   .nbx .edgerow .emetrics{font-family:var(--mono); font-size:.7rem; color:var(--ink-2); margin-top:.25rem; line-height:1.55; overflow-wrap:anywhere}
   .nbx .edgerow.entry{border-left-color:var(--accent)} .nbx .edgerow.entry.red{border-left-color:var(--warn); background:var(--warn-bg)}
   .nbx .edgerow.link{border-left-color:var(--exit)}
-  /* bandwidth-tier selector (VirVM — flat, tiered, unlimited traffic) */
+  /* billing-cycle selector (VirVM — flat price × cycle discount) */
   .nbx .bwsel{margin-top:.55rem; border-top:1px dashed var(--accent); padding-top:.5rem}
   .nbx .bwsel .tl{font-family:var(--mono); font-size:.58rem; text-transform:uppercase; letter-spacing:.04em; color:var(--accent-ink); margin-bottom:.3rem; display:flex; flex-wrap:wrap; gap:.3rem; align-items:center}
   .nbx .chips{display:flex; flex-wrap:wrap; gap:.28rem}
@@ -402,84 +402,154 @@
   /* ---------- module constants ---------- */
   var FX = { USD:1, CAD:0.73, CNY:0.147 };
   var CURSYM = { USD:'$', CAD:'CA$', CNY:'¥' };
+  // Billing-cycle discounts — VirVM offers these on BOTH product lines. Longer term, deeper discount.
+  var CYCLES = [
+    { mo:1,  disc:0,    label:'1 mo' },
+    { mo:3,  disc:0.05, label:'3 mo · −5%' },
+    { mo:6,  disc:0.10, label:'6 mo · −10%' },
+    { mo:12, disc:0.20, label:'1 yr · −20%' },
+    { mo:24, disc:0.25, label:'2 yr · −25%' }
+  ];
+  function cycleObj(mo){ for(var i=0;i<CYCLES.length;i++){ if(CYCLES[i].mo===mo) return CYCLES[i]; } return CYCLES[0]; }
 
-  /* ---------- PROVIDERS dataset (provider -> region -> plan) ----------
-     LIST-PRICE rule: perf pairs with its own plan's list price.
-     BWH US-LA 3C/2GB (perf 75) -> $30 ; 4C/4GB (perf 83) -> $56.99.
-     Benchmarked plans carry metrics; every other plan metrics=null.
-     VirVM (residential) is flat by bandwidth tier: 50M $35.99 / 100M $65.99. */
+  /* ---------- PROVIDERS dataset (provider -> region/product -> plan) ----------
+     FULL official catalog — every provider's real plan list, transcribed from
+     PROVIDERS.md (no fabrication). The mid level is a generic group: for BWH/DMIT/
+     VMISS it is a REGION; for VirVM/QQ.pw/AaITR it is a PRODUCT (groupLabel switches
+     the configurator's label). Facts (metrics) live on the plan we actually ran, so
+     only our fleet rows carry metrics; every other plan is priced-only (metrics:null).
+     Pricing is flat $/mo per selected variant; VirVM adds a billing-cycle discount. */
   var PROVIDERS = [
+    /* ============ JUMP HOSTS — datacenter CN2 GIA ============ */
     { id:'bwh', name:'BandwagonHost', roles:['jump'], regions:[
-      { id:'us-la', name:'US-LA · GIA-E', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'bwh-la-1g', label:'2C · 1GB · 20GB', bench:false, stock:'in',
-          pricing:{ type:'flat', amount:16.66, currency:'USD' }, metrics:null },
-        { id:'bwh-vpn', label:'bwh-vpn · 3C · 2GB · 40GB', bench:true, stock:'in',
-          pricing:{ type:'flat', amount:30, currency:'USD' },
+      { id:'us-la', name:'US-LA · USCA_9', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'bwh-la-20',   label:'2C · 1GB · 20GB · 1TB (·$49.99/3mo)', bench:false, stock:'in', pricing:{ type:'flat', amount:16.66,  currency:'USD' }, metrics:null },
+        { id:'bwh-vpn',     label:'bwh-vpn · 3C · 2GB · 40GB · 2TB',      bench:true,  stock:'in', pricing:{ type:'flat', amount:30,     currency:'USD' },
           metrics:{ perf:75, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
-        { id:'bwh-prod', label:'bwh-prod · 4C · 4GB · 80GB', bench:true, stock:'in',
-          pricing:{ type:'flat', amount:56.99, currency:'USD' },
+        { id:'bwh-prod',    label:'bwh-prod · 4C · 4GB · 80GB · 3TB',     bench:true,  stock:'in', pricing:{ type:'flat', amount:56.99,  currency:'USD' },
           metrics:{ perf:83, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
-        { id:'bwh-la-8g', label:'6C · 8GB · 160GB', bench:false, stock:'in',
-          pricing:{ type:'flat', amount:86.99, currency:'USD' }, metrics:null }
-      ]},
-      { id:'sg', name:'Singapore · SG_8', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'bwh-sg-2g', label:'2C · 2GB · 40GB', bench:false, stock:'in', pricing:{ type:'flat', amount:49.99, currency:'USD' }, metrics:null },
-        { id:'bwh-sg-4g', label:'4C · 4GB · 80GB', bench:false, stock:'in', pricing:{ type:'flat', amount:86.99, currency:'USD' }, metrics:null }
+        { id:'bwh-la-160',  label:'6C · 8GB · 160GB · 5TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-la-320',  label:'8C · 16GB · 320GB · 8TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:159.99, currency:'USD' }, metrics:null },
+        { id:'bwh-la-640',  label:'10C · 32GB · 640GB · 10TB', bench:false, stock:'in', pricing:{ type:'flat', amount:289.99, currency:'USD' }, metrics:null },
+        { id:'bwh-la-1t12', label:'12C · 64GB · 1TB · 12TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:549.99, currency:'USD' }, metrics:null },
+        { id:'bwh-la-1t15', label:'12C · 64GB · 1TB · 15TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:679,    currency:'USD' }, metrics:null },
+        { id:'bwh-la-1t20', label:'12C · 64GB · 1TB · 20TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:899,    currency:'USD' }, metrics:null }
       ]},
       { id:'hk', name:'Hong Kong · HKHK_8', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'bwh-hk-2g', label:'2C · 2GB · 40GB', bench:false, stock:'in', pricing:{ type:'flat', amount:89.99, currency:'USD' }, metrics:null },
-        { id:'bwh-hk-4g', label:'4C · 4GB · 80GB', bench:false, stock:'in', pricing:{ type:'flat', amount:155.99, currency:'USD' }, metrics:null }
+        { id:'bwh-hk-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:89.99,   currency:'USD' }, metrics:null },
+        { id:'bwh-hk-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:155.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-hk-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:299.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-hk-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:589.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-hk-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:989.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-hk-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1889.99, currency:'USD' }, metrics:null }
       ]},
       { id:'jp', name:'Japan-Osaka · JPOS_6', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'bwh-jp-2g', label:'2C · 2GB · 40GB', bench:false, stock:'in', pricing:{ type:'flat', amount:49.99, currency:'USD' }, metrics:null },
-        { id:'bwh-jp-4g', label:'4C · 4GB · 80GB', bench:false, stock:'in', pricing:{ type:'flat', amount:86.99, currency:'USD' }, metrics:null }
+        { id:'bwh-jp-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:49.99,   currency:'USD' }, metrics:null },
+        { id:'bwh-jp-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,   currency:'USD' }, metrics:null },
+        { id:'bwh-jp-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:165.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-jp-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:329.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-jp-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:549.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-jp-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1059.99, currency:'USD' }, metrics:null }
+      ]},
+      { id:'sg', name:'Singapore · SG_8', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'bwh-sg-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:49.99,   currency:'USD' }, metrics:null },
+        { id:'bwh-sg-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,   currency:'USD' }, metrics:null },
+        { id:'bwh-sg-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:165.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-sg-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:329.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-sg-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:549.99,  currency:'USD' }, metrics:null },
+        { id:'bwh-sg-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1059.99, currency:'USD' }, metrics:null }
       ]}
     ]},
     { id:'dmit', name:'DMIT', roles:['jump'], stockNote:'out of stock', regions:[
-      { id:'us-la', name:'US-LA · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-la-tiny', label:'LAX.AS3.Pro.TINY', bench:false, stock:'out', pricing:{ type:'reference', from:10.90, currency:'USD' }, metrics:null },
-        { id:'dmit-la-starter', label:'LAX.AS3.Pro.STARTER', bench:false, stock:'out', pricing:{ type:'reference', from:34.90, currency:'USD' }, metrics:null }
+      { id:'us-la', name:'US-LA · AS3/AN4/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'dmit-as3-tiny',    label:'LAX.AS3.Pro.TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:10.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-as3-pocket',  label:'LAX.AS3.Pro.POCKET',        bench:false, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-as3-starter', label:'LAX.AS3.Pro.STARTER',       bench:false, stock:'out', pricing:{ type:'flat', amount:34.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-as3-mini',    label:'LAX.AS3.Pro.MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:62.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-as3-micro',   label:'LAX.AS3.Pro.MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:87.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-as3-medium',  label:'LAX.AS3.Pro.MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:199.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-an4-mini',    label:'LAX.AN4.Pro.MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:72.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-an4-micro',   label:'LAX.AN4.Pro.MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:102.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-an4-medium',  label:'LAX.AN4.Pro.MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:239.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-an4-large',   label:'LAX.AN4.Pro.LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:459.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-an4-giant',   label:'LAX.AN4.Pro.GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:929.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-an5-mini',    label:'LAX.AN5.Pro.MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:79.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-an5-micro',   label:'LAX.AN5.Pro.MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:110.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-an5-medium',  label:'LAX.AN5.Pro.MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:289.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-an5-large',   label:'LAX.AN5.Pro.LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:499.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-an5-giant',   label:'LAX.AN5.Pro.GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:1009.90, currency:'USD' }, metrics:null }
       ]},
       { id:'hk', name:'Hong Kong · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-hk-tiny', label:'HKG.AS3.Pro.TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'reference', from:39.90, currency:'USD' }, metrics:null }
+        { id:'dmit-hk-tiny',    label:'HKG.AS3.Pro.TINY',    bench:false, stock:'out', pricing:{ type:'flat', amount:39.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-hk-starter', label:'HKG.AS3.Pro.STARTER', bench:false, stock:'out', pricing:{ type:'flat', amount:79.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-hk-mini',    label:'HKG.AS3.Pro.MINI',    bench:false, stock:'out', pricing:{ type:'flat', amount:126.90, currency:'USD' }, metrics:null },
+        { id:'dmit-hk-micro',   label:'HKG.AS3.Pro.MICRO',   bench:false, stock:'out', pricing:{ type:'flat', amount:179.90, currency:'USD' }, metrics:null }
       ]},
       { id:'jp', name:'Japan-Tokyo · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-jp-tiny', label:'TYO.AS3.Pro.TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'reference', from:21.90, currency:'USD' }, metrics:null }
+        { id:'dmit-jp-tiny', label:'TYO.AS3.Pro.TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:21.90, currency:'USD' }, metrics:null }
       ]}
     ]},
     { id:'vmiss', name:'VMISS', roles:['jump'], stockNote:'out of stock', regions:[
       { id:'us-la', name:'US-LA · CN2 GIA', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'vmiss-basic', label:'Basic · 1C/1GB · 300GB', bench:false, stock:'out', pricing:{ type:'flat', amount:6, currency:'CAD' }, metrics:null },
-        { id:'vmiss-core',  label:'Core · 1C/1GB · 600GB',  bench:false, stock:'out', pricing:{ type:'flat', amount:12, currency:'CAD' }, metrics:null },
-        { id:'vmiss-pro',   label:'Pro · 1C/2GB · 1000GB',  bench:false, stock:'out', pricing:{ type:'flat', amount:20, currency:'CAD' }, metrics:null },
-        { id:'vmiss-elite', label:'Elite · 2C/4GB · 1600GB', bench:false, stock:'out', pricing:{ type:'flat', amount:38, currency:'CAD' }, metrics:null },
-        { id:'vmiss-ultra', label:'Ultra · 4C/8GB · 2800GB', bench:false, stock:'out', pricing:{ type:'flat', amount:75, currency:'CAD' }, metrics:null }
+        { id:'vmiss-basic', label:'Basic · 1C/1GB · 10GB · 300GB',  bench:false, stock:'out', pricing:{ type:'flat', amount:6,  currency:'CAD' }, metrics:null },
+        { id:'vmiss-core',  label:'Core · 1C/1GB · 15GB · 600GB',   bench:false, stock:'out', pricing:{ type:'flat', amount:12, currency:'CAD' }, metrics:null },
+        { id:'vmiss-pro',   label:'Pro · 1C/2GB · 20GB · 1000GB',   bench:false, stock:'out', pricing:{ type:'flat', amount:20, currency:'CAD' }, metrics:null },
+        { id:'vmiss-elite', label:'Elite · 2C/4GB · 40GB · 1600GB', bench:false, stock:'out', pricing:{ type:'flat', amount:38, currency:'CAD' }, metrics:null },
+        { id:'vmiss-ultra', label:'Ultra · 4C/8GB · 80GB · 2800GB', bench:false, stock:'out', pricing:{ type:'flat', amount:75, currency:'CAD' }, metrics:null }
       ]}
     ]},
-    { id:'virvm', name:'VirVM', roles:['jump','exit'], regions:[
-      { id:'us-la', name:'US-LA', network:'163', exitNetwork:'专线GIA residential', jumpGia:false, plans:[
-        { id:'virvm-1', label:'4C · 8GB · 50GB · unlimited', bench:true, stock:'in',
-          pricing:{ type:'tiered', tiers:{50:35.99,100:65.99}, defaultTier:100, currency:'USD' },
-          metrics:{ perf:38, latencyMs:{lo:158,hi:201}, iops:38813, iopsCapped:false, bandwidthMbps:100, hopAddMs:50, route:{ isp:'AT&T', rank:2, rankPending:true, purity:'high' } } }
+    /* ============ RESIDENTIAL EXITS ============ */
+    { id:'virvm', name:'VirVM', roles:['exit'], groupLabel:'Product', cycles:true, regions:[
+      { id:'res', name:'Residential · 节点K', network:'residential', exitNetwork:'residential · trusted-IP', jumpGia:false, plans:[
+        { id:'virvm-res-50',  label:'50 Mbps · 4C·8GB·50GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:35.99,  currency:'USD' }, metrics:null },
+        { id:'virvm-res-100', label:'100 Mbps · 4C·8GB·50GB', bench:true,  stock:'in', pricing:{ type:'flat', amount:65.99,  currency:'USD' },
+          metrics:{ perf:38, latencyMs:{lo:158,hi:201}, iops:38813, iopsCapped:false, bandwidthMbps:100, hopAddMs:50, route:{ isp:'AT&T', rank:2, rankPending:true, purity:'high' } } },
+        { id:'virvm-res-200', label:'200 Mbps · 4C·8GB·50GB', bench:false, stock:'in', pricing:{ type:'flat', amount:115.99, currency:'USD' }, metrics:null },
+        { id:'virvm-res-300', label:'300 Mbps · 4C·8GB·50GB', bench:false, stock:'in', pricing:{ type:'flat', amount:160.99, currency:'USD' }, metrics:null }
+      ]},
+      { id:'gia', name:'GIA · 专线隧道B', network:'专线GIA', exitNetwork:'专线GIA · relay-ready', jumpGia:false, plans:[
+        { id:'virvm-gia-100',  label:'100 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:59.98,  currency:'USD' }, metrics:null },
+        { id:'virvm-gia-300',  label:'300 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:99.98,  currency:'USD' }, metrics:null },
+        { id:'virvm-gia-500',  label:'500 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:139.98, currency:'USD' }, metrics:null },
+        { id:'virvm-gia-1000', label:'1000 GB · 300M dedicated', bench:false, stock:'in', pricing:{ type:'flat', amount:239.98, currency:'USD' }, metrics:null }
       ]}
     ]},
     { id:'sola', name:'SolaDrive', roles:['exit'], regions:[
-      { id:'us-la', name:'US-LA', network:'163 · clean IP', jumpGia:false, plans:[
+      { id:'us-la', name:'US-LA', network:'163 · clean IP', exitNetwork:'163 · clean IP', jumpGia:false, plans:[
         { id:'sola-1', label:'4C · 4GB · 48GB', bench:true, stock:'in',
           pricing:{ type:'flat', amount:40, currency:'USD' },
           metrics:{ perf:88, latencyMs:{lo:175,hi:199}, iops:109775, iopsCapped:false, bandwidthMbps:569, hopAddMs:46, route:{ isp:'consumer ISP', rank:2, rankPending:true, purity:'high' } } }
       ]}
     ]},
-    { id:'aaitr', name:'AaITR', roles:['exit'], regions:[
-      { id:'us', name:'US · AT&T/Frontier', network:'163 · clean IP · lossy', jumpGia:false, plans:[
-        { id:'aaitr-1', label:'2C · 2GB · 25GB', bench:true, stock:'in',
-          pricing:{ type:'flat', amount:21.88, currency:'USD', native:{ amount:149, currency:'CNY' } },
-          metrics:{ perf:18, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', rank:1, rankPending:true, purity:'high' } } }
+    { id:'aaitr', name:'AaITR', roles:['exit'], groupLabel:'Product', regions:[
+      { id:'static', name:'Static residential · 独享', network:'residential', exitNetwork:'residential · AT&T/Frontier', jumpGia:false, plans:[
+        { id:'aaitr-att',      label:'US AT&T static · 2C·2GB·25GB · 100M · 2TB', bench:true,  stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' },
+          metrics:{ perf:18, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', rank:1, rankPending:true, purity:'high' } } },
+        { id:'aaitr-frontier', label:'US Frontier static · 2C·2GB·25GB · 100M · 2TB', bench:false, stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' }, metrics:null }
+      ]},
+      { id:'nat', name:'Residential NAT · 共享', network:'residential NAT', exitNetwork:'residential NAT · port-forward ×10', jumpGia:false, plans:[
+        { id:'aaitr-nat-frontier', label:'US Frontier NAT · 1C·512MB · 100M · daily rotate', bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, metrics:null },
+        { id:'aaitr-nat-sb',       label:'JP SoftBank NAT · 1C·512MB · Tokyo · 50M',          bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, metrics:null }
       ]}
     ]},
-    { id:'qqpw', name:'QQ.pw', roles:['exit'], stockNote:'out of stock', regions:[
-      { id:'hi', name:'Hawaii · residential', network:'—', jumpGia:false, plans:[
-        { id:'qqpw-1', label:'from 2C · 3GB', bench:false, stock:'out', pricing:{ type:'reference', from:35, currency:'USD' }, metrics:null }
+    { id:'qqpw', name:'QQ.pw', roles:['exit'], groupLabel:'Product', regions:[
+      { id:'nat', name:'Hawaii · NAT VPS', network:'residential NAT', exitNetwork:'Hawaii · residential NAT', jumpGia:false, plans:[
+        { id:'qqpw-nat-tiny',     label:'NAT Tiny · 1C·238MB · 1GB/mo · 10M · $12/yr', bench:false, stock:'in', pricing:{ type:'flat', amount:1,   currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-lite',     label:'NAT Lite · 1C·256MB · 6GB · 50M',      bench:false, stock:'in', pricing:{ type:'flat', amount:2,   currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-basic',    label:'NAT Basic · 1C·512MB · 20GB · 100M',   bench:false, stock:'in', pricing:{ type:'flat', amount:4,   currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-basic2',   label:'NAT Basic2 · 1C·512MB · 50GB · 150M',  bench:false, stock:'in', pricing:{ type:'flat', amount:6,   currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-basic3',   label:'NAT Basic3 · 1C·512MB · 100GB · 200M', bench:false, stock:'in', pricing:{ type:'flat', amount:8,   currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-standard', label:'NAT Standard · 1C·512MB · 200GB · 250M', bench:false, stock:'in', pricing:{ type:'flat', amount:10, currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-booster',  label:'NAT Booster · 1C·1GB · 512GB · 300M',  bench:false, stock:'in', pricing:{ type:'flat', amount:16,  currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-plus',     label:'NAT Plus · 2C·1.5GB · 1TB · 350M',     bench:false, stock:'in', pricing:{ type:'flat', amount:22,  currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-premium',  label:'NAT Premium · 2C·2GB · 2TB · 400M · from $28', bench:false, stock:'in', pricing:{ type:'flat', amount:28, currency:'USD' }, metrics:null },
+        { id:'qqpw-nat-extreme',  label:'NAT Extreme · 8C·8GB · 40TB · 1Gbps',  bench:false, stock:'in', pricing:{ type:'flat', amount:690, currency:'USD' }, metrics:null }
+      ]},
+      { id:'dedicated', name:'Hawaii · Dedicated VDS', network:'residential VDS', exitNetwork:'Hawaii · dedicated VDS', jumpGia:false, plans:[
+        { id:'qqpw-ded-intern',   label:'VDS Intern · 2C·3GB·20GB · 1TB@400M',   bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, metrics:null },
+        { id:'qqpw-ded-reliable', label:'VDS Reliable · 3C·4GB·30GB · 2TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, metrics:null },
+        { id:'qqpw-ded-hardcore', label:'VDS Hardcore · 4C·4GB·40GB · 4TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:45, currency:'USD' }, metrics:null },
+        { id:'qqpw-ded-elite',    label:'VDS Elite · 5C·8GB·50GB · $165/qtr',    bench:false, stock:'out', pricing:{ type:'flat', amount:55, currency:'USD' }, metrics:null }
       ]}
     ]}
   ];
@@ -497,18 +567,16 @@
   }
   function priceShort(pr){
     if(pr.type==='flat') return money(toUSD(pr.amount,pr.currency))+'/mo';
-    if(pr.type==='tiered') return money(toUSD(pr.tiers[pr.defaultTier],pr.currency))+'/mo';
-    return 'from '+money(pr.from)+'/mo';
+    return 'from '+money(toUSD(pr.from,pr.currency))+'/mo';
   }
   function benchPlan(region){ for(var i=0;i<region.plans.length;i++){ if(region.plans[i].bench) return region.plans[i]; } return region.plans[0]; }
   function providerBench(p){ return p.regions.some(function(r){ return r.plans.some(function(x){ return x.bench; }); }); }
-  // VirVM's bandwidth tier: node.tier if the user picked one, else the plan default.
-  function tierOf(node){ var pr=node.plan.pricing; return node.tier!=null ? node.tier : (pr.defaultTier!=null?pr.defaultTier:null); }
-  // Effective bandwidth metric for the min-hop bottleneck. A tiered node (VirVM)
-  // contributes its selected tier (50 or 100); everyone else their measured Mbps.
-  function bwOf(node){ var m=node.plan.metrics; if(!m) return null;
-    if(node.plan.pricing.type==='tiered') return tierOf(node);
-    return m.bandwidthMbps!=null ? m.bandwidthMbps : null; }
+  // Cycle discount applies only to providers that offer billing cycles (VirVM).
+  function cycleDiscOf(node){ return (node.provider.cycles && node.cycle) ? cycleObj(node.cycle).disc : 0; }
+  // Effective monthly USD for a placed node: flat price → USD, then the cycle discount.
+  function effUSD(node){ var pr=node.plan.pricing; var u=toUSD(pr.amount!=null?pr.amount:pr.from, pr.currency); return u*(1-cycleDiscOf(node)); }
+  // Bandwidth metric for the min-hop bottleneck — measured Mbps, or null when not benchmarked.
+  function bwOf(node){ var m=node.plan.metrics; return (m && m.bandwidthMbps!=null) ? m.bandwidthMbps : null; }
   function resolveNode(ref){
     if(!ref) return null;
     var p = findProvider(ref.provider); if(!p) return null;
@@ -518,29 +586,29 @@
     var pl = null;
     for(i=0;i<reg.plans.length;i++){ if(reg.plans[i].id===ref.plan){ pl=reg.plans[i]; break; } }
     if(!pl) pl = benchPlan(reg);
-    return { provider:p, region:reg, plan:pl, tier:(ref.tier!=null?ref.tier:null) };
+    return { provider:p, region:reg, plan:pl, cycle:(ref.cycle!=null?ref.cycle:(p.cycles?1:null)) };
   }
   function netOf(node, role){ var r=node.region; return role==='exit' ? (r.exitNetwork||r.network) : r.network; }
   function giaOf(node){ return !!node.region.jumpGia; }
 
   /* ---------- price fold-in ---------- */
+  // Cycle suffix for a price line label (only when a non-default cycle is selected).
+  function cycleSuffix(node){ return (node.provider.cycles && node.cycle && node.cycle!==1) ? ' · '+cycleObj(node.cycle).label : ''; }
   // Price string for a reference / out-of-stock line item (shown, never summed).
-  function refPriceStr(pr){
-    if(pr.type==='flat') return money(toUSD(pr.amount,pr.currency))+'/mo';
-    if(pr.type==='tiered') return money(toUSD(pr.tiers[pr.defaultTier],pr.currency))+'/mo';
-    return 'from '+money(pr.from);
+  function refPriceStr(node){
+    var pr=node.plan.pricing, nat=nativeStr(pr);
+    if(pr.type==='flat') return money(effUSD(node))+'/mo'+(nat?' ('+nat+')':'');
+    return 'from '+money(toUSD(pr.from,pr.currency))+'/mo';
   }
   // Fold one node into the running total. Out-of-stock => reference only (shown,
-  // never summed), consistently, whatever its pricing.type (MED-2). Flat and
-  // tiered (VirVM's bandwidth tier) both sum their real monthly price.
+  // never summed), consistently, whatever its pricing.type (MED-2). Flat plans sum
+  // their effective monthly price (base × billing-cycle discount where offered).
   function foldNode(node, label, acc){
     var pr = node.plan.pricing;
-    if(node.plan.stock==='out'){ acc.references.push({ label:label, note:refPriceStr(pr), out:true }); return; }
-    if(pr.type==='flat'){ var u=toUSD(pr.amount,pr.currency); acc.total+=u;
-      acc.lines.push({ label:label, usd:u, native:nativeStr(pr) }); }
-    else if(pr.type==='tiered'){ var tier=tierOf(node), tu=toUSD(pr.tiers[tier],pr.currency); acc.total+=tu;
-      acc.lines.push({ label:label+' · '+tier+'M', usd:tu, native:null }); }
-    else { acc.references.push({ label:label, note:'from '+money(pr.from) }); }
+    if(node.plan.stock==='out'){ acc.references.push({ label:label, note:refPriceStr(node), out:true }); return; }
+    if(pr.type==='flat'){ var u=effUSD(node); acc.total+=u;
+      acc.lines.push({ label:label+cycleSuffix(node), usd:u, native:nativeStr(pr) }); }
+    else { acc.references.push({ label:label, note:'from '+money(toUSD(pr.from,pr.currency)) }); }
   }
   function computePrice(jump, exits){
     var acc = { total:0, lines:[], references:[], pending:false };
@@ -683,7 +751,7 @@
   var state = {
     geo: null, gatingOn: false,
     jump: { provider:'bwh', region:'us-la', plan:'bwh-vpn' },
-    exits: [ { provider:'virvm', region:'us-la', plan:'virvm-1', tier:100 } ]
+    exits: [ { provider:'virvm', region:'res', plan:'virvm-res-100', cycle:1 } ]
   };
   var els = {};
   var pendingFocus = null;
@@ -702,7 +770,7 @@
   function defaultRef(providerId){
     var p = findProvider(providerId), reg = p.regions[0], pl = benchPlan(reg);
     var ref = { provider:providerId, region:reg.id, plan:pl.id };
-    if(pl.pricing.type==='tiered') ref.tier = pl.pricing.defaultTier;
+    if(p.cycles) ref.cycle = 1;
     return ref;
   }
 
@@ -737,17 +805,21 @@
   function stockBadge(pl){ return pl.stock==='out' ? ' · <span class="badge out">out of stock</span>' : ''; }
   function benchTag(pl){ return pl.bench ? '' : ' · <span class="badge ref">not benchmarked</span>'; }
 
-  function configurator(node){
-    var p = node.provider, multiRegion = p.regions.length>1, multiPlan = node.region.plans.length>1;
-    if(!multiRegion && !multiPlan) return '';
+  // Generalized product/region + plan selector. `scope` is 'jump' or an exit index.
+  // The mid dimension is labelled by the provider's groupLabel ('Product' for VirVM/
+  // QQ.pw/AaITR, 'Region' otherwise). Reaches every official plan in the catalog.
+  function configurator(node, scope){
+    var p = node.provider, multiGroup = p.regions.length>1, multiPlan = node.region.plans.length>1;
+    if(!multiGroup && !multiPlan) return '';
+    var glabel = p.groupLabel || 'Region', role = scope==='jump' ? 'jump host' : 'exit';
     var h = '<div class="cfg">';
-    if(multiRegion){
-      h += '<label class="cfg-l">Region<select class="cfg-s" data-cfg="region" aria-label="Region for '+esc(p.name)+'">'+
+    if(multiGroup){
+      h += '<label class="cfg-l">'+esc(glabel)+'<select class="cfg-s" data-cfg="region" data-scope="'+scope+'" aria-label="'+esc(glabel)+' for '+esc(p.name)+' '+role+'">'+
         p.regions.map(function(r){ return '<option value="'+r.id+'"'+(r.id===node.region.id?' selected':'')+'>'+esc(r.name)+'</option>'; }).join('')+
         '</select></label>';
     }
     if(multiPlan){
-      h += '<label class="cfg-l">Plan<select class="cfg-s" data-cfg="plan" aria-label="Plan for '+esc(p.name)+'">'+
+      h += '<label class="cfg-l">Plan<select class="cfg-s" data-cfg="plan" data-scope="'+scope+'" aria-label="Plan for '+esc(p.name)+' '+role+'">'+
         node.region.plans.map(function(pl){ return '<option value="'+pl.id+'"'+(pl.id===node.plan.id?' selected':'')+'>'+esc(pl.label)+' — '+esc(priceShort(pl.pricing))+'</option>'; }).join('')+
         '</select></label>';
     }
@@ -760,21 +832,20 @@
       '<span class="fnm">'+esc(p.name)+' <button class="x" type="button" data-remove="jump" aria-label="Remove '+esc(p.name)+'">×</button></span>'+
       '<span class="fsub">'+esc(netOf(node,'jump'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
     if(state.gatingOn && !giaOf(node)) h += '<span class="badge i163" style="margin-top:.3rem">'+esc(netOf(node,'jump'))+' · non-GIA entry</span>';
-    h += configurator(node);
-    if(pl.pricing.type==='tiered') h += bandwidthUI('jump');   // VirVM as jump gets the bandwidth-tier selector
+    h += configurator(node,'jump');
+    if(p.cycles) h += cycleUI('jump');   // a cycle-billed provider as jump gets the cycle selector
     return h+'</div>';
   }
-  // Bandwidth-tier selector for VirVM (flat, unlimited traffic). Picking a tier sets
-  // both the flat monthly price and the min-hop bandwidth metric. Default = 100 Mbps.
-  function bandwidthUI(scope){
+  // Billing-cycle selector for VirVM (both product lines). Picking a longer cycle
+  // multiplies the flat monthly price by (1 − discount). Default = 1 mo (no discount).
+  function cycleUI(scope){
     var ref = scope==='jump' ? state.jump : state.exits[scope];
-    var node = resolveNode(ref); if(!node) return '';
-    var pr = node.plan.pricing;
-    var sel = (ref && ref.tier!=null) ? ref.tier : pr.defaultTier;
-    var chips = [50,100].map(function(mb){
-      return '<button type="button" class="chip'+(sel===mb?' on':'')+'" data-tier="'+mb+'" data-scope="'+scope+'" aria-pressed="'+(sel===mb)+'">'+mb+' Mbps · '+money(pr.tiers[mb])+'</button>';
+    var node = resolveNode(ref); if(!node || !node.provider.cycles) return '';
+    var sel = (ref && ref.cycle!=null) ? ref.cycle : 1;
+    var chips = CYCLES.map(function(c){
+      return '<button type="button" class="chip'+(sel===c.mo?' on':'')+'" data-cycle="'+c.mo+'" data-scope="'+scope+'" aria-pressed="'+(sel===c.mo)+'">'+esc(c.label)+'</button>';
     }).join('');
-    return '<div class="bwsel"><div class="tl">Bandwidth tier · flat, unlimited traffic</div>'+
+    return '<div class="bwsel"><div class="tl">Billing cycle · longer term, deeper discount</div>'+
       '<div class="chips">'+chips+'</div></div>';
   }
   function exitSlot(node, i, total){
@@ -782,7 +853,8 @@
     var h = '<div class="slot filled exit" data-node="exit" data-idx="'+i+'" role="group" tabindex="0" aria-label="Exit '+(i+1)+': '+esc(p.name)+'. Press Delete to remove.">'+
       '<span class="fnm">'+esc(p.name)+' <button class="x" type="button" data-remove="exit" data-idx="'+i+'" aria-label="Remove '+esc(p.name)+' (exit '+(i+1)+')">×</button></span>'+
       '<span class="fsub"><span class="ftag">'+tag+'</span> · '+esc(netOf(node,'exit'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
-    if(pl.pricing.type==='tiered') h += bandwidthUI(i);
+    h += configurator(node, i);
+    if(p.cycles) h += cycleUI(i);
     return h+'</div>';
   }
   function addExitTarget(){
@@ -817,7 +889,7 @@
   function paintNotice(est){
     var jump = resolveNode(state.jump), n='';
     if(!jump) n = '<div class="notice info">Start by connecting a <b>jump host</b> — the required entry box. Then fan out to one or more residential exits.</div>';
-    else if(est.gating.entryBlocked) n = '<div class="notice">⚠ <b>'+esc(jump.provider.name)+'</b> reaches China over <b>'+esc(netOf(jump,'jump'))+'</b>, not CN2 GIA. From the mainland this route is slow or blocked — <b>pick a CN2 GIA box</b> (BandwagonHost / DMIT / VMISS)'+(jump.provider.id==='virvm'?', or add VirVM’s 专线GIA upgrade':'')+'.</div>';
+    else if(est.gating.entryBlocked) n = '<div class="notice">⚠ <b>'+esc(jump.provider.name)+'</b> reaches China over <b>'+esc(netOf(jump,'jump'))+'</b>, not CN2 GIA. From the mainland this route is slow or blocked — <b>pick a CN2 GIA box</b> (BandwagonHost / DMIT / VMISS).</div>';
     else if(state.exits.length===0) n = '<div class="notice ok">Single-host network — egress on the jump host’s datacenter IP. Add residential exits to fan out, or keep it to run a service here.</div>';
     els.notice.innerHTML = n;
   }
@@ -920,24 +992,25 @@
     }
     render();
   }
-  function setRegionPlan(kind, value){
-    if(!state.jump) return;
-    var p = findProvider(state.jump.provider);
+  // Product/region + plan changes on ANY placed node (jump or exit index).
+  function setRegionPlan(scope, kind, value){
+    var ref = scope==='jump' ? state.jump : state.exits[scope]; if(!ref) return;
+    var p = findProvider(ref.provider), glabel = (p.groupLabel||'Region');
     if(kind==='region'){
       var reg=null,i; for(i=0;i<p.regions.length;i++){ if(p.regions[i].id===value){ reg=p.regions[i]; break; } } if(!reg) reg=p.regions[0];
-      state.jump.region = reg.id; state.jump.plan = benchPlan(reg).id;
-      pendingFocus = 'select[data-cfg="region"]';
-      announce('Region set to '+reg.name+'. '+estText(estimate(state)));
+      ref.region = reg.id; ref.plan = benchPlan(reg).id;   // reset to that group's default plan
+      pendingFocus = 'select[data-cfg="region"][data-scope="'+scope+'"]';
+      announce(glabel+' set to '+reg.name+'. '+estText(estimate(state)));
     } else {
-      state.jump.plan = value; pendingFocus = 'select[data-cfg="plan"]';
+      ref.plan = value; pendingFocus = 'select[data-cfg="plan"][data-scope="'+scope+'"]';
       announce('Plan updated. '+estText(estimate(state)));
     }
     render();
   }
-  function setTier(scope, tier){
+  function setCycle(scope, mo){
     var e = scope==='jump' ? state.jump : state.exits[scope]; if(!e) return;
-    e.tier = tier; pendingFocus = '.chip[data-tier="'+tier+'"][data-scope="'+scope+'"]';
-    render(); announce((scope==='jump'?'Jump host':'Exit '+(scope+1))+' bandwidth set to '+tier+' Mbps. '+estText(estimate(state)));
+    e.cycle = mo; pendingFocus = '.chip[data-cycle="'+mo+'"][data-scope="'+scope+'"]';
+    render(); announce((scope==='jump'?'Jump host':'Exit '+(scope+1))+' billing cycle set to '+cycleObj(mo).label+'. '+estText(estimate(state)));
   }
 
   /* ---- delegated wiring (bind once on the stable board) ---- */
@@ -945,14 +1018,14 @@
     els.board.addEventListener('click', function(ev){
       var t = ev.target; if(!t.closest) return;
       var rm = t.closest('[data-remove]'); if(rm){ ev.stopPropagation(); remove(rm.getAttribute('data-remove'), rm.dataset.idx?parseInt(rm.dataset.idx,10):0); return; }
-      var chip = t.closest('.chip[data-tier]'); if(chip){ setTier(scopeVal(chip.dataset.scope), parseInt(chip.dataset.tier,10)); return; }
+      var chip = t.closest('.chip[data-cycle]'); if(chip){ setCycle(scopeVal(chip.dataset.scope), parseInt(chip.dataset.cycle,10)); return; }
       var card = t.closest('.pcard'); if(card){ place(card.dataset.id, card.dataset.role); return; }
     });
     els.board.addEventListener('change', function(ev){
       var s = ev.target.closest && ev.target.closest('select[data-cfg]'); if(!s) return;
-      var cfg = s.getAttribute('data-cfg');
-      if(cfg==='region') setRegionPlan('region', s.value);
-      else if(cfg==='plan') setRegionPlan('plan', s.value);
+      var scope = scopeVal(s.getAttribute('data-scope')), cfg = s.getAttribute('data-cfg');
+      if(cfg==='region') setRegionPlan(scope, 'region', s.value);
+      else if(cfg==='plan') setRegionPlan(scope, 'plan', s.value);
     });
     els.board.addEventListener('keydown', function(ev){
       var t = ev.target; if(!t.closest) return;
