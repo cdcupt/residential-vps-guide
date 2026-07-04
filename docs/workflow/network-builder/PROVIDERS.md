@@ -39,22 +39,24 @@ Order page: bandwagonhost.com. All plans RAID-10 SSD, CN2 GIA.
 
 ---
 
-## DMIT — CN2 GIA "Pro" line · reference (perpetually out of stock). Source: dmit-watch panel.
-### US-LA (AS3 / AN4 / AN5 generations)
-| Plan | Price/mo |
-|---|---|
-| LAX.AS3.Pro.TINY | $10.90 |
-| LAX.AS3.Pro.POCKET | $16.90 |
-| LAX.AS3.Pro.STARTER | $34.90 |
-| LAX.AS3.Pro.MINI | $62.90 |
-| LAX.AS3.Pro.MICRO | $87.90 |
-| LAX.AS3.Pro.MEDIUM | $199.90 |
-| LAX.AN4.Pro.MINI→GIANT | $72.90 / $102.90 / $239.90 / $459.90 / $929.90 |
-| LAX.AN5.Pro.MINI→GIANT | $79.90 / $110.90 / $289.90 / $499.90 / $1009.90 |
+## DMIT — CN2 GIA "Pro" line. **Stock is PER-PLAN** (dmit-watch panel, live 2026-07-04) + HKG.AN5 from DMIT site.
+In-stock plans ARE summable in the builder; out-of-stock = reference/excluded. (Corrects the earlier "all out of stock".)
 
-### Hong Kong (AS3): TINY $39.90 · STARTER $79.90 · MINI $126.90 · MICRO $179.90 (+larger)
-### Japan-Tokyo (AS3): TINY $21.90 (+larger tiers)
-All DMIT = out of stock. TINY tiers are 1 vCore / 1GB / 20GB SSD / Premium routing / 500GB @ 1Gbps.
+### US-LA — all OUT of stock
+- **AS3**: TINY $10.90 · POCKET $16.90 · STARTER $34.90 · MINI $62.90 · MICRO $87.90 · MEDIUM $199.90
+- **AN4**: MINI $72.90 · MICRO $102.90 · MEDIUM $239.90 · LARGE $459.90 · GIANT $929.90
+- **AN5**: MINI $79.90 · MICRO $110.90 · MEDIUM $289.90 · LARGE $499.90 · GIANT $1009.90
+
+### Hong Kong
+- **AS3 — IN STOCK**: TINY $39.90 · STARTER $79.90 · MINI $126.90 · MICRO $179.90 · MEDIUM $239.90
+- **AN5** (from DMIT site — not panel-tracked, treat as available): MINI $149.90 · MICRO $199.90 · MEDIUM $279.90 · LARGE $359.90 · GIANT $759.90
+  - specs: MINI 4C/4GB/80GB/1500GB · MICRO 4C/4GB/160GB/2000GB · MEDIUM 6C/8GB/160GB/2500GB · LARGE 8C/16GB/320GB/3000GB · GIANT 8C/24GB/640GB/6000GB (Premium routing, 1Gbps)
+
+### Japan-Tokyo — AS3
+- **IN STOCK**: TINY $21.90 · STARTER $45.90 · MINI $89.90 · MICRO $189.90 · MEDIUM $320.90
+- OUT: LARGE $429.90 · GIANT $829.90
+
+TINY tiers ≈ 1 vCore / 1GB / 20GB SSD / Premium routing / 500GB @ 1Gbps.
 
 ---
 
