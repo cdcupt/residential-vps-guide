@@ -460,33 +460,47 @@
         { id:'bwh-sg-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1059.99, currency:'USD' }, metrics:null }
       ]}
     ]},
-    { id:'dmit', name:'DMIT', roles:['jump'], stockNote:'out of stock', regions:[
+    // DMIT — CN2 GIA "Pro". Stock is PER-PLAN (live dmit-watch panel + DMIT site). LA all out;
+    // HK AS3 + Tokyo AS3 (TINY→MEDIUM) in stock; HK AN5 generation available. Not benchmarked.
+    { id:'dmit', name:'DMIT', roles:['jump'], regions:[
       { id:'us-la', name:'US-LA · AS3/AN4/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-as3-tiny',    label:'LAX.AS3.Pro.TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:10.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-as3-pocket',  label:'LAX.AS3.Pro.POCKET',        bench:false, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-as3-starter', label:'LAX.AS3.Pro.STARTER',       bench:false, stock:'out', pricing:{ type:'flat', amount:34.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-as3-mini',    label:'LAX.AS3.Pro.MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:62.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-as3-micro',   label:'LAX.AS3.Pro.MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:87.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-as3-medium',  label:'LAX.AS3.Pro.MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:199.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-an4-mini',    label:'LAX.AN4.Pro.MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:72.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-an4-micro',   label:'LAX.AN4.Pro.MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:102.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-an4-medium',  label:'LAX.AN4.Pro.MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:239.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-an4-large',   label:'LAX.AN4.Pro.LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:459.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-an4-giant',   label:'LAX.AN4.Pro.GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:929.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-an5-mini',    label:'LAX.AN5.Pro.MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:79.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-an5-micro',   label:'LAX.AN5.Pro.MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:110.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-an5-medium',  label:'LAX.AN5.Pro.MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:289.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-an5-large',   label:'LAX.AN5.Pro.LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:499.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-an5-giant',   label:'LAX.AN5.Pro.GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:1009.90, currency:'USD' }, metrics:null }
+        { id:'dmit-la-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:10.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-la-as3-pocket',  label:'AS3 · POCKET',        bench:false, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-la-as3-starter', label:'AS3 · STARTER',       bench:false, stock:'out', pricing:{ type:'flat', amount:34.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-la-as3-mini',    label:'AS3 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:62.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-la-as3-micro',   label:'AS3 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:87.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-la-as3-medium',  label:'AS3 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:199.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-la-an4-mini',    label:'AN4 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:72.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-la-an4-micro',   label:'AN4 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:102.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-la-an4-medium',  label:'AN4 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:239.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-la-an4-large',   label:'AN4 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:459.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-la-an4-giant',   label:'AN4 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:929.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-la-an5-mini',    label:'AN5 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:79.90,   currency:'USD' }, metrics:null },
+        { id:'dmit-la-an5-micro',   label:'AN5 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:110.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-la-an5-medium',  label:'AN5 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:289.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-la-an5-large',   label:'AN5 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:499.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-la-an5-giant',   label:'AN5 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:1009.90, currency:'USD' }, metrics:null }
       ]},
-      { id:'hk', name:'Hong Kong · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-hk-tiny',    label:'HKG.AS3.Pro.TINY',    bench:false, stock:'out', pricing:{ type:'flat', amount:39.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-hk-starter', label:'HKG.AS3.Pro.STARTER', bench:false, stock:'out', pricing:{ type:'flat', amount:79.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-hk-mini',    label:'HKG.AS3.Pro.MINI',    bench:false, stock:'out', pricing:{ type:'flat', amount:126.90, currency:'USD' }, metrics:null },
-        { id:'dmit-hk-micro',   label:'HKG.AS3.Pro.MICRO',   bench:false, stock:'out', pricing:{ type:'flat', amount:179.90, currency:'USD' }, metrics:null }
+      { id:'hk', name:'Hong Kong · AS3/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
+        { id:'dmit-hk-as3-tiny',    label:'AS3 · TINY · 1C/1GB',      bench:false, stock:'in', pricing:{ type:'flat', amount:39.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-hk-as3-starter', label:'AS3 · STARTER',           bench:false, stock:'in', pricing:{ type:'flat', amount:79.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-hk-as3-mini',    label:'AS3 · MINI',              bench:false, stock:'in', pricing:{ type:'flat', amount:126.90, currency:'USD' }, metrics:null },
+        { id:'dmit-hk-as3-micro',   label:'AS3 · MICRO',             bench:false, stock:'in', pricing:{ type:'flat', amount:179.90, currency:'USD' }, metrics:null },
+        { id:'dmit-hk-as3-medium',  label:'AS3 · MEDIUM',            bench:false, stock:'in', pricing:{ type:'flat', amount:239.90, currency:'USD' }, metrics:null },
+        { id:'dmit-hk-an5-mini',    label:'AN5 · MINI · 4C·4GB·80GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:149.90, currency:'USD' }, metrics:null },
+        { id:'dmit-hk-an5-micro',   label:'AN5 · MICRO · 4C·4GB·160GB',bench:false, stock:'in', pricing:{ type:'flat', amount:199.90, currency:'USD' }, metrics:null },
+        { id:'dmit-hk-an5-medium',  label:'AN5 · MEDIUM · 6C·8GB·160GB',bench:false, stock:'in', pricing:{ type:'flat', amount:279.90, currency:'USD' }, metrics:null },
+        { id:'dmit-hk-an5-large',   label:'AN5 · LARGE · 8C·16GB·320GB',bench:false, stock:'in', pricing:{ type:'flat', amount:359.90, currency:'USD' }, metrics:null },
+        { id:'dmit-hk-an5-giant',   label:'AN5 · GIANT · 8C·24GB·640GB',bench:false, stock:'in', pricing:{ type:'flat', amount:759.90, currency:'USD' }, metrics:null }
       ]},
       { id:'jp', name:'Japan-Tokyo · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-jp-tiny', label:'TYO.AS3.Pro.TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:21.90, currency:'USD' }, metrics:null }
+        { id:'dmit-jp-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'in',  pricing:{ type:'flat', amount:21.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-jp-as3-starter', label:'AS3 · STARTER',       bench:false, stock:'in',  pricing:{ type:'flat', amount:45.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-jp-as3-mini',    label:'AS3 · MINI',          bench:false, stock:'in',  pricing:{ type:'flat', amount:89.90,  currency:'USD' }, metrics:null },
+        { id:'dmit-jp-as3-micro',   label:'AS3 · MICRO',         bench:false, stock:'in',  pricing:{ type:'flat', amount:189.90, currency:'USD' }, metrics:null },
+        { id:'dmit-jp-as3-medium',  label:'AS3 · MEDIUM',        bench:false, stock:'in',  pricing:{ type:'flat', amount:320.90, currency:'USD' }, metrics:null },
+        { id:'dmit-jp-as3-large',   label:'AS3 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:429.90, currency:'USD' }, metrics:null },
+        { id:'dmit-jp-as3-giant',   label:'AS3 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:829.90, currency:'USD' }, metrics:null }
       ]}
     ]},
     { id:'vmiss', name:'VMISS', roles:['jump'], stockNote:'out of stock', regions:[
@@ -571,6 +585,23 @@
   }
   function benchPlan(region){ for(var i=0;i<region.plans.length;i++){ if(region.plans[i].bench) return region.plans[i]; } return region.plans[0]; }
   function providerBench(p){ return p.regions.some(function(r){ return r.plans.some(function(x){ return x.bench; }); }); }
+  function planUSD(pl){ var pr=pl.pricing; return toUSD(pr.amount!=null?pr.amount:pr.from, pr.currency); }
+  // Headline plan for the palette card + default placement: the benchmarked plan of the
+  // first region normally; but when that lead plan is out-of-stock AND not benchmarked
+  // (DMIT — LA sold out), fall back to the cheapest IN-STOCK plan across the provider so
+  // the card reads "from $x/mo" and a placed node defaults to something buildable.
+  function headlinePlan(p){
+    var reg = p.regions[0], pl = benchPlan(reg), from = false;
+    if(pl.stock==='out' && !pl.bench){
+      var best=null, bestU=Infinity, breg=reg;
+      p.regions.forEach(function(r){ r.plans.forEach(function(x){
+        if(x.stock==='out') return; var u=planUSD(x);
+        if(u<bestU){ bestU=u; best=x; breg=r; }
+      }); });
+      if(best){ reg=breg; pl=best; from=true; }
+    }
+    return { region:reg, plan:pl, from:from };
+  }
   // Cycle discount applies only to providers that offer billing cycles (VirVM).
   function cycleDiscOf(node){ return (node.provider.cycles && node.cycle) ? cycleObj(node.cycle).disc : 0; }
   // Effective monthly USD for a placed node: flat price → USD, then the cycle discount.
@@ -768,15 +799,15 @@
   // tier scope: 'jump' for the jump host, or an exit index number.
   function scopeVal(s){ return s==='jump' ? 'jump' : parseInt(s,10); }
   function defaultRef(providerId){
-    var p = findProvider(providerId), reg = p.regions[0], pl = benchPlan(reg);
-    var ref = { provider:providerId, region:reg.id, plan:pl.id };
+    var p = findProvider(providerId), hp = headlinePlan(p);
+    var ref = { provider:providerId, region:hp.region.id, plan:hp.plan.id };
     if(p.cycles) ref.cycle = 1;
     return ref;
   }
 
   /* ---- palette (data-driven, built once) ---- */
   function pcard(p, role){
-    var reg = p.regions[0], pl = benchPlan(reg);
+    var hp = headlinePlan(p), reg = hp.region, pl = hp.plan;
     var net = role==='jump' ? reg.network : (reg.exitNetwork||reg.network);
     var sub = net + (pl.metrics ? ' · perf '+pl.metrics.perf : (p.stockNote?' · '+p.stockNote:''));
     var both = p.roles.length>1;
@@ -787,7 +818,7 @@
       'aria-label="Add '+esc(p.name)+' as '+(role==='jump'?'jump host':'residential exit')+(both?' (fits both roles)':'')+'">'+
       '<span class="pc-top"><span class="nm">'+esc(p.name)+'</span>'+roleTag+'</span>'+
       '<span class="sp">'+esc(sub)+'</span>'+
-      '<span class="pc-foot"><span>'+badge+'</span><span class="pr">'+priceShort(pl.pricing)+'</span></span>'+
+      '<span class="pc-foot"><span>'+badge+'</span><span class="pr">'+(hp.from?'from ':'')+priceShort(pl.pricing)+'</span></span>'+
       '</button>';
   }
   function buildPalette(){
