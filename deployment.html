@@ -45,7 +45,7 @@
   <div class="prose">
     <p class="kicker">The numbers</p>
     <h2 style="margin-top:.3em">Performance, ranked</h2>
-    <p>Every box, one uniform pass: single- &amp; all-core CPU (sysbench events/s), memory bandwidth (GB/s), network download (Mbps), and 4K-random disk IOPS — then a single equal-weight <strong>Overall / 100</strong>. Best per column tints blue, worst red.</p>
+    <p>Every box, one uniform pass: single- &amp; all-core CPU (sysbench events/s), memory bandwidth (GB/s), network download (Mbps), and 4K-random disk IOPS — then a single equal-weight <strong>Overall / 100</strong>. Stronger values tint blue, weaker red.</p>
   </div>
 
   <div class="tool-wrap">
@@ -81,7 +81,7 @@
     <p style="font-size:.85rem;color:var(--ink-soft)"><b>*</b> capped disk — see below. Every number is a real measured value.</p>
     <div class="callout tip">
       <div class="ct">▲ What the numbers taught us</div>
-      Two things a spec sheet would never show: <strong>SolaDrive</strong> is the sleeper — a residential line whose "masked" CPU quietly tops the whole fleet on multicore and disk — while <strong>AaITR</strong>'s boxes are pinned at a provider <strong>~2,000-IOPS disk cap</strong> (read ≈ write, identical across all three). The cheap residential boxes are weak on compute, but that's irrelevant for their job: carrying a clean IP.
+      Two things a spec sheet would never show: <strong>SolaDrive</strong> is the sleeper — a residential line whose "masked" CPU quietly tops the fleet on disk and ties the datacenter boxes on multicore — while three of <strong>AaITR</strong>'s four boxes are pinned at a provider <strong>~2,000-IOPS disk cap</strong> (read ≈ write, identical across the three). The cheap residential boxes are weak on compute, but that's irrelevant for their job: carrying a clean IP.
     </div>
 
     <p class="kicker" style="margin-top:2.5rem">The setup</p>

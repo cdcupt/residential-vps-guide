@@ -55,19 +55,19 @@
   <div class="guide">
     <aside class="toc" aria-label="On this page">
       <div class="tt">On this page</div>
-      <a href="#start">Start here</a>
-      <a href="#fork">1 · The first fork</a>
-      <a href="#specs">2 · Reading the spec sheet</a>
-      <a href="#ip">3 · Residential-IP quality</a>
-      <a href="#bench">4 · Benchmark before you buy</a>
-      <a href="#flags">5 · Red flags</a>
-      <a href="#checklist">6 · Decision checklist</a>
+      <a href="#start">00 · Start here</a>
+      <a href="#fork">01 · The first fork</a>
+      <a href="#specs">02 · Reading the spec sheet</a>
+      <a href="#ip">03 · Residential-IP quality</a>
+      <a href="#bench">04 · Benchmark before you buy</a>
+      <a href="#flags">05 · Red flags</a>
+      <a href="#checklist">06 · Decision checklist</a>
     </aside>
 
     <div class="gbody prose">
 
       <section id="start">
-        <h2><span class="n">0</span>Start here — a VPN network from China</h2>
+        <h2><span class="n">00</span>Start here — a VPN network from China</h2>
         <p>Building your own VPN or residential-exit network from mainland China? The right order isn't specs or price — it's this, with the actual boxes we run for each role.</p>
 
         <h3>1 · In China, the network comes first</h3>
@@ -81,7 +81,7 @@
         <table class="mtable">
           <thead><tr><th>If you want…</th><th>Pick</th><th>Why</th></tr></thead>
           <tbody>
-            <tr><td>Best all-round performance</td><td><strong>SolaDrive</strong></td><td>Tops the fleet on multicore and disk, clean IP, 0% loss. The default exit.</td></tr>
+            <tr><td>Best all-round performance</td><td><strong>SolaDrive</strong></td><td>Tops the fleet on disk, ties the datacenter boxes on multicore, clean IP, 0% loss. The default exit.</td></tr>
             <tr><td>Lowest latency / best route</td><td><strong>VirVM</strong></td><td>Clean IP, 0% loss, slightly faster to China than SolaDrive — and 8&nbsp;GB RAM.</td></tr>
             <tr><td>Just a clean IP, speed irrelevant</td><td><strong>AaITR</strong></td><td>Genuinely residential and clean, but <strong>low I/O and lossy routes</strong> — pick it only when throughput and latency don't matter.</td></tr>
           </tbody>
@@ -160,7 +160,7 @@
             </tbody>
           </table>
         </div>
-        <p style="font-size:.9rem;color:var(--ink-soft)">All three read as a <strong>genuine residential ISP line</strong> (not hosting-in-disguise), with <strong>near-zero fraud and abuse scores</strong> and native Netflix — exactly what an exit needs. <em>One caveat:</em> a single scanner (IPQS) flags "proxy" on SolaDrive &amp; VirVM — only because we run a proxy service on them; the underlying IP reputation is clean. And a clean IP isn&#x27;t enough on its own: AaITR&#x27;s address is spotless, yet its route (above) drops 40–70% of packets. Check <strong>purity and route together</strong>.</p>
+        <p style="font-size:.9rem;color:var(--ink-soft)">All three read as a <strong>genuine residential ISP line</strong> (not hosting-in-disguise), with <strong>near-zero fraud and abuse scores</strong> and native Netflix — exactly what an exit needs. <em>One caveat:</em> a single scanner (IPQS) flags "proxy" on SolaDrive &amp; VirVM — only because we run a proxy service on them; the underlying IP reputation is clean. And a clean IP isn&#x27;t enough on its own: AaITR&#x27;s address is spotless, yet its route (below) drops 40–70% of packets. Check <strong>purity and route together</strong>.</p>
       </section>
 
       <section id="bench">
@@ -183,7 +183,7 @@
         </div>
 
         <h3 style="margin-top:2.2rem">Example: our real fleet, every axis</h3>
-        <p>The same uniform pass on the boxes we run — <strong>CPU, memory, network and disk</strong>, one row per box, real measured numbers (only the IPs are withheld). Best per column tints blue, worst red; scroll sideways for every axis.</p>
+        <p>The same uniform pass on the boxes we run — <strong>CPU, memory, network and disk</strong>, one row per box, real measured numbers (only the IPs are withheld). Stronger values tint blue, weaker red; scroll sideways for every axis.</p>
         <div class="tool-wrap">
           <table class="perf-ref" id="fleet-table">
             <thead><tr>
