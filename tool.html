@@ -11,16 +11,18 @@
 <link rel="stylesheet" href="style.css">
 <style>
   .tool-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-md); background:var(--card); box-shadow:var(--shadow-sm); margin:1.6rem 0}
-  table.io{width:100%; border-collapse:collapse; font-size:.86rem; min-width:760px}
+  table.io{width:100%; border-collapse:collapse; font-size:.86rem; min-width:880px}
   table.io th{font-family:var(--mono); font-size:.62rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft);
     text-align:right; padding:.7rem .55rem; border-bottom:1px solid var(--line-2); white-space:nowrap; background:var(--paper-2)}
   table.io th:first-child,table.io th.lbl{text-align:left}
+  table.io th:first-child,table.io td:first-child{min-width:236px}
   table.io th small{display:block; font-weight:400; color:var(--ink-soft); opacity:.8}
   table.io td{padding:.35rem .4rem; border-bottom:1px solid var(--line)}
   table.io tr:last-child td{border-bottom:none}
   table.io input{width:100%; border:1px solid transparent; background:transparent; font-family:var(--mono); font-size:.86rem;
-    text-align:right; padding:.35rem .45rem; border-radius:6px; color:var(--ink)}
-  table.io input.name{text-align:left; font-family:var(--sans); font-weight:600}
+    text-align:right; padding:.35rem .3rem; border-radius:6px; color:var(--ink)}
+  table.io input[type=number]{min-width:4rem}
+  table.io input.name{text-align:left; font-family:var(--sans); font-weight:600; min-width:220px}
   table.io input:hover{border-color:var(--line-2)}
   table.io input:focus{outline:none; box-shadow:0 0 0 3px var(--accent-bg); border-color:var(--accent); background:var(--paper)}
   .rm{border:none; background:transparent; color:var(--ink-soft); cursor:pointer; font-size:1.1rem; line-height:1; padding:.2rem .4rem; border-radius:6px}
@@ -30,7 +32,8 @@
   .res-table th{font-family:var(--mono); font-size:.62rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); text-align:right; padding:.7rem .6rem; border-bottom:1px solid var(--line-2)}
   .res-table th:nth-child(-n+2){text-align:left}
   .res-table td{padding:.7rem .6rem; border-bottom:1px solid var(--line); text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums}
-  .res-table td:nth-child(2){text-align:left; font-family:var(--sans); font-weight:650}
+  .res-table th:nth-child(2),.res-table td:nth-child(2){min-width:12rem}
+  .res-table td:nth-child(2){text-align:left; font-family:var(--sans); font-weight:650; white-space:nowrap}
   .res-table td.sc{font-weight:800; font-size:1.02rem}
   .res-table td.sc.hi{background:var(--accent-bg); color:var(--accent-ink)}
   .res-table td.sc.lo{background:var(--warn-bg); color:var(--warn)}
