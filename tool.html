@@ -180,7 +180,6 @@
   .nbx .est .breakdown{font-family:var(--mono); font-size:.66rem; color:var(--ink-soft); margin:.15rem 0 .1rem; line-height:1.5; overflow-wrap:anywhere}
   .nbx .est .egress{font-family:var(--mono); font-size:.66rem; color:var(--exit-ink); background:var(--exit-bg); border:1px solid var(--exit); border-radius:6px; padding:.25rem .45rem; margin:.35rem 0 .1rem}
   .nbx .estlabel{display:inline-block; font-family:var(--mono); font-size:.55rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); border:1px dashed var(--line-2); border-radius:99px; padding:.02rem .38rem; margin-left:.3rem; vertical-align:middle}
-  .nbx .ph{color:var(--warn-ink)} .nbx .ph::after{content:" ⚑ph"; font-size:.8em; opacity:.7}
   .nbx-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 </style>
 </head>
@@ -426,109 +425,109 @@
     /* ============ JUMP HOSTS — datacenter CN2 GIA ============ */
     { id:'bwh', name:'BandwagonHost', roles:['jump'], regions:[
       { id:'us-la', name:'US-LA · USCA_9', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'bwh-la-20',   label:'2C · 1GB · 20GB · 1TB (·$49.99/3mo)', bench:false, stock:'in', pricing:{ type:'flat', amount:16.66,  currency:'USD' }, metrics:null },
+        { id:'bwh-la-20',   label:'2C · 1GB · 20GB · 1TB (·$49.99/3mo)', bench:false, stock:'in', pricing:{ type:'flat', amount:16.66,  currency:'USD' }, linkMbps:2500, metrics:null },
         { id:'bwh-vpn',     label:'3C · 2GB · 40GB · 2TB',                bench:true,  stock:'in', pricing:{ type:'flat', amount:30,     currency:'USD' },
           metrics:{ perf:75, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
         { id:'bwh-prod',    label:'4C · 4GB · 80GB · 3TB',                bench:true,  stock:'in', pricing:{ type:'flat', amount:56.99,  currency:'USD' },
           metrics:{ perf:83, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
-        { id:'bwh-la-160',  label:'6C · 8GB · 160GB · 5TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-la-320',  label:'8C · 16GB · 320GB · 8TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:159.99, currency:'USD' }, metrics:null },
-        { id:'bwh-la-640',  label:'10C · 32GB · 640GB · 10TB', bench:false, stock:'in', pricing:{ type:'flat', amount:289.99, currency:'USD' }, metrics:null },
-        { id:'bwh-la-1t12', label:'12C · 64GB · 1TB · 12TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:549.99, currency:'USD' }, metrics:null },
-        { id:'bwh-la-1t15', label:'12C · 64GB · 1TB · 15TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:679,    currency:'USD' }, metrics:null },
-        { id:'bwh-la-1t20', label:'12C · 64GB · 1TB · 20TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:899,    currency:'USD' }, metrics:null }
+        { id:'bwh-la-160',  label:'6C · 8GB · 160GB · 5TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,  currency:'USD' }, linkMbps:5000, metrics:null },
+        { id:'bwh-la-320',  label:'8C · 16GB · 320GB · 8TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:159.99, currency:'USD' }, linkMbps:5000, metrics:null },
+        { id:'bwh-la-640',  label:'10C · 32GB · 640GB · 10TB', bench:false, stock:'in', pricing:{ type:'flat', amount:289.99, currency:'USD' }, linkMbps:10000, metrics:null },
+        { id:'bwh-la-1t12', label:'12C · 64GB · 1TB · 12TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:549.99, currency:'USD' }, linkMbps:10000, metrics:null },
+        { id:'bwh-la-1t15', label:'12C · 64GB · 1TB · 15TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:679,    currency:'USD' }, linkMbps:10000, metrics:null },
+        { id:'bwh-la-1t20', label:'12C · 64GB · 1TB · 20TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:899,    currency:'USD' }, linkMbps:10000, metrics:null }
       ]},
       { id:'hk', name:'Hong Kong · HKHK_8', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'bwh-hk-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:89.99,   currency:'USD' }, metrics:null },
-        { id:'bwh-hk-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:155.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-hk-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:299.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-hk-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:589.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-hk-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:989.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-hk-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1889.99, currency:'USD' }, metrics:null }
+        { id:'bwh-hk-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:89.99,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'bwh-hk-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:155.99,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'bwh-hk-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:299.99,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'bwh-hk-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:589.99,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'bwh-hk-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:989.99,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'bwh-hk-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1889.99, currency:'USD' }, linkMbps:1000, metrics:null }
       ]},
       { id:'jp', name:'Japan-Osaka · JPOS_6', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'bwh-jp-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:49.99,   currency:'USD' }, metrics:null },
-        { id:'bwh-jp-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,   currency:'USD' }, metrics:null },
-        { id:'bwh-jp-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:165.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-jp-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:329.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-jp-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:549.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-jp-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1059.99, currency:'USD' }, metrics:null }
+        { id:'bwh-jp-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:49.99,   currency:'USD' }, linkMbps:1500, metrics:null },
+        { id:'bwh-jp-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,   currency:'USD' }, linkMbps:1500, metrics:null },
+        { id:'bwh-jp-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:165.99,  currency:'USD' }, linkMbps:1500, metrics:null },
+        { id:'bwh-jp-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:329.99,  currency:'USD' }, linkMbps:1500, metrics:null },
+        { id:'bwh-jp-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:549.99,  currency:'USD' }, linkMbps:1500, metrics:null },
+        { id:'bwh-jp-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1059.99, currency:'USD' }, linkMbps:1500, metrics:null }
       ]},
       { id:'sg', name:'Singapore · SG_8', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'bwh-sg-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:49.99,   currency:'USD' }, metrics:null },
-        { id:'bwh-sg-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,   currency:'USD' }, metrics:null },
-        { id:'bwh-sg-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:165.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-sg-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:329.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-sg-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:549.99,  currency:'USD' }, metrics:null },
-        { id:'bwh-sg-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1059.99, currency:'USD' }, metrics:null }
+        { id:'bwh-sg-40',  label:'2C · 2GB · 40GB · 500GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:49.99,   currency:'USD' }, linkMbps:1500, metrics:null },
+        { id:'bwh-sg-80',  label:'4C · 4GB · 80GB · 1TB',    bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,   currency:'USD' }, linkMbps:1500, metrics:null },
+        { id:'bwh-sg-160', label:'6C · 8GB · 160GB · 2TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:165.99,  currency:'USD' }, linkMbps:2500, metrics:null },
+        { id:'bwh-sg-320', label:'8C · 16GB · 320GB · 4TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:329.99,  currency:'USD' }, linkMbps:2500, metrics:null },
+        { id:'bwh-sg-640', label:'10C · 32GB · 640GB · 6TB', bench:false, stock:'in', pricing:{ type:'flat', amount:549.99,  currency:'USD' }, linkMbps:5000, metrics:null },
+        { id:'bwh-sg-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1059.99, currency:'USD' }, linkMbps:5000, metrics:null }
       ]}
     ]},
     // DMIT — CN2 GIA "Pro". Stock is PER-PLAN (live dmit-watch panel + DMIT site). LA all out;
     // HK AS3 + Tokyo AS3 (TINY→MEDIUM) in stock; HK AN5 generation available. Not benchmarked.
     { id:'dmit', name:'DMIT', roles:['jump'], regions:[
       { id:'us-la', name:'US-LA · AS3/AN4/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-la-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:10.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-la-as3-pocket',  label:'AS3 · POCKET',        bench:false, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-la-as3-starter', label:'AS3 · STARTER',       bench:false, stock:'out', pricing:{ type:'flat', amount:34.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-la-as3-mini',    label:'AS3 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:62.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-la-as3-micro',   label:'AS3 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:87.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-la-as3-medium',  label:'AS3 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:199.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-la-an4-mini',    label:'AN4 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:72.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-la-an4-micro',   label:'AN4 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:102.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-la-an4-medium',  label:'AN4 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:239.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-la-an4-large',   label:'AN4 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:459.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-la-an4-giant',   label:'AN4 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:929.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-la-an5-mini',    label:'AN5 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:79.90,   currency:'USD' }, metrics:null },
-        { id:'dmit-la-an5-micro',   label:'AN5 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:110.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-la-an5-medium',  label:'AN5 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:289.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-la-an5-large',   label:'AN5 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:499.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-la-an5-giant',   label:'AN5 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:1009.90, currency:'USD' }, metrics:null }
+        { id:'dmit-la-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:10.90,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-as3-pocket',  label:'AS3 · POCKET',        bench:false, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-as3-starter', label:'AS3 · STARTER',       bench:false, stock:'out', pricing:{ type:'flat', amount:34.90,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-as3-mini',    label:'AS3 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:62.90,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-as3-micro',   label:'AS3 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:87.90,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-as3-medium',  label:'AS3 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:199.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an4-mini',    label:'AN4 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:72.90,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an4-micro',   label:'AN4 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:102.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an4-medium',  label:'AN4 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:239.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an4-large',   label:'AN4 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:459.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an4-giant',   label:'AN4 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:929.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an5-mini',    label:'AN5 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:79.90,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an5-micro',   label:'AN5 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:110.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an5-medium',  label:'AN5 · MEDIUM',        bench:false, stock:'out', pricing:{ type:'flat', amount:289.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an5-large',   label:'AN5 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:499.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-an5-giant',   label:'AN5 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:1009.90, currency:'USD' }, linkMbps:1000, metrics:null }
       ]},
       { id:'hk', name:'Hong Kong · AS3/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-hk-as3-tiny',    label:'AS3 · TINY · 1C/1GB',      bench:false, stock:'in', pricing:{ type:'flat', amount:39.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-hk-as3-starter', label:'AS3 · STARTER',           bench:false, stock:'in', pricing:{ type:'flat', amount:79.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-hk-as3-mini',    label:'AS3 · MINI',              bench:false, stock:'in', pricing:{ type:'flat', amount:126.90, currency:'USD' }, metrics:null },
-        { id:'dmit-hk-as3-micro',   label:'AS3 · MICRO',             bench:false, stock:'in', pricing:{ type:'flat', amount:179.90, currency:'USD' }, metrics:null },
-        { id:'dmit-hk-as3-medium',  label:'AS3 · MEDIUM',            bench:false, stock:'in', pricing:{ type:'flat', amount:239.90, currency:'USD' }, metrics:null },
-        { id:'dmit-hk-an5-mini',    label:'AN5 · MINI · 4C·4GB·80GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:149.90, currency:'USD' }, metrics:null },
-        { id:'dmit-hk-an5-micro',   label:'AN5 · MICRO · 4C·4GB·160GB',bench:false, stock:'in', pricing:{ type:'flat', amount:199.90, currency:'USD' }, metrics:null },
-        { id:'dmit-hk-an5-medium',  label:'AN5 · MEDIUM · 6C·8GB·160GB',bench:false, stock:'in', pricing:{ type:'flat', amount:279.90, currency:'USD' }, metrics:null },
-        { id:'dmit-hk-an5-large',   label:'AN5 · LARGE · 8C·16GB·320GB',bench:false, stock:'in', pricing:{ type:'flat', amount:359.90, currency:'USD' }, metrics:null },
-        { id:'dmit-hk-an5-giant',   label:'AN5 · GIANT · 8C·24GB·640GB',bench:false, stock:'in', pricing:{ type:'flat', amount:759.90, currency:'USD' }, metrics:null }
+        { id:'dmit-hk-as3-tiny',    label:'AS3 · TINY · 1C/1GB',      bench:false, stock:'in', pricing:{ type:'flat', amount:39.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-as3-starter', label:'AS3 · STARTER',           bench:false, stock:'in', pricing:{ type:'flat', amount:79.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-as3-mini',    label:'AS3 · MINI',              bench:false, stock:'in', pricing:{ type:'flat', amount:126.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-as3-micro',   label:'AS3 · MICRO',             bench:false, stock:'in', pricing:{ type:'flat', amount:179.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-as3-medium',  label:'AS3 · MEDIUM',            bench:false, stock:'in', pricing:{ type:'flat', amount:239.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-an5-mini',    label:'AN5 · MINI · 4C·4GB·80GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:149.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-an5-micro',   label:'AN5 · MICRO · 4C·4GB·160GB',bench:false, stock:'in', pricing:{ type:'flat', amount:199.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-an5-medium',  label:'AN5 · MEDIUM · 6C·8GB·160GB',bench:false, stock:'in', pricing:{ type:'flat', amount:279.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-an5-large',   label:'AN5 · LARGE · 8C·16GB·320GB',bench:false, stock:'in', pricing:{ type:'flat', amount:359.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-an5-giant',   label:'AN5 · GIANT · 8C·24GB·640GB',bench:false, stock:'in', pricing:{ type:'flat', amount:759.90, currency:'USD' }, linkMbps:1000, metrics:null }
       ]},
       { id:'jp', name:'Japan-Tokyo · AS3 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-jp-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'in',  pricing:{ type:'flat', amount:21.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-jp-as3-starter', label:'AS3 · STARTER',       bench:false, stock:'in',  pricing:{ type:'flat', amount:45.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-jp-as3-mini',    label:'AS3 · MINI',          bench:false, stock:'in',  pricing:{ type:'flat', amount:89.90,  currency:'USD' }, metrics:null },
-        { id:'dmit-jp-as3-micro',   label:'AS3 · MICRO',         bench:false, stock:'in',  pricing:{ type:'flat', amount:189.90, currency:'USD' }, metrics:null },
-        { id:'dmit-jp-as3-medium',  label:'AS3 · MEDIUM',        bench:false, stock:'in',  pricing:{ type:'flat', amount:320.90, currency:'USD' }, metrics:null },
-        { id:'dmit-jp-as3-large',   label:'AS3 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:429.90, currency:'USD' }, metrics:null },
-        { id:'dmit-jp-as3-giant',   label:'AS3 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:829.90, currency:'USD' }, metrics:null }
+        { id:'dmit-jp-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'in',  pricing:{ type:'flat', amount:21.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-jp-as3-starter', label:'AS3 · STARTER',       bench:false, stock:'in',  pricing:{ type:'flat', amount:45.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-jp-as3-mini',    label:'AS3 · MINI',          bench:false, stock:'in',  pricing:{ type:'flat', amount:89.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-jp-as3-micro',   label:'AS3 · MICRO',         bench:false, stock:'in',  pricing:{ type:'flat', amount:189.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-jp-as3-medium',  label:'AS3 · MEDIUM',        bench:false, stock:'in',  pricing:{ type:'flat', amount:320.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-jp-as3-large',   label:'AS3 · LARGE',         bench:false, stock:'out', pricing:{ type:'flat', amount:429.90, currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-jp-as3-giant',   label:'AS3 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:829.90, currency:'USD' }, linkMbps:1000, metrics:null }
       ]}
     ]},
     { id:'vmiss', name:'VMISS', roles:['jump'], stockNote:'out of stock', regions:[
       { id:'us-la', name:'US-LA · CN2 GIA', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'vmiss-basic', label:'Basic · 1C/1GB · 10GB · 300GB',  bench:false, stock:'out', pricing:{ type:'flat', amount:6,  currency:'CAD' }, metrics:null },
-        { id:'vmiss-core',  label:'Core · 1C/1GB · 15GB · 600GB',   bench:false, stock:'out', pricing:{ type:'flat', amount:12, currency:'CAD' }, metrics:null },
-        { id:'vmiss-pro',   label:'Pro · 1C/2GB · 20GB · 1000GB',   bench:false, stock:'out', pricing:{ type:'flat', amount:20, currency:'CAD' }, metrics:null },
-        { id:'vmiss-elite', label:'Elite · 2C/4GB · 40GB · 1600GB', bench:false, stock:'out', pricing:{ type:'flat', amount:38, currency:'CAD' }, metrics:null },
-        { id:'vmiss-ultra', label:'Ultra · 4C/8GB · 80GB · 2800GB', bench:false, stock:'out', pricing:{ type:'flat', amount:75, currency:'CAD' }, metrics:null }
+        { id:'vmiss-basic', label:'Basic · 1C/1GB · 10GB · 300GB',  bench:false, stock:'out', pricing:{ type:'flat', amount:6,  currency:'CAD' }, linkMbps:200, metrics:null },
+        { id:'vmiss-core',  label:'Core · 1C/1GB · 15GB · 600GB',   bench:false, stock:'out', pricing:{ type:'flat', amount:12, currency:'CAD' }, linkMbps:200, metrics:null },
+        { id:'vmiss-pro',   label:'Pro · 1C/2GB · 20GB · 1000GB',   bench:false, stock:'out', pricing:{ type:'flat', amount:20, currency:'CAD' }, linkMbps:500, metrics:null },
+        { id:'vmiss-elite', label:'Elite · 2C/4GB · 40GB · 1600GB', bench:false, stock:'out', pricing:{ type:'flat', amount:38, currency:'CAD' }, linkMbps:500, metrics:null },
+        { id:'vmiss-ultra', label:'Ultra · 4C/8GB · 80GB · 2800GB', bench:false, stock:'out', pricing:{ type:'flat', amount:75, currency:'CAD' }, linkMbps:1000, metrics:null }
       ]}
     ]},
     /* ============ RESIDENTIAL EXITS ============ */
     { id:'virvm', name:'VirVM', roles:['exit'], groupLabel:'Product', cycles:true, regions:[
       { id:'res', name:'Residential · 节点K', network:'residential', exitNetwork:'residential · trusted-IP', jumpGia:false, plans:[
-        { id:'virvm-res-50',  label:'50 Mbps · 4C·8GB·50GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:35.99,  currency:'USD' }, metrics:null },
+        { id:'virvm-res-50',  label:'50 Mbps · 4C·8GB·50GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:35.99,  currency:'USD' }, linkMbps:50, metrics:null },
         { id:'virvm-res-100', label:'100 Mbps · 4C·8GB·50GB', bench:true,  stock:'in', pricing:{ type:'flat', amount:65.99,  currency:'USD' },
           metrics:{ perf:38, latencyMs:{lo:158,hi:201}, iops:38813, iopsCapped:false, bandwidthMbps:100, hopAddMs:50, route:{ isp:'AT&T', purity:'high' } } },
-        { id:'virvm-res-200', label:'200 Mbps · 4C·8GB·50GB', bench:false, stock:'in', pricing:{ type:'flat', amount:115.99, currency:'USD' }, metrics:null },
-        { id:'virvm-res-300', label:'300 Mbps · 4C·8GB·50GB', bench:false, stock:'in', pricing:{ type:'flat', amount:160.99, currency:'USD' }, metrics:null }
+        { id:'virvm-res-200', label:'200 Mbps · 4C·8GB·50GB', bench:false, stock:'in', pricing:{ type:'flat', amount:115.99, currency:'USD' }, linkMbps:200, metrics:null },
+        { id:'virvm-res-300', label:'300 Mbps · 4C·8GB·50GB', bench:false, stock:'in', pricing:{ type:'flat', amount:160.99, currency:'USD' }, linkMbps:300, metrics:null }
       ]},
       { id:'gia', name:'GIA · 专线隧道B', network:'专线GIA', exitNetwork:'专线GIA · relay-ready', jumpGia:false, plans:[
-        { id:'virvm-gia-100',  label:'100 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:59.98,  currency:'USD' }, metrics:null },
-        { id:'virvm-gia-300',  label:'300 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:99.98,  currency:'USD' }, metrics:null },
-        { id:'virvm-gia-500',  label:'500 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:139.98, currency:'USD' }, metrics:null },
-        { id:'virvm-gia-1000', label:'1000 GB · 300M dedicated', bench:false, stock:'in', pricing:{ type:'flat', amount:239.98, currency:'USD' }, metrics:null }
+        { id:'virvm-gia-100',  label:'100 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:59.98,  currency:'USD' }, linkMbps:300, metrics:null },
+        { id:'virvm-gia-300',  label:'300 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:99.98,  currency:'USD' }, linkMbps:300, metrics:null },
+        { id:'virvm-gia-500',  label:'500 GB · 300M dedicated',  bench:false, stock:'in', pricing:{ type:'flat', amount:139.98, currency:'USD' }, linkMbps:300, metrics:null },
+        { id:'virvm-gia-1000', label:'1000 GB · 300M dedicated', bench:false, stock:'in', pricing:{ type:'flat', amount:239.98, currency:'USD' }, linkMbps:300, metrics:null }
       ]}
     ]},
     { id:'sola', name:'SolaDrive', roles:['exit'], regions:[
@@ -542,31 +541,31 @@
       { id:'static', name:'Static residential · 独享', network:'residential', exitNetwork:'residential · AT&T/Frontier', jumpGia:false, plans:[
         { id:'aaitr-att',      label:'US AT&T static · 2C·2GB·25GB · 100M · 2TB', bench:true,  stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' },
           metrics:{ perf:18, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', purity:'high' } } },
-        { id:'aaitr-frontier', label:'US Frontier static · 2C·2GB·25GB · 100M · 2TB', bench:false, stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' }, metrics:null }
+        { id:'aaitr-frontier', label:'US Frontier static · 2C·2GB·25GB · 100M · 2TB', bench:false, stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' }, linkMbps:100, metrics:null }
       ]},
       { id:'nat', name:'Residential NAT · 共享', network:'residential NAT', exitNetwork:'residential NAT · port-forward ×10', jumpGia:false, plans:[
-        { id:'aaitr-nat-frontier', label:'US Frontier NAT · 1C·512MB · 100M · daily rotate', bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, metrics:null },
-        { id:'aaitr-nat-sb',       label:'JP SoftBank NAT · 1C·512MB · Tokyo · 50M',          bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, metrics:null }
+        { id:'aaitr-nat-frontier', label:'US Frontier NAT · 1C·512MB · 100M · daily rotate', bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, linkMbps:100, metrics:null },
+        { id:'aaitr-nat-sb',       label:'JP SoftBank NAT · 1C·512MB · Tokyo · 50M',          bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, linkMbps:50, metrics:null }
       ]}
     ]},
     { id:'qqpw', name:'QQ.pw', roles:['exit'], groupLabel:'Product', regions:[
       { id:'nat', name:'Hawaii · NAT VPS', network:'residential NAT', exitNetwork:'Hawaii · residential NAT', jumpGia:false, plans:[
-        { id:'qqpw-nat-tiny',     label:'NAT Tiny · 1C·238MB · 1GB/mo · 10M · $12/yr', bench:false, stock:'in', pricing:{ type:'flat', amount:1,   currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-lite',     label:'NAT Lite · 1C·256MB · 6GB · 50M',      bench:false, stock:'in', pricing:{ type:'flat', amount:2,   currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-basic',    label:'NAT Basic · 1C·512MB · 20GB · 100M',   bench:false, stock:'in', pricing:{ type:'flat', amount:4,   currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-basic2',   label:'NAT Basic2 · 1C·512MB · 50GB · 150M',  bench:false, stock:'in', pricing:{ type:'flat', amount:6,   currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-basic3',   label:'NAT Basic3 · 1C·512MB · 100GB · 200M', bench:false, stock:'in', pricing:{ type:'flat', amount:8,   currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-standard', label:'NAT Standard · 1C·512MB · 200GB · 250M', bench:false, stock:'in', pricing:{ type:'flat', amount:10, currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-booster',  label:'NAT Booster · 1C·1GB · 512GB · 300M',  bench:false, stock:'in', pricing:{ type:'flat', amount:16,  currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-plus',     label:'NAT Plus · 2C·1.5GB · 1TB · 350M',     bench:false, stock:'in', pricing:{ type:'flat', amount:22,  currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-premium',  label:'NAT Premium · 2C·2GB · 2TB · 400M · from $28', bench:false, stock:'in', pricing:{ type:'flat', amount:28, currency:'USD' }, metrics:null },
-        { id:'qqpw-nat-extreme',  label:'NAT Extreme · 8C·8GB · 40TB · 1Gbps',  bench:false, stock:'in', pricing:{ type:'flat', amount:690, currency:'USD' }, metrics:null }
+        { id:'qqpw-nat-tiny',     label:'NAT Tiny · 1C·238MB · 1GB/mo · 10M · $12/yr', bench:false, stock:'in', pricing:{ type:'flat', amount:1,   currency:'USD' }, linkMbps:10, metrics:null },
+        { id:'qqpw-nat-lite',     label:'NAT Lite · 1C·256MB · 6GB · 50M',      bench:false, stock:'in', pricing:{ type:'flat', amount:2,   currency:'USD' }, linkMbps:50, metrics:null },
+        { id:'qqpw-nat-basic',    label:'NAT Basic · 1C·512MB · 20GB · 100M',   bench:false, stock:'in', pricing:{ type:'flat', amount:4,   currency:'USD' }, linkMbps:100, metrics:null },
+        { id:'qqpw-nat-basic2',   label:'NAT Basic2 · 1C·512MB · 50GB · 150M',  bench:false, stock:'in', pricing:{ type:'flat', amount:6,   currency:'USD' }, linkMbps:150, metrics:null },
+        { id:'qqpw-nat-basic3',   label:'NAT Basic3 · 1C·512MB · 100GB · 200M', bench:false, stock:'in', pricing:{ type:'flat', amount:8,   currency:'USD' }, linkMbps:200, metrics:null },
+        { id:'qqpw-nat-standard', label:'NAT Standard · 1C·512MB · 200GB · 250M', bench:false, stock:'in', pricing:{ type:'flat', amount:10, currency:'USD' }, linkMbps:250, metrics:null },
+        { id:'qqpw-nat-booster',  label:'NAT Booster · 1C·1GB · 512GB · 300M',  bench:false, stock:'in', pricing:{ type:'flat', amount:16,  currency:'USD' }, linkMbps:300, metrics:null },
+        { id:'qqpw-nat-plus',     label:'NAT Plus · 2C·1.5GB · 1TB · 350M',     bench:false, stock:'in', pricing:{ type:'flat', amount:22,  currency:'USD' }, linkMbps:350, metrics:null },
+        { id:'qqpw-nat-premium',  label:'NAT Premium · 2C·2GB · 2TB · 400M · from $28', bench:false, stock:'in', pricing:{ type:'flat', amount:28, currency:'USD' }, linkMbps:400, metrics:null },
+        { id:'qqpw-nat-extreme',  label:'NAT Extreme · 8C·8GB · 40TB · 1Gbps',  bench:false, stock:'in', pricing:{ type:'flat', amount:690, currency:'USD' }, linkMbps:1000, metrics:null }
       ]},
       { id:'dedicated', name:'Hawaii · Dedicated VDS', network:'residential VDS', exitNetwork:'Hawaii · dedicated VDS', jumpGia:false, plans:[
-        { id:'qqpw-ded-intern',   label:'VDS Intern · 2C·3GB·20GB · 1TB@400M',   bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, metrics:null },
-        { id:'qqpw-ded-reliable', label:'VDS Reliable · 3C·4GB·30GB · 2TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, metrics:null },
-        { id:'qqpw-ded-hardcore', label:'VDS Hardcore · 4C·4GB·40GB · 4TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:45, currency:'USD' }, metrics:null },
-        { id:'qqpw-ded-elite',    label:'VDS Elite · 5C·8GB·50GB · $165/qtr',    bench:false, stock:'out', pricing:{ type:'flat', amount:55, currency:'USD' }, metrics:null }
+        { id:'qqpw-ded-intern',   label:'VDS Intern · 2C·3GB·20GB · 1TB@400M',   bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, linkMbps:400, metrics:null },
+        { id:'qqpw-ded-reliable', label:'VDS Reliable · 3C·4GB·30GB · 2TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, linkMbps:400, metrics:null },
+        { id:'qqpw-ded-hardcore', label:'VDS Hardcore · 4C·4GB·40GB · 4TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:45, currency:'USD' }, linkMbps:400, metrics:null },
+        { id:'qqpw-ded-elite',    label:'VDS Elite · 5C·8GB·50GB · $165/qtr',    bench:false, stock:'out', pricing:{ type:'flat', amount:55, currency:'USD' }, linkMbps:400, metrics:null }
       ]}
     ]}
   ];
@@ -609,8 +608,10 @@
   function cycleDiscOf(node){ return (node.provider.cycles && node.cycle) ? cycleObj(node.cycle).disc : 0; }
   // Effective monthly USD for a placed node: flat price → USD, then the cycle discount.
   function effUSD(node){ var pr=node.plan.pricing; var u=toUSD(pr.amount!=null?pr.amount:pr.from, pr.currency); return u*(1-cycleDiscOf(node)); }
-  // Bandwidth metric for the min-hop bottleneck — measured Mbps, or null when not benchmarked.
-  function bwOf(node){ var m=node.plan.metrics; return (m && m.bandwidthMbps!=null) ? m.bandwidthMbps : null; }
+  // Bandwidth for the min-hop bottleneck: prefer the box's MEASURED throughput
+  // (benchmarked boxes), else fall back to the plan's official port/link speed
+  // (linkMbps) so every hop always contributes a number to the min-hop calc.
+  function bwOf(node){ var m=node.plan.metrics; if(m && m.bandwidthMbps!=null) return m.bandwidthMbps; return (node.plan.linkMbps!=null) ? node.plan.linkMbps : null; }
   function resolveNode(ref){
     if(!ref) return null;
     var p = findProvider(ref.provider); if(!p) return null;
@@ -645,12 +646,12 @@
     else { acc.references.push({ label:label, note:'from '+money(toUSD(pr.from,pr.currency)) }); }
   }
   function computePrice(jump, exits){
-    var acc = { total:0, lines:[], references:[], pending:false };
+    var acc = { total:0, lines:[], references:[] };
     if(jump) foldNode(jump, jump.provider.name+(exits.length>1?' (shared jump)':' (jump)'), acc);
     exits.forEach(function(ex, i){
       foldNode(ex, ex.provider.name+(exits.length>1 ? ' (exit '+(i+1)+')' : ' (exit)'), acc);
     });
-    return { monthlyUSD: acc.total, lines: acc.lines, references: acc.references, pending: acc.pending };
+    return { monthlyUSD: acc.total, lines: acc.lines, references: acc.references };
   }
 
   /* ---------- estimate(state) -> EstimateResult (pure, synchronous) ---------- */
@@ -664,7 +665,7 @@
     if(!jump){
       return {
         incomplete: true,
-        price: { monthlyUSD: null, lines: [], references: [], pending: false },
+        price: { monthlyUSD: null, lines: [], references: [] },
         latency: null, io: null, bandwidth: null, route: null, edges: [],
         gating: { active: !!state.gatingOn, entryBlocked: false, reason: null },
         estimated: true
@@ -728,12 +729,14 @@
       io = { iops: jump.plan.metrics.iops, capped: !!jump.plan.metrics.iopsCapped };
     }
 
-    /* bandwidth: min across ALL hops (jump + every exit) */
-    var bandwidth = null, bwVals = [], bwPending = false;
-    if(jump){ var jbw = bwOf(jump); if(jbw!=null) bwVals.push(jbw); else bwPending=true; }
-    exits.forEach(function(ex){ var ebw = bwOf(ex); if(ebw!=null) bwVals.push(ebw); else bwPending=true; });
-    if(bwVals.length) bandwidth = { mbps: Math.min.apply(null,bwVals), pending: bwPending };
-    else if(jump || exits.length) bandwidth = { mbps:null, pending:true };
+    /* bandwidth: min across ALL hops (jump + every exit). The min-hop value is a
+       valid estimate even when some hops are unmeasured — the slowest measured tier
+       is the bottleneck regardless of an unbenchmarked hop's throughput. */
+    var bandwidth = null, bwVals = [];
+    if(jump){ var jbw = bwOf(jump); if(jbw!=null) bwVals.push(jbw); }
+    exits.forEach(function(ex){ var ebw = bwOf(ex); if(ebw!=null) bwVals.push(ebw); });
+    if(bwVals.length) bandwidth = { mbps: Math.min.apply(null,bwVals) };
+    else if(jump || exits.length) bandwidth = { mbps:null };
 
     /* route: collapse identical exits; N egress IPs */
     var route = null;
@@ -972,7 +975,7 @@
     var latHtml = est.latency ? (est.latency.lo+' ~ '+est.latency.hi+' <span class="u">ms</span>') : '—';
     var ioHtml = est.io ? commas(est.io.iops)+(est.io.capped?' <span class="u">capped</span>':'')+' <span class="u">IOPS</span>'
       : ((jump||est.edges.length)?'not benchmarked':'—');
-    var bwHtml = est.bandwidth ? (est.bandwidth.mbps!=null ? est.bandwidth.mbps+'M <span class="u">min hop</span>'+(est.bandwidth.pending?' <span class="ph">pending</span>':'') : '<span class="ph">pending</span>') : '—';
+    var bwHtml = est.bandwidth ? (est.bandwidth.mbps!=null ? est.bandwidth.mbps+'M <span class="u">min hop</span>' : 'not benchmarked') : '—';
     var routeHtml;
     if(!est.route) routeHtml = '—';
     else if(est.route.exitIPs===0) routeHtml = 'datacenter IP <span class="u">no residential</span>';
@@ -991,7 +994,7 @@
       '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">'+bwHtml+'</span></div>'+
       '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v" style="font-size:.72rem">'+routeHtml+'</span></div>'+
       (p.references.length?'<div class="breakdown">reference (not summed): '+p.references.map(function(r){ return esc(r.label)+' — '+esc(r.note)+(r.out?' <span class="badge out">out of stock</span>':''); }).join('; ')+'</div>':'')+
-      '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">estimated</span> not a quote'+(p.pending?' · <span class="ph">prices pending</span>':'')+'</div>';
+      '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">estimated</span> not a quote</div>';
   }
   function syncGuardrail(){
     els.toggle.checked = !!state.gatingOn;
