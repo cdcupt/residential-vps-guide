@@ -147,17 +147,14 @@ All in stock · 1Gbps port. Only SD-4 is benchmarked (our fleet exit); the other
 - **Pricing models the engine must handle:** flat $/mo · flat + billing-cycle-discount · **bandwidth-tiered** (VirVM residential) · **traffic-metered** (VirVM GIA — bring the metered model back for this SKU) · currency conversion (CAD, CNY→USD).
 - **Stock:** DMIT, VMISS, QQ.pw-dedicated, AaITR-static currently out → badge but still price; out-of-stock excluded from the buildable total (reference), only in-stock summed.
 
-## IP quality (meowvps + our measurements)
-The builder's **⑥ IP QUALITY** metric rates the **egress IP** — which is always the **exit's** IP, never the jump's. Unified scale: `excellent > good > average` (or `null` = unrated). Each rating carries a **source**: `measured` = our own fleet test (Scamalytics / Netflix / ISP checks on a box we run); `ref · meowvps` = a reference rating from **[meowvps.com](https://meowvps.com)** for a box we have **not** benchmarked ourselves. A meowvps opinion is always shown as a reference, never as our measurement.
+## IP purity (professional reputation scorers)
+The builder's **⑥ IP PURITY** metric scores the **egress IP** — which is always the **exit's** IP, never the jump's. It is a **number /100** where **purity = 100 − fraud score**, and the fraud score is the output of professional IP-reputation scorers — **Scamalytics · IPQS · AbuseIPDB** (see choose.html §03 "Fraud score /100") — run on **our specific exit IP**. This is **not our perf benchmark**: the number is the scorers' verdict, and it is **box-specific**, not a provider-wide grade. QQ.pw carries **no scorer run** on our side, so it is shown as a qualitative **reference** only, credited to [meowvps.com](https://meowvps.com) — never as a scored value.
 
-| Provider | Rating | Source | Basis |
-|----------|--------|--------|-------|
-| **SolaDrive** (163 · clean IP) | excellent | measured | our SD-4 box — Scamalytics low, Netflix Native |
-| **VirVM** (residential + GIA) | excellent | measured | our box measured clean; meowvps notes "buy fresh segments" |
-| **AaITR** (static/NAT residential) | excellent | measured | our box measured clean; meowvps "excellent" |
-| **QQ.pw** (Hawaii residential) | excellent | ref · meowvps | meowvps "top-tier residential" — not benchmarked by us |
-| **BandwagonHost** (datacenter) | average | ref · meowvps | datacenter IP |
-| **DMIT** (datacenter) | average | ref · meowvps | datacenter IP |
-| **VMISS** (datacenter) | unrated | ref · meowvps | meowvps gives no explicit rating |
+| Provider | Purity /100 | Source | Basis |
+|----------|-------------|--------|-------|
+| **SolaDrive** (163 · clean IP) | **100** | Scamalytics · IPQS · AbuseIPDB | our SD-4 exit IP — fraud score 0 |
+| **AaITR** (static/NAT residential) | **87** | Scamalytics · IPQS · AbuseIPDB | our AT&T static exit IP — fraud score 13 |
+| **VirVM** (residential + GIA) | **82** | Scamalytics · IPQS · AbuseIPDB | our residential exit IP — fraud score 18 |
+| **QQ.pw** (Hawaii residential) | — (ref) | meowvps | meowvps "top-tier residential" — no scorer run on our side |
 
-Reference ratings for the non-measured providers credit **meowvps.com** as the source. In the builder: **single exit** → that exit's rating + source tag; **multiple exits** → the **worst** rating across exits (tagged `mixed` if they differ, `incl. unrated` if any is null); **zero exits** (single-host) → `datacenter IP · no residential exit` (the jump's own datacenter egress, not scored against the exit scale).
+Jump hosts (BandwagonHost, DMIT, VMISS) are datacenter boxes and never appear in ⑥ — the metric reflects the **exit**, not the jump. In the builder: **scored exit** → `NN /100 · IPQS`; **reference exit** (QQ.pw) → `— · ref · meowvps` (no number); **unrated exit** → `— · unrated`; **multiple exits** → the **worst (lowest)** score, with a small `+ ref` note appended if any exit is a reference/unrated; **zero exits** (single-host) → `datacenter IP · no residential exit` (the jump's own datacenter egress, not scored).

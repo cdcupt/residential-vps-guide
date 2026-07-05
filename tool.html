@@ -427,7 +427,7 @@
      Pricing is flat $/mo per selected variant; VirVM adds a billing-cycle discount. */
   var PROVIDERS = [
     /* ============ JUMP HOSTS — datacenter CN2 GIA ============ */
-    { id:'bwh', name:'BandwagonHost', roles:['jump'], ipQuality:{ rating:'average', source:'meowvps' }, buyUrl:'https://bandwagonhost.com/order/ecommerce/Los%20Angeles', regions:[
+    { id:'bwh', name:'BandwagonHost', roles:['jump'], buyUrl:'https://bandwagonhost.com/order/ecommerce/Los%20Angeles', regions:[
       { id:'us-la', name:'US-LA · USCA_9', network:'CN2 GIA', jumpGia:true, plans:[
         { id:'bwh-la-20',   label:'2C · 1GB · 20GB · 1TB (·$49.99/3mo)', bench:false, stock:'in', pricing:{ type:'flat', amount:16.66,  currency:'USD' }, linkMbps:2500, metrics:null },
         { id:'bwh-vpn',     label:'3C · 2GB · 40GB · 2TB',                bench:true,  stock:'in', pricing:{ type:'flat', amount:30,     currency:'USD' },
@@ -468,7 +468,7 @@
     ]},
     // DMIT — CN2 GIA "Pro". Stock is PER-PLAN (live dmit-watch panel + DMIT site). LA all out;
     // HK AS3 + Tokyo AS3 (TINY→MEDIUM) in stock; HK AN5 generation available. Not benchmarked.
-    { id:'dmit', name:'DMIT', roles:['jump'], ipQuality:{ rating:'average', source:'meowvps' }, buyUrl:'https://www.dmit.io/cart.php?network=premium&language=english', regions:[
+    { id:'dmit', name:'DMIT', roles:['jump'], buyUrl:'https://www.dmit.io/cart.php?network=premium&language=english', regions:[
       { id:'us-la', name:'US-LA · AS3/AN4/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
         { id:'dmit-la-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:10.90,   currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-la-as3-pocket',  label:'AS3 · POCKET',        bench:false, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' }, linkMbps:1000, metrics:null },
@@ -509,7 +509,7 @@
         { id:'dmit-jp-as3-giant',   label:'AS3 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:829.90, currency:'USD' }, linkMbps:1000, metrics:null }
       ]}
     ]},
-    { id:'vmiss', name:'VMISS', roles:['jump'], ipQuality:{ rating:null, source:'meowvps' }, stockNote:'out of stock', buyUrl:'https://app.vmiss.com/store/us-los-angeles-cn2', regions:[
+    { id:'vmiss', name:'VMISS', roles:['jump'], stockNote:'out of stock', buyUrl:'https://app.vmiss.com/store/us-los-angeles-cn2', regions:[
       { id:'us-la', name:'US-LA · CN2 GIA', network:'CN2 GIA', jumpGia:true, plans:[
         { id:'vmiss-basic', label:'Basic · 1C/1GB · 10GB · 300GB',  bench:false, stock:'out', pricing:{ type:'flat', amount:6,  currency:'CAD' }, linkMbps:200, metrics:null },
         { id:'vmiss-core',  label:'Core · 1C/1GB · 15GB · 600GB',   bench:false, stock:'out', pricing:{ type:'flat', amount:12, currency:'CAD' }, linkMbps:200, metrics:null },
@@ -519,7 +519,7 @@
       ]}
     ]},
     /* ============ RESIDENTIAL EXITS ============ */
-    { id:'virvm', name:'VirVM', roles:['exit'], groupLabel:'Product', cycles:true, ipQuality:{ rating:'excellent', source:'measured' }, buyUrl:'https://www.vircs.com/products/2', regions:[
+    { id:'virvm', name:'VirVM', roles:['exit'], groupLabel:'Product', cycles:true, purity:{ score:82, source:'scorers' }, buyUrl:'https://www.vircs.com/products/2', regions:[
       { id:'res', name:'Residential · 节点K', network:'residential', exitNetwork:'residential · trusted-IP', jumpGia:false, plans:[
         { id:'virvm-res-50',  label:'50 Mbps · 4C·8GB·50GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:35.99,  currency:'USD' }, linkMbps:50, metrics:null },
         { id:'virvm-res-100', label:'100 Mbps · 4C·8GB·50GB', bench:true,  stock:'in', pricing:{ type:'flat', amount:65.99,  currency:'USD' },
@@ -538,7 +538,7 @@
     // options; only SD-4 is our fleet box (benchmarked, perf 88) so it carries metrics and
     // stays the default placement (bench:true). The other three are priced-only with linkMbps
     // set so the min-hop bandwidth still resolves (no "pending"). buyUrl empty until the PM supplies it.
-    { id:'sola', name:'SolaDrive', roles:['exit'], ipQuality:{ rating:'excellent', source:'measured' }, buyUrl:'', regions:[
+    { id:'sola', name:'SolaDrive', roles:['exit'], purity:{ score:100, source:'scorers' }, buyUrl:'', regions:[
       { id:'us-la', name:'US-LA', network:'163 · clean IP', exitNetwork:'163 · clean IP', jumpGia:false, plans:[
         { id:'sola-sd2', label:'SD-2 · 2C·2GB·25GB · 2TB · 1 res-IP',   bench:false, stock:'in', pricing:{ type:'flat', amount:25,  currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'sola-1',   label:'SD-4 · 4C·4GB·50GB · 4TB · 2 res-IP',   bench:true,  stock:'in', pricing:{ type:'flat', amount:40,  currency:'USD' },
@@ -547,7 +547,7 @@
         { id:'sola-250', label:'250 VPS Node · 24C/48T·512GB·2×8TB · 254 res-IP · 30TB', bench:false, stock:'in', pricing:{ type:'flat', amount:795, currency:'USD' }, linkMbps:1000, metrics:null }
       ]}
     ]},
-    { id:'aaitr', name:'AaITR', roles:['exit'], groupLabel:'Product', ipQuality:{ rating:'excellent', source:'measured' }, buyUrl:'', regions:[
+    { id:'aaitr', name:'AaITR', roles:['exit'], groupLabel:'Product', purity:{ score:87, source:'scorers' }, buyUrl:'', regions:[
       { id:'static', name:'Static residential · 独享', network:'residential', exitNetwork:'residential · AT&T/Frontier', jumpGia:false, plans:[
         { id:'aaitr-att',      label:'US AT&T static · 2C·2GB·25GB · 100M · 2TB', bench:true,  stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' },
           metrics:{ perf:18, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', purity:'high' } } },
@@ -558,7 +558,7 @@
         { id:'aaitr-nat-sb',       label:'JP SoftBank NAT · 1C·512MB · Tokyo · 50M',          bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, linkMbps:50, metrics:null }
       ]}
     ]},
-    { id:'qqpw', name:'QQ.pw', roles:['exit'], groupLabel:'Product', ipQuality:{ rating:'excellent', source:'meowvps' }, buyUrl:'https://qq.pw/store/residential-vds-with-dedicated-ip', regions:[
+    { id:'qqpw', name:'QQ.pw', roles:['exit'], groupLabel:'Product', purity:{ score:null, ref:'meowvps: top-tier' }, buyUrl:'https://qq.pw/store/residential-vds-with-dedicated-ip', regions:[
       { id:'nat', name:'Hawaii · NAT VPS', network:'residential NAT', exitNetwork:'Hawaii · residential NAT', jumpGia:false, plans:[
         { id:'qqpw-nat-tiny',     label:'NAT Tiny · 1C·238MB · 1GB/mo · 10M · $12/yr', bench:false, stock:'in', pricing:{ type:'flat', amount:1,   currency:'USD' }, linkMbps:10, metrics:null },
         { id:'qqpw-nat-lite',     label:'NAT Lite · 1C·256MB · 6GB · 50M',      bench:false, stock:'in', pricing:{ type:'flat', amount:2,   currency:'USD' }, linkMbps:50, metrics:null },
@@ -670,7 +670,7 @@
       return {
         incomplete: true,
         price: { monthlyUSD: null, lines: [] },
-        latency: null, io: null, bandwidth: null, route: null, ipQuality: null, edges: [],
+        latency: null, io: null, bandwidth: null, route: null, purity: null, edges: [],
         gating: { active: !!state.gatingOn, entryBlocked: false, reason: null },
         estimated: true
       };
@@ -759,32 +759,34 @@
       }
     }
 
-    /* ipQuality: quality of the EGRESS IP — which is the EXIT's, never the jump's.
-       Single exit → that exit provider's rating + source. Multiple exits → the WORST
-       rating across exits (average < good < excellent), flagged `differ`/`hasNull`.
+    /* purity: numeric IP-reputation PURITY of the EGRESS IP — which is the EXIT's,
+       never the jump's. purity = 100 − fraud score, where the fraud score is the
+       output of professional IP-reputation scorers (Scamalytics · IPQS · AbuseIPDB)
+       run on OUR specific exit IP — NOT our own perf benchmark, and box-specific
+       rather than a provider-wide grade. Scored exit → its score. Reference exit
+       (QQ.pw — we run no scorer on it) → no number, carries a qualitative ref only.
+       Multiple exits → the WORST (lowest) score; any ref/unrated exit is flagged.
        Zero exits (single-host) → egress is the jump's datacenter IP, so `datacenter`. */
-    var ipQuality = null;
+    var ipPurity = null;
     if(jump){
       if(exits.length===0){
-        ipQuality = { datacenter:true };
+        ipPurity = { datacenter:true };
       } else {
-        var IPQ_RANK = { average:0, good:1, excellent:2 };
-        var iqs = exits.map(function(ex){ return ex.provider.ipQuality || { rating:null, source:'meowvps' }; });
-        var iqRatings = iqs.map(function(q){ return q.rating; });
-        var iqWorst = null;
-        iqRatings.forEach(function(r){ if(r!=null && (iqWorst==null || IPQ_RANK[r]<IPQ_RANK[iqWorst])) iqWorst=r; });
-        ipQuality = {
-          rating: iqWorst,
-          allMeasured: iqs.every(function(q){ return q.source==='measured'; }),
-          differ: iqRatings.some(function(r){ return r!==iqRatings[0]; }),
-          hasNull: iqRatings.some(function(r){ return r==null; }),
+        var pus = exits.map(function(ex){ return ex.provider.purity || { score:null }; });
+        var scored = pus.filter(function(q){ return q.score!=null; }).map(function(q){ return q.score; });
+        var puWorst = scored.length ? Math.min.apply(null, scored) : null;
+        ipPurity = {
+          score: puWorst,
+          refLabel: (exits.length===1 && pus[0].score==null) ? (pus[0].ref||null) : null,
+          hasRef: pus.some(function(q){ return q.score==null && q.ref; }),
+          hasUnrated: pus.some(function(q){ return q.score==null && !q.ref; }),
           count: exits.length
         };
       }
     }
 
     return {
-      price: price, latency: latency, io: io, bandwidth: bandwidth, route: route, ipQuality: ipQuality, edges: edges,
+      price: price, latency: latency, io: io, bandwidth: bandwidth, route: route, purity: ipPurity, edges: edges,
       gating: { active: gatingActive, entryBlocked: gated,
         reason: gated ? (jump.provider.name+' reaches China over '+netOf(jump,'jump')+', not CN2 GIA') : null },
       estimated: true
@@ -1000,7 +1002,7 @@
         '<div class="row"><span class="k"><span class="i">③</span> I/O disk</span><span class="v">—</span></div>'+
         '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">—</span></div>'+
         '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v">—</span></div>'+
-        '<div class="row"><span class="k"><span class="i">⑥</span> IP quality</span><span class="v">—</span></div>'+
+        '<div class="row"><span class="k"><span class="i">⑥</span> IP purity</span><span class="v">—</span></div>'+
         '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">incomplete</span> jump host required — nothing billed yet</div>';
       return;
     }
@@ -1022,18 +1024,15 @@
     var nIP = est.route ? est.route.exitIPs : 0;
     var egress = nIP ? nIP+' exit IP'+(nIP>1?'s':'')+' — '+nIP+' separate egress path'+(nIP>1?'s':'') : (jump?'single host · datacenter egress':'—');
 
-    // ⑥ IP quality — about the EXIT egress IP. `measured` = our own bench; `ref · meowvps`
-    // = a meowvps.com reference we did NOT benchmark. Never present a reference as measured.
-    var iq = est.ipQuality, ipqHtml;
-    if(!iq) ipqHtml = '—';
-    else if(iq.datacenter) ipqHtml = 'datacenter IP<span class="u"> · no residential exit</span>';
-    else if(iq.rating==null) ipqHtml = '—<span class="u"> · unrated</span>';
-    else {
-      var iqParts = [ iq.allMeasured ? 'measured' : 'ref · meowvps' ];
-      if(iq.count>1 && iq.differ) iqParts.push('mixed');
-      if(iq.count>1 && iq.hasNull) iqParts.push('incl. unrated');
-      ipqHtml = esc(iq.rating)+'<span class="u"> · '+iqParts.join(' · ')+'</span>';
-    }
+    // ⑥ IP purity — numeric reputation score of the EXIT egress IP: purity =
+    // 100 − fraud score from professional scorers (Scamalytics · IPQS · AbuseIPDB),
+    // on OUR exit IP. NOT our perf benchmark. QQ.pw carries no scorer run, so it
+    // shows as a meowvps reference only — never present a reference as a scored value.
+    var pu = est.purity, puHtml;
+    if(!pu) puHtml = '—';
+    else if(pu.datacenter) puHtml = 'datacenter IP<span class="u"> · no residential exit</span>';
+    else if(pu.score==null) puHtml = pu.refLabel ? '—<span class="u"> · ref · meowvps</span>' : '—<span class="u"> · unrated</span>';
+    else puHtml = pu.score+' <span class="u">/100 · IPQS'+((pu.hasRef||pu.hasUnrated)?' · + ref':'')+'</span>';
 
     els.estimate.innerHTML =
       '<div class="row"><span class="k"><span class="i">①</span> Price</span><span class="v big">'+money(p.monthlyUSD)+'<span class="u">/mo</span></span></div>'+
@@ -1044,7 +1043,8 @@
       '<div class="row"><span class="k"><span class="i">③</span> I/O disk'+(nIP>1?' <span class="u">(min)</span>':'')+'</span><span class="v">'+ioHtml+'</span></div>'+
       '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">'+bwHtml+'</span></div>'+
       '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v" style="font-size:.72rem">'+routeHtml+'</span></div>'+
-      '<div class="row"><span class="k"><span class="i">⑥</span> IP quality</span><span class="v" style="font-size:.72rem">'+ipqHtml+'</span></div>'+
+      '<div class="row"><span class="k"><span class="i">⑥</span> IP purity</span><span class="v" style="font-size:.72rem">'+puHtml+'</span></div>'+
+      (pu && pu.score!=null ? '<div class="breakdown">purity = 100 − fraud score (Scamalytics · IPQS · AbuseIPDB), on our exit IP</div>' : '')+
       '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">estimated</span> not a quote</div>';
   }
   function syncGuardrail(){
