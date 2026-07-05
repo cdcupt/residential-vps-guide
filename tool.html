@@ -185,6 +185,11 @@
   .nbx .est .v{font-family:var(--mono); font-weight:700; text-align:right; font-size:.82rem}
   .nbx .est .v.big{font-size:1.4rem; font-family:var(--serif)}
   .nbx .est .v .u{font-weight:400; font-size:.7rem; color:var(--ink-soft)}
+  /* ⑥ IP-purity traffic light: colored dot + rating text by level (tag stays muted via .u) */
+  .nbx .est .pdot{font-size:.6em; margin-right:.35em; vertical-align:baseline; line-height:1}
+  .nbx .est .pdot-high,.nbx .est .ptext-high{color:var(--purity-high)}
+  .nbx .est .pdot-mid,.nbx .est .ptext-mid{color:var(--purity-mid)}
+  .nbx .est .pdot-low,.nbx .est .ptext-low{color:var(--purity-low)}
   .nbx .est .breakdown{font-family:var(--mono); font-size:.66rem; color:var(--ink-soft); margin:.15rem 0 .1rem; line-height:1.5; overflow-wrap:anywhere}
   .nbx .est .egress{font-family:var(--mono); font-size:.66rem; color:var(--exit-ink); background:var(--exit-bg); border:1px solid var(--exit); border-radius:6px; padding:.25rem .45rem; margin:.35rem 0 .1rem}
   .nbx .estlabel{display:inline-block; font-family:var(--mono); font-size:.55rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); border:1px dashed var(--line-2); border-radius:99px; padding:.02rem .38rem; margin-left:.3rem; vertical-align:middle}
@@ -1011,6 +1016,17 @@
     });
     els.edges.innerHTML = h;
   }
+  // ⑥ IP-purity traffic light: map a rating (aggregate/worst) to a level bucket.
+  // HIGH→green, MEDIUM→amber, LOW→red. Unknown/unrated → null (neutral, no color).
+  function purityLevel(rating){
+    if(!rating) return null;
+    switch(String(rating).toLowerCase()){
+      case 'excellent': return 'high';
+      case 'poor': case 'low': return 'low';
+      case 'variable': case 'degrading': case 'good': case 'average': return 'mid';
+      default: return null;
+    }
+  }
   function paintEstimate(est){
     var jump = resolveNode(state.jump);
     if(est.incomplete){   // HIGH-1: no jump => no phantom dollar total, everything blank
@@ -1052,8 +1068,16 @@
     if(!pu) puHtml = '—';
     else if(pu.datacenter) puHtml = 'datacenter IP<span class="u"> · no residential exit</span>';
     else if(!pu.rating) puHtml = '—<span class="u"> · unrated</span>';
-    else puHtml = esc(pu.rating)+(pu.rating==='variable' && pu.degrading ? ' · degrading' : '')+
-      '<span class="u"> · ref · meowvps'+(pu.hasUnrated?' · +unrated':'')+'</span>';
+    else {
+      // colour by aggregate (worst) rating — matches the worst-of value ⑥ shows.
+      var puLvl = purityLevel(pu.rating);
+      var puText = esc(pu.rating)+(pu.rating==='variable' && pu.degrading ? ' · degrading' : '');
+      var puTag = '<span class="u"> · ref · meowvps'+(pu.hasUnrated?' · +unrated':'')+'</span>';
+      puHtml = puLvl
+        ? '<span class="pdot pdot-'+puLvl+'" aria-hidden="true">●</span>'+
+          '<span class="ptext ptext-'+puLvl+'">'+puText+'</span>'+puTag
+        : puText+puTag;   // unknown rating → neutral, no traffic-light colour
+    }
 
     els.estimate.innerHTML =
       '<div class="row"><span class="k"><span class="i">①</span> Price</span><span class="v big">'+money(p.monthlyUSD)+'<span class="u">/mo</span></span></div>'+
