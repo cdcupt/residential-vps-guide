@@ -765,15 +765,13 @@
     var route = null;
     if(jump){
       if(exits.length===0){
-        route = { label:'datacenter IP', purity:null, exitIPs:0, benchmarked: !!jump.plan.metrics };
+        route = { label:'datacenter IP', exitIPs:0, benchmarked: !!jump.plan.metrics };
       } else {
         var lr = edges.filter(function(e){ return e.kind==='link'; });
         var labels = lr.map(function(e){ return e.route ? e.route.isp : 'not benchmarked'; });
         var allSame = labels.every(function(v){ return v===labels[0]; });
         var label = allSame ? (lr.length>1 ? lr.length+'× '+labels[0] : labels[0]) : labels.join(', ');
-        var purs = lr.map(function(e){ return e.route ? e.route.purity : null; }).filter(Boolean);
-        var purity = purs.length ? (purs.every(function(v){ return v===purs[0]; }) ? purs[0] : 'mixed') : null;
-        route = { label:label, purity:purity, exitIPs:exits.length,
+        route = { label:label, exitIPs:exits.length,
           benchmarked: lr.every(function(e){ return e.benchmarked; }) };
       }
     }
@@ -1056,7 +1054,7 @@
     if(!est.route) routeHtml = '—';
     else if(est.route.exitIPs===0) routeHtml = 'datacenter IP <span class="u">no residential</span>';
     else if(!est.route.benchmarked) routeHtml = 'not benchmarked';
-    else routeHtml = esc(est.route.label)+'<span class="u"> · purity '+esc(est.route.purity||'—')+'</span>';
+    else routeHtml = esc(est.route.label);
     var nIP = est.route ? est.route.exitIPs : 0;
     var egress = nIP ? nIP+' exit IP'+(nIP>1?'s':'')+' — '+nIP+' separate egress path'+(nIP>1?'s':'') : (jump?'single host · datacenter egress':'—');
 
