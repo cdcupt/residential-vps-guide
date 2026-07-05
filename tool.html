@@ -84,6 +84,9 @@
   .nbx .badge.gia{background:var(--accent-bg); color:var(--accent-ink); border:1px solid var(--accent)}
   .nbx .badge.i163{background:var(--paper-2); color:var(--ink-2); border:1px solid var(--line-2)}
   .nbx .badge.out{background:var(--warn-bg); color:var(--warn-ink); border:1px solid var(--warn)}
+  /* recommendation badges — ★ Top pick (accent-filled standout) + ★ Recommended (accent-tinted) */
+  .nbx .badge.rec{background:var(--accent-bg); color:var(--accent-ink); border:1px solid var(--accent); font-weight:700}
+  .nbx .badge.toppick{background:var(--accent); color:#fff; border:1px solid var(--accent); font-weight:800; letter-spacing:.04em}
   /* official order-page link on a placed box */
   .nbx .buylink{display:inline-block; margin-top:.45rem; font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink); text-decoration:none; border-bottom:1px solid var(--accent); padding-bottom:.04rem}
   .nbx .buylink:hover{color:var(--accent)}
@@ -141,6 +144,7 @@
   .nbx .slot.filled.jump{background:var(--accent-bg); border-color:var(--accent)}
   .nbx .slot.filled.exit{background:var(--exit-bg); border-color:var(--exit)}
   .nbx .slot .fnm{font-weight:700; font-size:.82rem; display:flex; justify-content:space-between; align-items:center; gap:.3rem}
+  .nbx .slot .fnm .fnm-l{display:inline-flex; align-items:center; gap:.35rem; flex-wrap:wrap; min-width:0}
   .nbx .slot .ftag{font-family:var(--mono); font-size:.54rem; text-transform:uppercase; letter-spacing:.03em; color:var(--exit-ink); font-weight:600}
   .nbx .slot .fsub{font-size:.66rem; color:var(--ink-2); margin-top:.15rem; line-height:1.35; overflow-wrap:anywhere}
   .nbx .slot .x{border:1px solid transparent; background:none; color:var(--ink-soft); cursor:pointer; font-size:1rem; line-height:1; min-width:40px; min-height:40px; border-radius:6px; flex:none}
@@ -239,6 +243,7 @@
         <h3 class="pal-h exit">Residential exits</h3>
         <div id="nbx-palette-exit" aria-label="Residential exit providers"></div>
         <p class="nbx-hint">Drag a card onto the canvas, tap it, or focus it and press <kbd>Enter</kbd>. Exits append to the fan-out; each has its own <kbd>Delete</kbd>. A box only drops into a slot it fits.</p>
+        <p class="nbx-hint" style="margin-top:.5rem"><span style="color:var(--accent-ink);font-weight:700">★</span> marks the providers we recommend — per <a href="https://meowvps.com/blog/resrec/" target="_blank" rel="noopener">meowvps.com</a>&rsquo;s residential roundup &amp; our own use.</p>
       </div>
       <div class="nbx-col">
         <h3>Your network &mdash; one jump, many exits</h3>
@@ -427,7 +432,7 @@
      Pricing is flat $/mo per selected variant; VirVM adds a billing-cycle discount. */
   var PROVIDERS = [
     /* ============ JUMP HOSTS — datacenter CN2 GIA ============ */
-    { id:'bwh', name:'BandwagonHost', roles:['jump'], buyUrl:'https://bandwagonhost.com/order/ecommerce/Los%20Angeles', regions:[
+    { id:'bwh', name:'BandwagonHost', roles:['jump'], recommend:'rec', recNote:'Recommended — our go-to CN2 GIA jump host', buyUrl:'https://bandwagonhost.com/order/ecommerce/Los%20Angeles', regions:[
       { id:'us-la', name:'US-LA · USCA_9', network:'CN2 GIA', jumpGia:true, plans:[
         { id:'bwh-la-20',   label:'2C · 1GB · 20GB · 1TB (·$49.99/3mo)', bench:false, stock:'in', pricing:{ type:'flat', amount:16.66,  currency:'USD' }, linkMbps:2500, metrics:null },
         { id:'bwh-vpn',     label:'3C · 2GB · 40GB · 2TB',                bench:true,  stock:'in', pricing:{ type:'flat', amount:30,     currency:'USD' },
@@ -519,7 +524,7 @@
       ]}
     ]},
     /* ============ RESIDENTIAL EXITS ============ */
-    { id:'virvm', name:'VirVM', roles:['exit'], groupLabel:'Product', cycles:true, purity:{ score:82, source:'scorers' }, buyUrl:'https://www.vircs.com/products/2', regions:[
+    { id:'virvm', name:'VirVM', roles:['exit'], recommend:'top', recNote:'Top pick — our #1 US-West residential provider; 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', cycles:true, purity:{ score:82, source:'scorers' }, buyUrl:'https://www.vircs.com/products/2', regions:[
       { id:'res', name:'Residential · 节点K', network:'residential', exitNetwork:'residential · trusted-IP', jumpGia:false, plans:[
         { id:'virvm-res-50',  label:'50 Mbps · 4C·8GB·50GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:35.99,  currency:'USD' }, linkMbps:50, metrics:null },
         { id:'virvm-res-100', label:'100 Mbps · 4C·8GB·50GB', bench:true,  stock:'in', pricing:{ type:'flat', amount:65.99,  currency:'USD' },
@@ -547,7 +552,7 @@
         { id:'sola-250', label:'250 VPS Node · 24C/48T·512GB·2×8TB · 254 res-IP · 30TB', bench:false, stock:'in', pricing:{ type:'flat', amount:795, currency:'USD' }, linkMbps:1000, metrics:null }
       ]}
     ]},
-    { id:'aaitr', name:'AaITR', roles:['exit'], groupLabel:'Product', purity:{ score:87, source:'scorers' }, buyUrl:'', regions:[
+    { id:'aaitr', name:'AaITR', roles:['exit'], recommend:'rec', recNote:'Recommended — 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', purity:{ score:87, source:'scorers' }, buyUrl:'', regions:[
       { id:'static', name:'Static residential · 独享', network:'residential', exitNetwork:'residential · AT&T/Frontier', jumpGia:false, plans:[
         { id:'aaitr-att',      label:'US AT&T static · 2C·2GB·25GB · 100M · 2TB', bench:true,  stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' },
           metrics:{ perf:18, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', purity:'high' } } },
@@ -558,7 +563,7 @@
         { id:'aaitr-nat-sb',       label:'JP SoftBank NAT · 1C·512MB · Tokyo · 50M',          bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, linkMbps:50, metrics:null }
       ]}
     ]},
-    { id:'qqpw', name:'QQ.pw', roles:['exit'], groupLabel:'Product', purity:{ score:null, ref:'meowvps: top-tier' }, buyUrl:'https://qq.pw/store/residential-vds-with-dedicated-ip', regions:[
+    { id:'qqpw', name:'QQ.pw', roles:['exit'], recommend:'rec', recNote:'Recommended — 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', purity:{ score:null, ref:'meowvps: top-tier' }, buyUrl:'https://qq.pw/store/residential-vds-with-dedicated-ip', regions:[
       { id:'nat', name:'Hawaii · NAT VPS', network:'residential NAT', exitNetwork:'Hawaii · residential NAT', jumpGia:false, plans:[
         { id:'qqpw-nat-tiny',     label:'NAT Tiny · 1C·238MB · 1GB/mo · 10M · $12/yr', bench:false, stock:'in', pricing:{ type:'flat', amount:1,   currency:'USD' }, linkMbps:10, metrics:null },
         { id:'qqpw-nat-lite',     label:'NAT Lite · 1C·256MB · 6GB · 50M',      bench:false, stock:'in', pricing:{ type:'flat', amount:2,   currency:'USD' }, linkMbps:50, metrics:null },
@@ -597,6 +602,14 @@
   }
   function benchPlan(region){ for(var i=0;i<region.plans.length;i++){ if(region.plans[i].bench) return region.plans[i]; } return region.plans[0]; }
   function providerBench(p){ return p.regions.some(function(r){ return r.plans.some(function(x){ return x.bench; }); }); }
+  // Recommendation badge — ★ Top pick (standout) or ★ Recommended, per the provider's
+  // `recommend` field. Basis: meowvps.com's residential roundup (5/5) + our own use.
+  function recBadge(p){
+    if(!p || !p.recommend) return '';
+    var top = p.recommend==='top';
+    var note = p.recNote || (top ? 'Top pick' : 'Recommended');
+    return '<span class="badge '+(top?'toppick':'rec')+'" title="'+esc(note)+'">★ '+(top?'Top pick':'Recommended')+'</span>';
+  }
   function planUSD(pl){ var pr=pl.pricing; return toUSD(pr.amount!=null?pr.amount:pr.from, pr.currency); }
   // Headline plan for the palette card + default placement: the benchmarked plan of the
   // first region normally; but when that lead plan is out-of-stock AND not benchmarked
@@ -851,7 +864,7 @@
     if(role==='jump') badge += reg.jumpGia ? ' <span class="badge gia">CN2 GIA</span>' : ' <span class="badge i163">163 · non-GIA</span>';
     return '<button class="pcard" type="button" draggable="true" data-id="'+p.id+'" data-role="'+role+'" '+
       'aria-label="Add '+esc(p.name)+' as '+(role==='jump'?'jump host':'residential exit')+(both?' (fits both roles)':'')+'">'+
-      '<span class="pc-top"><span class="nm">'+esc(p.name)+'</span>'+roleTag+'</span>'+
+      '<span class="pc-top"><span class="nm">'+esc(p.name)+'</span>'+roleTag+recBadge(p)+'</span>'+
       '<span class="sp">'+esc(sub)+'</span>'+
       '<span class="pc-foot"><span>'+badge+'</span><span class="pr">'+(hp.from?'from ':'')+priceShort(pl.pricing)+'</span></span>'+
       '</button>';
@@ -902,7 +915,7 @@
     if(!node) return '<div class="slot jump" data-drop="jump" role="button" tabindex="0" aria-label="Jump host slot, empty. Activate a jump provider in the palette, or drop one here."><span class="stitle">Jump host</span><span class="shint">required · drop · tap · ⏎</span></div>';
     var p=node.provider, pl=node.plan;
     var h = '<div class="slot filled jump" data-node="jump" role="group" tabindex="0" aria-label="Jump host: '+esc(p.name)+' '+esc(pl.label)+'. Press Delete to remove.">'+
-      '<span class="fnm">'+esc(p.name)+' <button class="x" type="button" data-remove="jump" aria-label="Remove '+esc(p.name)+'">×</button></span>'+
+      '<span class="fnm"><span class="fnm-l">'+esc(p.name)+recBadge(p)+'</span><button class="x" type="button" data-remove="jump" aria-label="Remove '+esc(p.name)+'">×</button></span>'+
       '<span class="fsub">'+esc(netOf(node,'jump'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
     if(state.gatingOn && !giaOf(node)) h += '<span class="badge i163" style="margin-top:.3rem">'+esc(netOf(node,'jump'))+' · non-GIA entry</span>';
     h += configurator(node,'jump');
@@ -925,7 +938,7 @@
   function exitSlot(node, i, total){
     var p=node.provider, pl=node.plan, tag = total>1 ? 'exit '+(i+1) : 'exit';
     var h = '<div class="slot filled exit" data-node="exit" data-idx="'+i+'" role="group" tabindex="0" aria-label="Exit '+(i+1)+': '+esc(p.name)+'. Press Delete to remove.">'+
-      '<span class="fnm">'+esc(p.name)+' <button class="x" type="button" data-remove="exit" data-idx="'+i+'" aria-label="Remove '+esc(p.name)+' (exit '+(i+1)+')">×</button></span>'+
+      '<span class="fnm"><span class="fnm-l">'+esc(p.name)+recBadge(p)+'</span><button class="x" type="button" data-remove="exit" data-idx="'+i+'" aria-label="Remove '+esc(p.name)+' (exit '+(i+1)+')">×</button></span>'+
       '<span class="fsub"><span class="ftag">'+tag+'</span> · '+esc(netOf(node,'exit'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
     h += configurator(node, i);
     if(p.cycles) h += cycleUI(i);

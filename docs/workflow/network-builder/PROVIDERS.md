@@ -147,6 +147,21 @@ All in stock · 1Gbps port. Only SD-4 is benchmarked (our fleet exit); the other
 - **Pricing models the engine must handle:** flat $/mo · flat + billing-cycle-discount · **bandwidth-tiered** (VirVM residential) · **traffic-metered** (VirVM GIA — bring the metered model back for this SKU) · currency conversion (CAD, CNY→USD).
 - **Stock:** DMIT, VMISS, QQ.pw-dedicated, AaITR-static currently out → badge but still price; out-of-stock excluded from the buildable total (reference), only in-stock summed.
 
+## Recommended (★ star on provider cards)
+The builder marks the most-recommended providers with a **★ star** on both the palette card and the placed-node card. Basis: **the PM's own top pick + [meowvps.com](https://meowvps.com/blog/resrec/)'s residential roundup ratings** (1–5 scale) + our own use. We do **not** invent ratings for providers the roundup doesn't list.
+
+| Provider | Badge | Basis |
+|----------|-------|-------|
+| **VirVM** | **★ Top pick** | PM's #1 (most mature US-West residential provider) + meowvps roundup **5/5** |
+| **AaITR** | ★ Recommended | meowvps roundup **5/5** |
+| **QQ.pw** | ★ Recommended | meowvps roundup **5/5** |
+| **BandwagonHost** | ★ Recommended | our own go-to CN2 GIA jump host (not in the residential roundup) |
+| SolaDrive | — (no star) | meowvps roundup **3/5** · IP-degrading over time |
+| DMIT | — (no star) | out-of-stock reference (not rated in the roundup) |
+| VMISS | — (no star) | out-of-stock reference (not rated in the roundup) |
+
+`★ Top pick` renders as the standout (accent-filled badge); `★ Recommended` is accent-tinted. Each badge carries a `title` tooltip crediting the basis. QQ.pw's roundup score (5/5) is a **recommendation basis only** — separate from ⑥ IP PURITY, where QQ.pw remains a `— · ref · meowvps` (no scorer run on our side).
+
 ## IP purity (professional reputation scorers)
 The builder's **⑥ IP PURITY** metric scores the **egress IP** — which is always the **exit's** IP, never the jump's. It is a **number /100** where **purity = 100 − fraud score**, and the fraud score is the output of professional IP-reputation scorers — **Scamalytics · IPQS · AbuseIPDB** (see choose.html §03 "Fraud score /100") — run on **our specific exit IP**. This is **not our perf benchmark**: the number is the scorers' verdict, and it is **box-specific**, not a provider-wide grade. QQ.pw carries **no scorer run** on our side, so it is shown as a qualitative **reference** only, credited to [meowvps.com](https://meowvps.com) — never as a scored value.
 
