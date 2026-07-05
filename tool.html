@@ -524,7 +524,7 @@
       ]}
     ]},
     /* ============ RESIDENTIAL EXITS ============ */
-    { id:'virvm', name:'VirVM', roles:['exit'], recommend:'top', recNote:'Top pick — our #1 US-West residential provider; 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', cycles:true, purity:{ score:82, source:'scorers' }, buyUrl:'https://www.vircs.com/products/2', regions:[
+    { id:'virvm', name:'VirVM', roles:['exit'], recommend:'top', recNote:'Top pick — our #1 US-West residential provider; 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', cycles:true, purity:{ rating:'excellent', source:'meowvps' }, buyUrl:'https://www.vircs.com/products/2', regions:[
       { id:'res', name:'Residential · 节点K', network:'residential', exitNetwork:'residential · trusted-IP', jumpGia:false, plans:[
         { id:'virvm-res-50',  label:'50 Mbps · 4C·8GB·50GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:35.99,  currency:'USD' }, linkMbps:50, metrics:null },
         { id:'virvm-res-100', label:'100 Mbps · 4C·8GB·50GB', bench:true,  stock:'in', pricing:{ type:'flat', amount:65.99,  currency:'USD' },
@@ -542,8 +542,9 @@
     // SolaDrive "Residential IP" line (US-LA, 163 · clean IP, 1Gbps port). FOUR official
     // options; only SD-4 is our fleet box (benchmarked, perf 88) so it carries metrics and
     // stays the default placement (bench:true). The other three are priced-only with linkMbps
-    // set so the min-hop bandwidth still resolves (no "pending"). buyUrl empty until the PM supplies it.
-    { id:'sola', name:'SolaDrive', roles:['exit'], purity:{ score:100, source:'scorers' }, buyUrl:'', regions:[
+    // set so the min-hop bandwidth still resolves (no "pending"). meowvps rates SolaDrive
+    // 2nd-tier: recycles IP ranges, some IPs hit Google captcha → variable · degrading.
+    { id:'sola', name:'SolaDrive', roles:['exit'], purity:{ rating:'variable', degrading:true, source:'meowvps' }, buyUrl:'https://www.soladrive.com/support/store/residential-ip', regions:[
       { id:'us-la', name:'US-LA', network:'163 · clean IP', exitNetwork:'163 · clean IP', jumpGia:false, plans:[
         { id:'sola-sd2', label:'SD-2 · 2C·2GB·25GB · 2TB · 1 res-IP',   bench:false, stock:'in', pricing:{ type:'flat', amount:25,  currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'sola-1',   label:'SD-4 · 4C·4GB·50GB · 4TB · 2 res-IP',   bench:true,  stock:'in', pricing:{ type:'flat', amount:40,  currency:'USD' },
@@ -552,7 +553,7 @@
         { id:'sola-250', label:'250 VPS Node · 24C/48T·512GB·2×8TB · 254 res-IP · 30TB', bench:false, stock:'in', pricing:{ type:'flat', amount:795, currency:'USD' }, linkMbps:1000, metrics:null }
       ]}
     ]},
-    { id:'aaitr', name:'AaITR', roles:['exit'], recommend:'rec', recNote:'Recommended — 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', purity:{ score:87, source:'scorers' }, buyUrl:'', regions:[
+    { id:'aaitr', name:'AaITR', roles:['exit'], recommend:'rec', recNote:'Recommended — 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', purity:{ rating:'excellent', source:'meowvps' }, buyUrl:'https://www.aaitr.com/store/srv', regions:[
       { id:'static', name:'Static residential · 独享', network:'residential', exitNetwork:'residential · AT&T/Frontier', jumpGia:false, plans:[
         { id:'aaitr-att',      label:'US AT&T static · 2C·2GB·25GB · 100M · 2TB', bench:true,  stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' },
           metrics:{ perf:18, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', purity:'high' } } },
@@ -563,7 +564,7 @@
         { id:'aaitr-nat-sb',       label:'JP SoftBank NAT · 1C·512MB · Tokyo · 50M',          bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, linkMbps:50, metrics:null }
       ]}
     ]},
-    { id:'qqpw', name:'QQ.pw', roles:['exit'], recommend:'rec', recNote:'Recommended — 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', purity:{ score:null, ref:'meowvps: top-tier' }, buyUrl:'https://qq.pw/store/residential-vds-with-dedicated-ip', regions:[
+    { id:'qqpw', name:'QQ.pw', roles:['exit'], recommend:'rec', recNote:'Recommended — 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', purity:{ rating:'excellent', source:'meowvps' }, buyUrl:'https://qq.pw/store/residential-vds-with-dedicated-ip', regions:[
       { id:'nat', name:'Hawaii · NAT VPS', network:'residential NAT', exitNetwork:'Hawaii · residential NAT', jumpGia:false, plans:[
         { id:'qqpw-nat-tiny',     label:'NAT Tiny · 1C·238MB · 1GB/mo · 10M · $12/yr', bench:false, stock:'in', pricing:{ type:'flat', amount:1,   currency:'USD' }, linkMbps:10, metrics:null },
         { id:'qqpw-nat-lite',     label:'NAT Lite · 1C·256MB · 6GB · 50M',      bench:false, stock:'in', pricing:{ type:'flat', amount:2,   currency:'USD' }, linkMbps:50, metrics:null },
@@ -772,27 +773,32 @@
       }
     }
 
-    /* purity: numeric IP-reputation PURITY of the EGRESS IP — which is the EXIT's,
-       never the jump's. purity = 100 − fraud score, where the fraud score is the
-       output of professional IP-reputation scorers (Scamalytics · IPQS · AbuseIPDB)
-       run on OUR specific exit IP — NOT our own perf benchmark, and box-specific
-       rather than a provider-wide grade. Scored exit → its score. Reference exit
-       (QQ.pw — we run no scorer on it) → no number, carries a qualitative ref only.
-       Multiple exits → the WORST (lowest) score; any ref/unrated exit is flagged.
-       Zero exits (single-host) → egress is the jump's datacenter IP, so `datacenter`. */
+    /* purity: qualitative IP-quality read of the EGRESS IP — which is the EXIT's,
+       never the jump's. Sourced entirely from meowvps's residential review
+       (https://meowvps.com/blog/resrec/): a per-provider rating, no scorer number.
+       Ranking (worst→best): variable · degrading < good < excellent. Rated exit →
+       its rating. Unrated exit (no blog read) → `— · unrated`. Multiple exits →
+       the WORST (lowest-ranked) rating; SolaDrive's `variable · degrading` ranks
+       lowest, so any SolaDrive present surfaces that caveat. Zero exits
+       (single-host) → egress is the jump's datacenter IP, so `datacenter`. */
     var ipPurity = null;
     if(jump){
       if(exits.length===0){
         ipPurity = { datacenter:true };
       } else {
-        var pus = exits.map(function(ex){ return ex.provider.purity || { score:null }; });
-        var scored = pus.filter(function(q){ return q.score!=null; }).map(function(q){ return q.score; });
-        var puWorst = scored.length ? Math.min.apply(null, scored) : null;
+        var PURITY_RANK = { variable:0, good:1, excellent:2 };
+        var pus = exits.map(function(ex){ return ex.provider.purity || {}; });
+        var worst = null, degrading = false, unrated = false;
+        pus.forEach(function(q){
+          if(q.rating){
+            if(worst===null || PURITY_RANK[q.rating] < PURITY_RANK[worst]) worst = q.rating;
+            if(q.degrading) degrading = true;
+          } else { unrated = true; }
+        });
         ipPurity = {
-          score: puWorst,
-          refLabel: (exits.length===1 && pus[0].score==null) ? (pus[0].ref||null) : null,
-          hasRef: pus.some(function(q){ return q.score==null && q.ref; }),
-          hasUnrated: pus.some(function(q){ return q.score==null && !q.ref; }),
+          rating: worst,
+          degrading: degrading && worst==='variable',
+          hasUnrated: unrated,
           count: exits.length
         };
       }
@@ -883,8 +889,8 @@
   function egressNode(i){ return '<div class="node net egress" aria-hidden="true"><span class="nlab">egress &middot; exit IP '+(i+1)+'</span><span class="nnm">internet</span></div>'; }
   function stockBadge(pl){ return pl.stock==='out' ? ' · <span class="badge out">out of stock</span>' : ''; }
   function benchTag(pl){ return pl.bench ? '' : ' · <span class="badge notbench">not benchmarked</span>'; }
-  // Official order-page link for a placed box. Empty buyUrl (AaITR, SolaDrive) => no
-  // link rendered — adding a provider's URL later is a one-line data edit in PROVIDERS.
+  // Official order-page link for a placed box. Every provider now carries a buyUrl;
+  // an empty buyUrl still renders no link (safe guard for any future data edit).
   function buyLink(node){
     var url = node.provider.buyUrl;
     if(!url) return '';
@@ -988,7 +994,8 @@
     est.edges.forEach(function(e){
       if(e.kind==='entry'){
         var line = (e.latency ? e.latency.lo+'–'+e.latency.hi+' ms · ' : '') +
-          (e.gia ? 'CN2 GIA ✓' : (esc(entryNet)+' · non-GIA'+(e.gated?' — gated':'')));
+          (e.gia ? 'CN2 GIA ✓' : (esc(entryNet)+' · non-GIA'+(e.gated?' — gated':''))) +
+          (e.benchmarked ? '' : ' · not benchmarked');
         h += '<div class="edgerow entry'+(e.gated?' red':'')+'"><div class="ehead">'+esc(e.from)+' → '+esc(e.to)+'</div><div class="emetrics">'+line+'</div></div>';
       } else if(e.kind==='tail'){
         h += '<div class="edgerow link"><div class="ehead">'+esc(e.from)+' → internet</div><div class="emetrics">egress on datacenter IP · no residential exit'+(e.latency?' · '+e.latency.lo+'–'+e.latency.hi+' ms':'')+'</div></div>';
@@ -1037,15 +1044,16 @@
     var nIP = est.route ? est.route.exitIPs : 0;
     var egress = nIP ? nIP+' exit IP'+(nIP>1?'s':'')+' — '+nIP+' separate egress path'+(nIP>1?'s':'') : (jump?'single host · datacenter egress':'—');
 
-    // ⑥ IP purity — numeric reputation score of the EXIT egress IP: purity =
-    // 100 − fraud score from professional scorers (Scamalytics · IPQS · AbuseIPDB),
-    // on OUR exit IP. NOT our perf benchmark. QQ.pw carries no scorer run, so it
-    // shows as a meowvps reference only — never present a reference as a scored value.
+    // ⑥ IP purity — qualitative IP-quality read of the EXIT egress IP, sourced
+    // entirely from meowvps's residential review. No number, no /100, no scorer:
+    // a rating (excellent / good / variable) + a uniform `ref · meowvps` tag.
+    // SolaDrive is `variable · degrading`; an unrated exit shows `— · unrated`.
     var pu = est.purity, puHtml;
     if(!pu) puHtml = '—';
     else if(pu.datacenter) puHtml = 'datacenter IP<span class="u"> · no residential exit</span>';
-    else if(pu.score==null) puHtml = pu.refLabel ? '—<span class="u"> · ref · meowvps</span>' : '—<span class="u"> · unrated</span>';
-    else puHtml = pu.score+' <span class="u">/100 · IPQS'+((pu.hasRef||pu.hasUnrated)?' · + ref':'')+'</span>';
+    else if(!pu.rating) puHtml = '—<span class="u"> · unrated</span>';
+    else puHtml = esc(pu.rating)+(pu.rating==='variable' && pu.degrading ? ' · degrading' : '')+
+      '<span class="u"> · ref · meowvps'+(pu.hasUnrated?' · +unrated':'')+'</span>';
 
     els.estimate.innerHTML =
       '<div class="row"><span class="k"><span class="i">①</span> Price</span><span class="v big">'+money(p.monthlyUSD)+'<span class="u">/mo</span></span></div>'+
@@ -1057,7 +1065,7 @@
       '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">'+bwHtml+'</span></div>'+
       '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v" style="font-size:.72rem">'+routeHtml+'</span></div>'+
       '<div class="row"><span class="k"><span class="i">⑥</span> IP purity</span><span class="v" style="font-size:.72rem">'+puHtml+'</span></div>'+
-      (pu && pu.score!=null ? '<div class="breakdown">purity = 100 − fraud score (Scamalytics · IPQS · AbuseIPDB), on our exit IP</div>' : '')+
+      (pu && pu.rating ? '<div class="breakdown">IP purity per meowvps’s residential review.</div>' : '')+
       '<div class="breakdown" style="margin-top:.5rem"><span class="estlabel">estimated</span> not a quote</div>';
   }
   function syncGuardrail(){

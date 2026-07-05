@@ -97,7 +97,7 @@ All reference · out of stock. (PM: focus ONLY on US-LA CN2 GIA; ignore VMISS's 
 
 ---
 
-## AaITR — CA/JP residential · CNY ¥149/mo ≈ **$21.88** (aaitr site)
+## AaITR — CA/JP residential · CNY ¥149/mo ≈ **$21.88**. Buy: aaitr.com/store/srv
 ### Static residential VPS (独享静态 · 2vCPU·2GB·25GB SSD·100Mbps·2000GB) — SOLD OUT
 | US AT&T static ¥149 (真实民宅, CA multi-city) · US Frontier static ¥149 | **benchmarked: our AaITR box = this line, perf 18** |
 |---|---|
@@ -129,7 +129,7 @@ Cycle discounts apply. Specs: 300M dedicated, 1 IPv4, VLESS+Reality, Asia-Pacifi
 
 ---
 
-## SolaDrive — US-LA residential (163 · clean IP · 1Gbps port). "Residential IP" line. Our box = SD-4 (perf 88).
+## SolaDrive — US-LA residential (163 · clean IP · 1Gbps port). "Residential IP" line. Our box = SD-4 (perf 88). Buy: soladrive.com/support/store/residential-ip
 | Plan | Specs | Res IP | Transfer | Price/mo |
 |---|---|---|---|---|
 | SD-2 | 2C @3.0GHz+ · 2GB · 25GB Raid-10 NVMe | 1 | 2TB | $25.00 |
@@ -160,16 +160,16 @@ The builder marks the most-recommended providers with a **★ star** on both the
 | DMIT | — (no star) | out-of-stock reference (not rated in the roundup) |
 | VMISS | — (no star) | out-of-stock reference (not rated in the roundup) |
 
-`★ Top pick` renders as the standout (accent-filled badge); `★ Recommended` is accent-tinted. Each badge carries a `title` tooltip crediting the basis. QQ.pw's roundup score (5/5) is a **recommendation basis only** — separate from ⑥ IP PURITY, where QQ.pw remains a `— · ref · meowvps` (no scorer run on our side).
+`★ Top pick` renders as the standout (accent-filled badge); `★ Recommended` is accent-tinted. Each badge carries a `title` tooltip crediting the basis. QQ.pw's roundup score (5/5) is the **recommendation basis**; its ⑥ IP PURITY reads `excellent · ref · meowvps` — a separate axis, but both drawn from the same meowvps review.
 
-## IP purity (professional reputation scorers)
-The builder's **⑥ IP PURITY** metric scores the **egress IP** — which is always the **exit's** IP, never the jump's. It is a **number /100** where **purity = 100 − fraud score**, and the fraud score is the output of professional IP-reputation scorers — **Scamalytics · IPQS · AbuseIPDB** (see choose.html §03 "Fraud score /100") — run on **our specific exit IP**. This is **not our perf benchmark**: the number is the scorers' verdict, and it is **box-specific**, not a provider-wide grade. QQ.pw carries **no scorer run** on our side, so it is shown as a qualitative **reference** only, credited to [meowvps.com](https://meowvps.com) — never as a scored value.
+## IP purity (meowvps residential review)
+The builder's **⑥ IP PURITY** metric reflects the **egress IP** — which is always the **exit's** IP, never the jump's. It is a **qualitative rating sourced entirely from [meowvps.com](https://meowvps.com/blog/resrec/)'s residential review** — **not a scorer number**. The earlier reputation-scorer number (**Scamalytics · IPQS · AbuseIPDB**, "purity = 100 − fraud score") was **dropped for every machine**: too small a sample to publish a per-provider figure. Ranking, worst→best: **variable · degrading < good < excellent**.
 
-| Provider | Purity /100 | Source | Basis |
-|----------|-------------|--------|-------|
-| **SolaDrive** (163 · clean IP) | **100** | Scamalytics · IPQS · AbuseIPDB | our SD-4 exit IP — fraud score 0 |
-| **AaITR** (static/NAT residential) | **87** | Scamalytics · IPQS · AbuseIPDB | our AT&T static exit IP — fraud score 13 |
-| **VirVM** (residential + GIA) | **82** | Scamalytics · IPQS · AbuseIPDB | our residential exit IP — fraud score 18 |
-| **QQ.pw** (Hawaii residential) | — (ref) | meowvps | meowvps "top-tier residential" — no scorer run on our side |
+| Provider | ⑥ IP purity | Source | Basis (meowvps review) |
+|----------|-------------|--------|------------------------|
+| **VirVM** (residential + GIA) | **excellent** | meowvps | "IP质量优秀" (minor caveat: a few old IP ranges weaker) |
+| **AaITR** (static/NAT residential) | **excellent** | meowvps | "IP质量优秀" |
+| **QQ.pw** (Hawaii residential) | **excellent** | meowvps | "ip质量优秀 / 最稳定" |
+| **SolaDrive** (163 · clean IP) | **variable · degrading** | meowvps | 2nd-tier: recycles IP ranges, some IPs hit Google captcha |
 
-Jump hosts (BandwagonHost, DMIT, VMISS) are datacenter boxes and never appear in ⑥ — the metric reflects the **exit**, not the jump. In the builder: **scored exit** → `NN /100 · IPQS`; **reference exit** (QQ.pw) → `— · ref · meowvps` (no number); **unrated exit** → `— · unrated`; **multiple exits** → the **worst (lowest)** score, with a small `+ ref` note appended if any exit is a reference/unrated; **zero exits** (single-host) → `datacenter IP · no residential exit` (the jump's own datacenter egress, not scored).
+Jump hosts (BandwagonHost, DMIT, VMISS) are datacenter boxes and never appear in ⑥ — the metric reflects the **exit**, not the jump. In the builder: **rated exit** → `<rating> · ref · meowvps` (e.g. `excellent · ref · meowvps`; SolaDrive → `variable · degrading · ref · meowvps`); **unrated exit** (no blog read) → `— · unrated`; **multiple exits** → the **worst (lowest-ranked)** rating, so any SolaDrive present surfaces the `variable · degrading` caveat; **zero exits** (single-host) → `datacenter IP · no residential exit` (the jump's own datacenter egress, not rated).
