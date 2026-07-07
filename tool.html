@@ -569,7 +569,14 @@
         { id:'aaitr-nat-sb',       label:'JP SoftBank NAT · 1C·512MB · Tokyo · 50M',          bench:false, stock:'in', pricing:{ type:'flat', amount:149, currency:'CNY' }, linkMbps:50, metrics:null }
       ]}
     ]},
-    { id:'qqpw', name:'QQ.pw', roles:['exit'], recommend:'rec', recNote:'Recommended — 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', purity:{ rating:'excellent', source:'meowvps' }, buyUrl:'https://qq.pw/store/residential-vds-with-dedicated-ip', regions:[
+    { id:'qqpw', name:'QQ.pw', roles:['exit'], recommend:'rec', recNote:'Strongest hardware + clean IP (Netflix &amp; ChatGPT native), but the slowest China route of our exits (~190–240 ms, some loss, no CN2) — a niche / Hawaii-geo pick', groupLabel:'Product', purity:{ rating:'excellent', source:'meowvps' }, buyUrl:'https://qq.pw/store/residential-vds-with-dedicated-ip', regions:[
+      { id:'dedicated', name:'Hawaii · Dedicated VDS', network:'residential VDS', exitNetwork:'Hawaii · dedicated VDS', jumpGia:false, plans:[
+        { id:'qqpw-ded-intern',   label:'VDS Intern · 2C·2GB·20GB · 1TB@400M',   bench:true,  stock:'in',  pricing:{ type:'flat', amount:35, currency:'USD' }, linkMbps:400,
+          metrics:{ perf:85, latencyMs:{lo:188,hi:239}, iops:130000, iopsCapped:false, bandwidthMbps:300, hopAddMs:56, route:{ isp:'Hawaiian Telcom', purity:'high' } } },
+        { id:'qqpw-ded-reliable', label:'VDS Reliable · 3C·4GB·30GB · 2TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, linkMbps:400, metrics:null },
+        { id:'qqpw-ded-hardcore', label:'VDS Hardcore · 4C·4GB·40GB · 4TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:45, currency:'USD' }, linkMbps:400, metrics:null },
+        { id:'qqpw-ded-elite',    label:'VDS Elite · 5C·8GB·50GB · $165/qtr',    bench:false, stock:'out', pricing:{ type:'flat', amount:55, currency:'USD' }, linkMbps:400, metrics:null }
+      ]},
       { id:'nat', name:'Hawaii · NAT VPS', network:'residential NAT', exitNetwork:'Hawaii · residential NAT', jumpGia:false, plans:[
         { id:'qqpw-nat-tiny',     label:'NAT Tiny · 1C·238MB · 1GB/mo · 10M · $12/yr', bench:false, stock:'in', pricing:{ type:'flat', amount:1,   currency:'USD' }, linkMbps:10, metrics:null },
         { id:'qqpw-nat-lite',     label:'NAT Lite · 1C·256MB · 6GB · 50M',      bench:false, stock:'in', pricing:{ type:'flat', amount:2,   currency:'USD' }, linkMbps:50, metrics:null },
@@ -581,12 +588,6 @@
         { id:'qqpw-nat-plus',     label:'NAT Plus · 2C·1.5GB · 1TB · 350M',     bench:false, stock:'in', pricing:{ type:'flat', amount:22,  currency:'USD' }, linkMbps:350, metrics:null },
         { id:'qqpw-nat-premium',  label:'NAT Premium · 2C·2GB · 2TB · 400M · from $28', bench:false, stock:'in', pricing:{ type:'flat', amount:28, currency:'USD' }, linkMbps:400, metrics:null },
         { id:'qqpw-nat-extreme',  label:'NAT Extreme · 8C·8GB · 40TB · 1Gbps',  bench:false, stock:'in', pricing:{ type:'flat', amount:690, currency:'USD' }, linkMbps:1000, metrics:null }
-      ]},
-      { id:'dedicated', name:'Hawaii · Dedicated VDS', network:'residential VDS', exitNetwork:'Hawaii · dedicated VDS', jumpGia:false, plans:[
-        { id:'qqpw-ded-intern',   label:'VDS Intern · 2C·3GB·20GB · 1TB@400M',   bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, linkMbps:400, metrics:null },
-        { id:'qqpw-ded-reliable', label:'VDS Reliable · 3C·4GB·30GB · 2TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:35, currency:'USD' }, linkMbps:400, metrics:null },
-        { id:'qqpw-ded-hardcore', label:'VDS Hardcore · 4C·4GB·40GB · 4TB@400M', bench:false, stock:'out', pricing:{ type:'flat', amount:45, currency:'USD' }, linkMbps:400, metrics:null },
-        { id:'qqpw-ded-elite',    label:'VDS Elite · 5C·8GB·50GB · $165/qtr',    bench:false, stock:'out', pricing:{ type:'flat', amount:55, currency:'USD' }, linkMbps:400, metrics:null }
       ]}
     ]}
   ];
