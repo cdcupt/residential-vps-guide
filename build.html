@@ -176,7 +176,8 @@
       <section id="lessons">
         <h2><span class="n">06</span>Hard-won lessons</h2>
         <ul>
-          <li><strong>Non-443 + weak SNI gets probed.</strong> On hostile networks, a fresh IP running a tunnel on an odd port with a flimsy borrowed SNI draws active probing and gets blocked. Strong SNI, ordinary port, real backbone.</li>
+          <li><strong>Non-443 + weak SNI gets probed.</strong> On hostile networks, a fresh IP running a tunnel on an odd port with a flimsy borrowed SNI draws active probing and gets blocked — and piling <em>many</em> odd ports onto one IP only compounds the exposure. Strong SNI, ordinary 443, real backbone; keep the port surface small.</li>
+          <li><strong>Keep a second front door.</strong> Even done right, an entry IP can eventually be blocked — the <em>address</em> gets flagged, not your config, and no amount of tuning brings it back. Stand up a second entry relay on a different IP, provider and region, pointed at the <em>same</em> exit, so a block means switching lanes instead of going dark. One exit, several ways in.</li>
           <li><strong>The ~2,000-IOPS cap is real.</strong> Budget residential tiers often throttle disk hard. Fine for a proxy (it barely touches disk) — just don't expect to run anything I/O-heavy on the exit.</li>
           <li><strong>One test file, not the device.</strong> Benchmark disks against a temp file, never a raw block device. And deprioritize benchmarks (<span class="mono">nice</span>/<span class="mono">ionice</span>) so they don't starve a live service.</li>
           <li><strong>Watch your shell.</strong> Automation quirk that eats hours: some shells don't word-split unquoted variables (zsh), so a host list in a loop silently becomes one giant argument. Use explicit lists.</li>

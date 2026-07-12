@@ -441,9 +441,9 @@
       { id:'us-la', name:'US-LA · USCA_9', network:'CN2 GIA', jumpGia:true, plans:[
         { id:'bwh-la-20',   label:'2C · 1GB · 20GB · 1TB (·$49.99/3mo)', bench:false, stock:'in', pricing:{ type:'flat', amount:16.66,  currency:'USD' }, linkMbps:2500, metrics:null },
         { id:'bwh-vpn',     label:'3C · 2GB · 40GB · 2TB',                bench:true,  stock:'in', pricing:{ type:'flat', amount:30,     currency:'USD' },
-          metrics:{ perf:75, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
+          metrics:{ perf:59, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
         { id:'bwh-prod',    label:'4C · 4GB · 80GB · 3TB',                bench:true,  stock:'in', pricing:{ type:'flat', amount:56.99,  currency:'USD' },
-          metrics:{ perf:83, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
+          metrics:{ perf:66, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
         { id:'bwh-la-160',  label:'6C · 8GB · 160GB · 5TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:86.99,  currency:'USD' }, linkMbps:5000, metrics:null },
         { id:'bwh-la-320',  label:'8C · 16GB · 320GB · 8TB',  bench:false, stock:'in', pricing:{ type:'flat', amount:159.99, currency:'USD' }, linkMbps:5000, metrics:null },
         { id:'bwh-la-640',  label:'10C · 32GB · 640GB · 10TB', bench:false, stock:'in', pricing:{ type:'flat', amount:289.99, currency:'USD' }, linkMbps:10000, metrics:null },
@@ -476,12 +476,13 @@
         { id:'bwh-sg-1t',  label:'12C · 64GB · 1TB · 8TB',   bench:false, stock:'in', pricing:{ type:'flat', amount:1059.99, currency:'USD' }, linkMbps:5000, metrics:null }
       ]}
     ]},
-    // DMIT — CN2 GIA "Pro". Stock is PER-PLAN (live dmit-watch panel + DMIT site). LA all out;
-    // HK AS3 + Tokyo AS3 (TINY→MEDIUM) in stock; HK AN5 generation available. Not benchmarked.
+    // DMIT — CN2 GIA "Pro". Stock is PER-PLAN (checked against a live stock panel + the DMIT site).
+    // LA AS3 Pocket + HK AS3 TINY are our two benchmarked relays (2026-07-12); LA is currently out of stock.
     { id:'dmit', name:'DMIT', roles:['jump'], buyUrl:'https://www.dmit.io/cart.php?network=premium&language=english', regions:[
       { id:'us-la', name:'US-LA · AS3/AN4/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
         { id:'dmit-la-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:10.90,   currency:'USD' }, linkMbps:1000, metrics:null },
-        { id:'dmit-la-as3-pocket',  label:'AS3 · POCKET',        bench:false, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-la-as3-pocket',  label:'AS3 · POCKET · 2C/2GB', bench:true, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' },
+          metrics:{ perf:42, latencyMs:{lo:131,hi:199}, iops:23000, iopsCapped:false, bandwidthMbps:964, hopAddMs:0, route:null } },
         { id:'dmit-la-as3-starter', label:'AS3 · STARTER',       bench:false, stock:'out', pricing:{ type:'flat', amount:34.90,   currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-la-as3-mini',    label:'AS3 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:62.90,   currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-la-as3-micro',   label:'AS3 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:87.90,   currency:'USD' }, linkMbps:1000, metrics:null },
@@ -498,7 +499,8 @@
         { id:'dmit-la-an5-giant',   label:'AN5 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:1009.90, currency:'USD' }, linkMbps:1000, metrics:null }
       ]},
       { id:'hk', name:'Hong Kong · AS3/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-hk-as3-tiny',    label:'AS3 · TINY · 1C/1GB',      bench:false, stock:'in', pricing:{ type:'flat', amount:39.90,  currency:'USD' }, linkMbps:1000, metrics:null },
+        { id:'dmit-hk-as3-tiny',    label:'AS3 · TINY · 1C/1GB',      bench:true, stock:'in', pricing:{ type:'flat', amount:39.90,  currency:'USD' },
+          metrics:{ perf:36, latencyMs:{lo:12,hi:98}, iops:23000, iopsCapped:false, bandwidthMbps:846, hopAddMs:0, route:null } },
         { id:'dmit-hk-as3-starter', label:'AS3 · STARTER',           bench:false, stock:'in', pricing:{ type:'flat', amount:79.90,  currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-hk-as3-mini',    label:'AS3 · MINI',              bench:false, stock:'in', pricing:{ type:'flat', amount:126.90, currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-hk-as3-micro',   label:'AS3 · MICRO',             bench:false, stock:'in', pricing:{ type:'flat', amount:179.90, currency:'USD' }, linkMbps:1000, metrics:null },
@@ -533,7 +535,7 @@
       { id:'res', name:'Residential · 节点K', network:'residential', exitNetwork:'residential · trusted-IP', jumpGia:false, plans:[
         { id:'virvm-res-50',  label:'50 Mbps · 4C·8GB·50GB',  bench:false, stock:'in', pricing:{ type:'flat', amount:35.99,  currency:'USD' }, linkMbps:50, metrics:null },
         { id:'virvm-res-100', label:'100 Mbps · 4C·8GB·50GB', bench:true,  stock:'in', pricing:{ type:'flat', amount:65.99,  currency:'USD' },
-          metrics:{ perf:38, latencyMs:{lo:158,hi:201}, iops:38813, iopsCapped:false, bandwidthMbps:100, hopAddMs:50, route:{ isp:'AT&T', purity:'high' } } },
+          metrics:{ perf:29, latencyMs:{lo:158,hi:201}, iops:38813, iopsCapped:false, bandwidthMbps:100, hopAddMs:50, route:{ isp:'AT&T', purity:'high' } } },
         { id:'virvm-res-200', label:'200 Mbps · 4C·8GB·50GB', bench:false, stock:'in', pricing:{ type:'flat', amount:115.99, currency:'USD' }, linkMbps:200, metrics:null },
         { id:'virvm-res-300', label:'300 Mbps · 4C·8GB·50GB', bench:false, stock:'in', pricing:{ type:'flat', amount:160.99, currency:'USD' }, linkMbps:300, metrics:null }
       ]},
@@ -545,7 +547,7 @@
       ]}
     ]},
     // SolaDrive "Residential IP" line (US-LA, 163 · clean IP, 1Gbps port). FOUR official
-    // options; only SD-4 is our fleet box (benchmarked, perf 88) so it carries metrics and
+    // options; only SD-4 is our fleet box (benchmarked, perf 70) so it carries metrics and
     // stays the default placement (bench:true). The other three are priced-only with linkMbps
     // set so the min-hop bandwidth still resolves (no "pending"). meowvps rates SolaDrive
     // 2nd-tier: recycles IP ranges, some IPs hit Google captcha → variable · degrading.
@@ -553,7 +555,7 @@
       { id:'us-la', name:'US-LA', network:'163 · clean IP', exitNetwork:'163 · clean IP', jumpGia:false, plans:[
         { id:'sola-sd2', label:'SD-2 · 2C·2GB·25GB · 2TB · 1 res-IP',   bench:false, stock:'in', pricing:{ type:'flat', amount:25,  currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'sola-1',   label:'SD-4 · 4C·4GB·50GB · 4TB · 2 res-IP',   bench:true,  stock:'in', pricing:{ type:'flat', amount:40,  currency:'USD' },
-          metrics:{ perf:88, latencyMs:{lo:175,hi:199}, iops:109775, iopsCapped:false, bandwidthMbps:569, hopAddMs:46, route:{ isp:'consumer ISP', purity:'high' } } },
+          metrics:{ perf:70, latencyMs:{lo:175,hi:199}, iops:109775, iopsCapped:false, bandwidthMbps:569, hopAddMs:46, route:{ isp:'consumer ISP', purity:'high' } } },
         { id:'sola-10',  label:'10 VPS · 10×(2GB·25GB) · 10 res-IP · 15TB', bench:false, stock:'in', pricing:{ type:'flat', amount:195, currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'sola-250', label:'250 VPS Node · 24C/48T·512GB·2×8TB · 254 res-IP · 30TB', bench:false, stock:'in', pricing:{ type:'flat', amount:795, currency:'USD' }, linkMbps:1000, metrics:null }
       ]}
@@ -561,7 +563,7 @@
     { id:'aaitr', name:'AaITR', roles:['exit'], recommend:'rec', recNote:'Recommended — 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', purity:{ rating:'excellent', source:'meowvps' }, buyUrl:'https://www.aaitr.com/store/srv', regions:[
       { id:'static', name:'Static residential · 独享', network:'residential', exitNetwork:'residential · AT&T/Frontier', jumpGia:false, plans:[
         { id:'aaitr-att',      label:'US AT&T static · 2C·2GB·25GB · 100M · 2TB', bench:true,  stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' },
-          metrics:{ perf:18, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', purity:'high' } } },
+          metrics:{ perf:12, latencyMs:{lo:137,hi:285}, iops:2018, iopsCapped:true, bandwidthMbps:102, hopAddMs:81, route:{ isp:'AT&T', purity:'high' } } },
         { id:'aaitr-frontier', label:'US Frontier static · 2C·2GB·25GB · 100M · 2TB', bench:false, stock:'out', pricing:{ type:'flat', amount:149, currency:'CNY' }, linkMbps:100, metrics:null }
       ]},
       { id:'nat', name:'Residential NAT · 共享', network:'residential NAT', exitNetwork:'residential NAT · port-forward ×10', jumpGia:false, plans:[
