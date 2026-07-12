@@ -222,7 +222,7 @@
   <div class="wrap">
     <p class="eyebrow">Tool</p>
     <h1>Network Builder</h1>
-    <p class="lede">Assemble a residential-exit VPS network — place a jump host, fan out to one or more residential exits, and get an <strong>instant price and performance estimate</strong> for the whole route. Or score any single box 0–100 further down.</p>
+    <p class="lede">Assemble a VPS network — place a jump host, fan out to residential exits or a datacenter exit like DMIT, and get an <strong>instant price and performance estimate</strong> for the whole route. Or score any single box 0–100 further down.</p>
   </div>
 </header>
 
@@ -231,7 +231,7 @@
   <section class="nbx" id="nbx-board" aria-label="Network builder">
     <div class="prose" style="max-width:none; padding:1rem 1rem 0">
       <h2 style="margin-top:.2rem">Build your network</h2>
-      <p style="margin:.3rem 0 0; color:var(--ink-soft); font-size:.95rem">Place a jump host, then fan out to one or more residential exits — <code>you &rarr; jump &#8649; exit&middot;N &rarr; internet</code>. Boxes <strong>we run</strong> are benchmarked; the rest are listed at their <strong>official price</strong> for comparison. Every number is an <strong>estimate</strong>.</p>
+      <p style="margin:.3rem 0 0; color:var(--ink-soft); font-size:.95rem">Place a jump host, then fan out to one or more exits — <code>you &rarr; jump &#8649; exit&middot;N &rarr; internet</code>. Boxes <strong>we run</strong> are benchmarked; the rest are listed at their <strong>official price</strong> for comparison. Every number is an <strong>estimate</strong>.</p>
     </div>
     <div class="nbx-guard" id="nbx-guardrail">
       <label class="switch">
@@ -245,8 +245,8 @@
       <div class="nbx-col">
         <h3 class="pal-h jump">Jump hosts</h3>
         <div id="nbx-palette-jump" aria-label="Jump host providers"></div>
-        <h3 class="pal-h exit">Residential exits</h3>
-        <div id="nbx-palette-exit" aria-label="Residential exit providers"></div>
+        <h3 class="pal-h exit">Exits</h3>
+        <div id="nbx-palette-exit" aria-label="Exit providers"></div>
         <p class="nbx-hint">Drag a card onto the canvas, tap it, or focus it and press <kbd>Enter</kbd>. Exits append to the fan-out; each has its own <kbd>Delete</kbd>. A box only drops into a slot it fits.</p>
         <p class="nbx-hint" style="margin-top:.5rem"><span style="color:var(--accent-ink);font-weight:700">★</span> marks the providers we recommend — per <a href="https://meowvps.com/blog/resrec/" target="_blank" rel="noopener">meowvps.com</a>&rsquo;s residential roundup &amp; our own use.</p>
       </div>
@@ -438,7 +438,7 @@
   var PROVIDERS = [
     /* ============ JUMP HOSTS — datacenter CN2 GIA ============ */
     { id:'bwh', name:'BandwagonHost', roles:['jump'], recommend:'rec', recNote:'Recommended — our go-to CN2 GIA jump host', buyUrl:'https://bandwagonhost.com/order/ecommerce/Los%20Angeles', regions:[
-      { id:'us-la', name:'US-LA · USCA_9', network:'CN2 GIA', jumpGia:true, plans:[
+      { id:'us-la', name:'US-LA · USCA_9', network:'CN2 GIA', hopOrigin:true, jumpGia:true, plans:[
         { id:'bwh-la-20',   label:'2C · 1GB · 20GB · 1TB (·$49.99/3mo)', bench:false, stock:'in', pricing:{ type:'flat', amount:16.66,  currency:'USD' }, linkMbps:2500, metrics:null },
         { id:'bwh-la-40',   label:'3C · 2GB · 40GB · 2TB',                bench:true,  stock:'in', pricing:{ type:'flat', amount:30,     currency:'USD' },
           metrics:{ perf:59, latencyMs:{lo:129,hi:156}, iops:57318, iopsCapped:false, bandwidthMbps:2280, hopAddMs:0, route:null } },
@@ -478,11 +478,11 @@
     ]},
     // DMIT — CN2 GIA "Pro". Stock is PER-PLAN (checked against a live stock panel + the DMIT site).
     // LA AS3 Pocket + HK AS3 TINY are our two benchmarked relays (2026-07-12); LA is currently out of stock.
-    { id:'dmit', name:'DMIT', roles:['jump'], buyUrl:'https://www.dmit.io/cart.php?network=premium&language=english', regions:[
-      { id:'us-la', name:'US-LA · AS3/AN4/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
+    { id:'dmit', name:'DMIT', roles:['jump','exit'], purity:{ datacenter:true }, buyUrl:'https://www.dmit.io/cart.php?network=premium&language=english', regions:[
+      { id:'us-la', name:'US-LA · AS3/AN4/AN5 Pro', network:'CN2 GIA', exitNetwork:'LA · datacenter', hopOrigin:true, jumpGia:true, plans:[
         { id:'dmit-la-as3-tiny',    label:'AS3 · TINY · 1C/1GB', bench:false, stock:'out', pricing:{ type:'flat', amount:10.90,   currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-la-as3-pocket',  label:'AS3 · POCKET · 2C/2GB', bench:true, stock:'out', pricing:{ type:'flat', amount:16.90,   currency:'USD' },
-          metrics:{ perf:42, latencyMs:{lo:131,hi:199}, iops:23000, iopsCapped:false, bandwidthMbps:964, hopAddMs:0, route:null } },
+          metrics:{ perf:42, latencyMs:{lo:131,hi:199}, iops:23000, iopsCapped:false, bandwidthMbps:964, hopAddMs:1, route:{ isp:'DMIT · datacenter', purity:'datacenter' } } },
         { id:'dmit-la-as3-starter', label:'AS3 · STARTER',       bench:false, stock:'out', pricing:{ type:'flat', amount:34.90,   currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-la-as3-mini',    label:'AS3 · MINI',          bench:false, stock:'out', pricing:{ type:'flat', amount:62.90,   currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-la-as3-micro',   label:'AS3 · MICRO',         bench:false, stock:'out', pricing:{ type:'flat', amount:87.90,   currency:'USD' }, linkMbps:1000, metrics:null },
@@ -499,8 +499,7 @@
         { id:'dmit-la-an5-giant',   label:'AN5 · GIANT',         bench:false, stock:'out', pricing:{ type:'flat', amount:1009.90, currency:'USD' }, linkMbps:1000, metrics:null }
       ]},
       { id:'hk', name:'Hong Kong · AS3/AN5 Pro', network:'CN2 GIA', jumpGia:true, plans:[
-        { id:'dmit-hk-as3-tiny',    label:'AS3 · TINY · 1C/1GB',      bench:true, stock:'in', pricing:{ type:'flat', amount:39.90,  currency:'USD' },
-          metrics:{ perf:36, latencyMs:{lo:12,hi:98}, iops:23000, iopsCapped:false, bandwidthMbps:846, hopAddMs:0, route:null } },
+        { id:'dmit-hk-as3-tiny',    label:'AS3 · TINY · 1C/1GB',      bench:false, stock:'in', pricing:{ type:'flat', amount:39.90,  currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-hk-as3-starter', label:'AS3 · STARTER',           bench:false, stock:'in', pricing:{ type:'flat', amount:79.90,  currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-hk-as3-mini',    label:'AS3 · MINI',              bench:false, stock:'in', pricing:{ type:'flat', amount:126.90, currency:'USD' }, linkMbps:1000, metrics:null },
         { id:'dmit-hk-as3-micro',   label:'AS3 · MICRO',             bench:false, stock:'in', pricing:{ type:'flat', amount:179.90, currency:'USD' }, linkMbps:1000, metrics:null },
@@ -722,7 +721,7 @@
     } else {
       exits.forEach(function(ex, i){
         var jmm = jump && jump.plan.metrics, em = ex.plan.metrics;
-        var lat = (jmm && em) ? { lo:jmm.latencyMs.lo, hi:jmm.latencyMs.lo + (em.hopAddMs||0) }
+        var lat = (jmm && em && jump.region.hopOrigin) ? { lo:jmm.latencyMs.lo, hi:jmm.latencyMs.lo + (em.hopAddMs||0) }
                 : (em ? { lo:em.latencyMs.lo, hi:em.latencyMs.hi } : null);
         edges.push({ kind:'link', from: jump?jump.provider.name:'—', to: ex.provider.name,
           latency: lat,
@@ -794,19 +793,27 @@
       } else {
         var PURITY_RANK = { variable:0, good:1, excellent:2 };
         var pus = exits.map(function(ex){ return ex.provider.purity || {}; });
-        var worst = null, degrading = false, unrated = false;
+        var worst = null, degrading = false, unrated = false, hasDatacenter = false, ratedCount = 0;
         pus.forEach(function(q){
-          if(q.rating){
+          if(q.datacenter){ hasDatacenter = true; }         // datacenter exit (e.g. DMIT) — egress is a hosting IP, not residential
+          else if(q.rating){
+            ratedCount++;
             if(worst===null || PURITY_RANK[q.rating] < PURITY_RANK[worst]) worst = q.rating;
             if(q.degrading) degrading = true;
           } else { unrated = true; }
         });
-        ipPurity = {
-          rating: worst,
-          degrading: degrading && worst==='variable',
-          hasUnrated: unrated,
-          count: exits.length
-        };
+        if(hasDatacenter && ratedCount===0 && !unrated){
+          // every exit egresses a datacenter IP → the whole path lands on hosting IPs
+          ipPurity = { datacenter:true, count: exits.length };
+        } else {
+          ipPurity = {
+            rating: worst,
+            degrading: degrading && worst==='variable',
+            hasUnrated: unrated,
+            hasDatacenter: hasDatacenter,
+            count: exits.length
+          };
+        }
       }
     }
 
@@ -875,7 +882,7 @@
     var badge = providerBench(p) ? '<span class="badge bench">benchmarked</span>' : '<span class="badge notbench">not benchmarked</span>';
     if(role==='jump') badge += reg.jumpGia ? ' <span class="badge gia">CN2 GIA</span>' : ' <span class="badge i163">163 · non-GIA</span>';
     return '<button class="pcard" type="button" draggable="true" data-id="'+p.id+'" data-role="'+role+'" '+
-      'aria-label="Add '+esc(p.name)+' as '+(role==='jump'?'jump host':'residential exit')+(both?' (fits both roles)':'')+'">'+
+      'aria-label="Add '+esc(p.name)+' as '+(role==='jump'?'jump host':'exit')+(both?' (fits both roles)':'')+'">'+
       '<span class="pc-top"><span class="nm">'+esc(p.name)+'</span>'+roleTag+recBadge(p)+'</span>'+
       '<span class="sp">'+esc(sub)+'</span>'+
       '<span class="pc-foot"><span>'+badge+'</span><span class="pr">'+(hp.from?'from ':'')+priceShort(pl.pricing)+'</span></span>'+
@@ -958,7 +965,7 @@
     return h+'</div>';
   }
   function addExitTarget(){
-    return '<div class="addexit" data-drop="exit" role="button" tabindex="0" aria-label="Add a residential exit to the fan-out. Drop or activate a compatible provider.">+ add residential exit<span>drop · tap · ⏎</span></div>';
+    return '<div class="addexit" data-drop="exit" role="button" tabindex="0" aria-label="Add an exit to the fan-out. Drop or activate a compatible provider.">+ add exit<span>drop · tap · ⏎</span></div>';
   }
 
   function paintCanvas(est){
@@ -981,16 +988,16 @@
         var rows = '';
         exits.forEach(function(ex, i){ rows += '<div class="branch">'+exitSlot(ex,i,exits.length)+conn('')+ipNode(i)+'</div>'; });
         rows += '<div class="branch">'+addExitTarget()+'</div>';
-        html += '<div class="branches" aria-label="Residential exits — fan-out from the jump host">'+rows+'</div>';
+        html += '<div class="branches" aria-label="Exits — fan-out from the jump host">'+rows+'</div>';
       }
     }
     els.canvas.innerHTML = html+'</div>';
   }
   function paintNotice(est){
     var jump = resolveNode(state.jump), n='';
-    if(!jump) n = '<div class="notice info">Start by connecting a <b>jump host</b> — the required entry box. Then fan out to one or more residential exits.</div>';
+    if(!jump) n = '<div class="notice info">Start by connecting a <b>jump host</b> — the required entry box. Then fan out to one or more exits.</div>';
     else if(est.gating.entryBlocked) n = '<div class="notice">⚠ <b>'+esc(jump.provider.name)+'</b> reaches China over <b>'+esc(netOf(jump,'jump'))+'</b>, not CN2 GIA. From the mainland this route is slow or blocked — <b>pick a CN2 GIA box</b> (BandwagonHost / DMIT / VMISS).</div>';
-    else if(state.exits.length===0) n = '<div class="notice ok">Single-host network — egress on the jump host’s datacenter IP. Add residential exits to fan out, or keep it to run a service here.</div>';
+    else if(state.exits.length===0) n = '<div class="notice ok">Single-host network — egress on the jump host’s datacenter IP. Add exits to fan out, or keep it to run a service here.</div>';
     els.notice.innerHTML = n;
   }
   function paintEdges(est){
@@ -1068,12 +1075,13 @@
     var pu = est.purity, puHtml;
     if(!pu) puHtml = '—';
     else if(pu.datacenter) puHtml = 'datacenter IP<span class="u"> · no residential exit</span>';
-    else if(!pu.rating) puHtml = '—<span class="u"> · unrated</span>';
+    else if(!pu.rating) puHtml = '—<span class="u"> · unrated'+(pu.hasDatacenter?' · +datacenter':'')+'</span>';
     else {
       // colour by aggregate (worst) rating — matches the worst-of value ⑥ shows.
       var puLvl = purityLevel(pu.rating);
+      if(pu.hasDatacenter) puLvl = 'mid';   // a datacenter egress in the mix pulls the light down to amber — not every IP is residential
       var puText = esc(pu.rating)+(pu.rating==='variable' && pu.degrading ? ' · degrading' : '');
-      var puTag = '<span class="u"> · ref · meowvps'+(pu.hasUnrated?' · +unrated':'')+'</span>';
+      var puTag = '<span class="u"> · ref · meowvps'+(pu.hasUnrated?' · +unrated':'')+(pu.hasDatacenter?' · +datacenter':'')+'</span>';
       puHtml = puLvl
         ? '<span class="pdot pdot-'+puLvl+'" aria-hidden="true">●</span>'+
           '<span class="ptext ptext-'+puLvl+'">'+puText+'</span>'+puTag
@@ -1085,7 +1093,7 @@
       '<div class="breakdown">'+(lineHtml||'connect a box')+(multi?'<br><b>= '+money(p.monthlyUSD)+'/mo</b> total':'')+'</div>'+
       '<div class="egress">◉ egress: '+egress+'</div>'+
       '<div class="row"><span class="k"><span class="i">②</span> Latency'+(nIP>1?' <span class="u">(across exits)</span>':'')+'</span><span class="v">'+latHtml+'</span></div>'+
-      (est.latency && est.latency.illustrative ? '<div class="breakdown">entry RTT measured · +private-hop upper bound illustrative</div>' : '')+
+      (est.latency && est.latency.illustrative ? '<div class="breakdown">entry RTT measured · +private-hop illustrative composite</div>' : '')+
       '<div class="row"><span class="k"><span class="i">③</span> I/O disk'+(nIP>1?' <span class="u">(min)</span>':'')+'</span><span class="v">'+ioHtml+'</span></div>'+
       '<div class="row"><span class="k"><span class="i">④</span> Bandwidth</span><span class="v">'+bwHtml+'</span></div>'+
       '<div class="row"><span class="k"><span class="i">⑤</span> Route quality</span><span class="v" style="font-size:.72rem">'+routeHtml+'</span></div>'+
@@ -1108,10 +1116,10 @@
   /* ---- actions (the only mutators) ---- */
   function place(providerId, role){
     var p = findProvider(providerId); if(!p) return;
-    if(p.roles.indexOf(role)<0){ announce(p.name+' can’t be a '+(role==='jump'?'jump host':'residential exit')+'.'); return; }
+    if(p.roles.indexOf(role)<0){ announce(p.name+' can’t be a '+(role==='jump'?'jump host':'exit')+'.'); return; }
     if(role==='jump'){ state.jump = defaultRef(providerId); pendingFocus = '[data-node="jump"]'; render(); announce('Connected '+p.name+' as jump host. '+estText(estimate(state))); }
     else {
-      if(!state.jump){ announce('Add a jump host first — it’s the required entry box. Then fan out to residential exits.'); return; }  // HIGH-1: no exits without a jump
+      if(!state.jump){ announce('Add a jump host first — it’s the required entry box. Then fan out to exits.'); return; }  // HIGH-1: no exits without a jump
       state.exits.push(defaultRef(providerId)); var idx = state.exits.length-1; pendingFocus = '[data-node="exit"][data-idx="'+idx+'"]'; render(); announce('Added '+p.name+' as exit '+state.exits.length+'. '+estText(estimate(state)));
     }
   }
@@ -1166,7 +1174,7 @@
       var filled = t.closest('.slot.filled');
       if(filled && (ev.key==='Delete'||ev.key==='Backspace')){ ev.preventDefault(); remove(filled.getAttribute('data-node')==='jump'?'jump':'exit', filled.dataset.idx?parseInt(filled.dataset.idx,10):0); return; }
       var drop = t.closest('.slot[data-drop], .addexit');
-      if(drop && (ev.key==='Enter'||ev.key===' ')){ ev.preventDefault(); announce(drop.getAttribute('data-drop')==='jump'?'To add a jump host, activate a jump-host card in the palette.':'To add an exit, activate a residential-exit card in the palette; it appends here.'); return; }
+      if(drop && (ev.key==='Enter'||ev.key===' ')){ ev.preventDefault(); announce(drop.getAttribute('data-drop')==='jump'?'To add a jump host, activate a jump-host card in the palette.':'To add an exit, activate an exit card in the palette; it appends here.'); return; }
     });
     els.board.addEventListener('dragstart', function(ev){ var card = ev.target.closest && ev.target.closest('.pcard'); if(!card) return; card.classList.add('dragging'); ev.dataTransfer.setData('text/plain', card.dataset.id+'|'+card.dataset.role); ev.dataTransfer.effectAllowed='copy'; });
     els.board.addEventListener('dragend', function(ev){ var card = ev.target.closest && ev.target.closest('.pcard'); if(card) card.classList.remove('dragging'); });
@@ -1178,7 +1186,7 @@
       z.classList.remove('over');
       var id = (ev.dataTransfer.getData('text/plain')||'').split('|')[0], role = z.getAttribute('data-drop'); if(!id) return;
       if(compatible(id,role)){ z.classList.remove('reject'); place(id,role); }
-      else { z.classList.add('reject'); setTimeout(function(){ z.classList.remove('reject'); }, 450); var pp=findProvider(id); announce((pp?pp.name:'That box')+' can’t be a '+(role==='jump'?'jump host':'residential exit')+'.'); } });
+      else { z.classList.add('reject'); setTimeout(function(){ z.classList.remove('reject'); }, 450); var pp=findProvider(id); announce((pp?pp.name:'That box')+' can’t be a '+(role==='jump'?'jump host':'exit')+'.'); } });
     els.toggle.addEventListener('change', function(ev){ state.gatingOn = ev.target.checked; render(); announce(state.gatingOn?'China gating on. Entry must be CN2 GIA.':'China gating off.'); });
   }
 
