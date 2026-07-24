@@ -83,6 +83,7 @@
   .nbx .badge.notbench{background:var(--card); color:var(--warn-ink); border:1px dashed var(--warn)}
   .nbx .badge.gia{background:var(--accent-bg); color:var(--accent-ink); border:1px solid var(--accent)}
   .nbx .badge.i163{background:var(--paper-2); color:var(--ink-2); border:1px solid var(--line-2)}
+  .nbx .badge.iplc{background:#fbf7ee; color:#8a5a10; border:1px solid #c47d12}
   .nbx .badge.out{background:var(--warn-bg); color:var(--warn-ink); border:1px solid var(--warn)}
   /* recommendation badges — ★ Top pick (accent-filled standout) + ★ Recommended (accent-tinted) */
   .nbx .badge.rec{background:var(--accent-bg); color:var(--accent-ink); border:1px solid var(--accent); font-weight:700}
@@ -529,6 +530,28 @@
         { id:'vmiss-ultra', label:'Ultra · 4C/8GB · 80GB · 2800GB', bench:false, stock:'out', pricing:{ type:'flat', amount:75, currency:'CAD' }, linkMbps:1000, metrics:null }
       ]}
     ]},
+    /* ============ JUMP HOST — 沪美 IPLC (private leased circuit) ============ */
+    { id:'iplc', name:'IPLC 沪美', roles:['jump'], recNote:'A private Shanghai↔US leased circuit — the steadiest China route (a dedicated line that bypasses the GFW), but province-locked & premium-priced. Niche direct-purchase (no public order page).', groupLabel:'Line', regions:[
+      { id:'mkcloud', name:'mkcloud · Shanghai-Telecom in / US-BGP out (Nearoute)', network:'IPLC 沪美 · Shanghai Telecom', iplc:true, hopOrigin:true, plans:[
+        { id:'iplc-mk-100g', label:'1C·2GB·20GB · 100GB/mo · 150M peak', bench:false, stock:'out', pricing:{ type:'flat', amount:198, currency:'CNY' }, linkMbps:150, metrics:null },
+        { id:'iplc-mk-500g', label:'1C·2GB·20GB · 500GB/mo · 150M peak', bench:false, stock:'out', pricing:{ type:'flat', amount:258, currency:'CNY' }, linkMbps:150, metrics:null },
+        { id:'iplc-mk-1t', label:'1C·2GB·20GB · 1TB/mo · 200M peak', bench:false, stock:'in', pricing:{ type:'flat', amount:428, currency:'CNY' }, linkMbps:200, metrics:null },
+        { id:'iplc-mk-2t', label:'2C·4GB·40GB · 2TB/mo · 300M peak (benchmarked)', bench:true, stock:'in', pricing:{ type:'flat', amount:698, currency:'CNY' },
+          metrics:{ perf:40, latencyMs:{lo:141,hi:170}, iops:79200, iopsCapped:false, bandwidthMbps:100, hopAddMs:0, route:null } },
+        { id:'iplc-mk-4t', label:'2C·4GB·40GB · 4TB/mo · 300M peak', bench:false, stock:'in', pricing:{ type:'flat', amount:1258, currency:'CNY' }, linkMbps:300, metrics:null },
+        { id:'iplc-mk-6t', label:'4C·8GB·60GB · 6TB/mo · 500M peak', bench:false, stock:'in', pricing:{ type:'flat', amount:1758, currency:'CNY' }, linkMbps:500, metrics:null },
+        { id:'iplc-mk-10t', label:'4C·8GB·60GB · 10TB/mo · 500M peak', bench:false, stock:'in', pricing:{ type:'flat', amount:2888, currency:'CNY' }, linkMbps:500, metrics:null }
+      ]},
+      { id:'heptasky', name:'heptasky · UCloud SH-BGP in / UCloud LA-BGP out (real LA exit · 99.9% SLA)', network:'IPLC 沪美 · UCloud BGP', iplc:true, hopOrigin:true, plans:[
+        { id:'iplc-hep-8m',   label:'8Mbps 特惠款 · 2C·2GB VDS · dedicated/unmetered · real LA exit (benchmarked)', bench:true, stock:'in', pricing:{ type:'flat', amount:130, currency:'USD' },
+          metrics:{ perf:25, latencyMs:{lo:124,hi:134}, iops:2900, iopsCapped:false, bandwidthMbps:8, hopAddMs:0, route:null } },
+        { id:'iplc-hep-5m',   label:'5Mbps · 2C·2GB VDS · dedicated/unmetered',   bench:false, stock:'in', pricing:{ type:'flat', amount:130,  currency:'USD' }, linkMbps:5,   metrics:null },
+        { id:'iplc-hep-10m',  label:'10Mbps · 2C·2GB VDS · dedicated/unmetered',  bench:false, stock:'in', pricing:{ type:'flat', amount:260,  currency:'USD' }, linkMbps:10,  metrics:null },
+        { id:'iplc-hep-20m',  label:'20Mbps · 2C·2GB VDS · dedicated/unmetered',  bench:false, stock:'in', pricing:{ type:'flat', amount:520,  currency:'USD' }, linkMbps:20,  metrics:null },
+        { id:'iplc-hep-50m',  label:'50Mbps · 2C·2GB VDS · dedicated/unmetered',  bench:false, stock:'in', pricing:{ type:'flat', amount:1250, currency:'USD' }, linkMbps:50,  metrics:null },
+        { id:'iplc-hep-100m', label:'100Mbps · 2C·2GB VDS · dedicated/unmetered', bench:false, stock:'in', pricing:{ type:'flat', amount:2430, currency:'USD' }, linkMbps:100, metrics:null }
+      ]}
+    ]},
     /* ============ RESIDENTIAL EXITS ============ */
     { id:'virvm', name:'VirVM', roles:['exit'], recommend:'top', recNote:'Top pick — our #1 US-West residential provider; 5/5 in meowvps.com’s residential roundup', groupLabel:'Product', cycles:true, purity:{ rating:'excellent', source:'meowvps' }, buyUrl:'https://www.vircs.com/products/2', regions:[
       { id:'res', name:'Residential · 节点K', network:'residential', exitNetwork:'residential · trusted-IP', jumpGia:false, plans:[
@@ -655,7 +678,7 @@
     return { provider:p, region:reg, plan:pl, cycle:(ref.cycle!=null?ref.cycle:(p.cycles?1:null)) };
   }
   function netOf(node, role){ var r=node.region; return role==='exit' ? (r.exitNetwork||r.network) : r.network; }
-  function giaOf(node){ return !!node.region.jumpGia; }
+  function giaOf(node){ return !!(node.region.jumpGia || node.region.iplc); }
 
   /* ---------- price fold-in ---------- */
   // Cycle suffix for a price line label (only when a non-default cycle is selected).
@@ -705,7 +728,7 @@
     var edges = [];
     if(jump){
       var jm = jump.plan.metrics;
-      edges.push({ kind:'entry', from:'you', to:jump.provider.name, gia:gia, gated:gated,
+      edges.push({ kind:'entry', from:'you', to:jump.provider.name, gia:gia, iplc:!!(jump.region&&jump.region.iplc), gated:gated,
         latency: jm ? { lo:jm.latencyMs.lo, hi:jm.latencyMs.hi } : null,
         bandwidthMbps: jm ? bwOf(jump) : null,
         io: jm ? { iops:jm.iops, capped:!!jm.iopsCapped } : null,
@@ -880,7 +903,7 @@
     var both = p.roles.length>1;
     var roleTag = '<span class="role '+(both?'both':(role==='exit'?'ex':''))+'">'+(both?'JUMP + EXIT':(role==='jump'?'JUMP':'EXIT'))+'</span>';
     var badge = providerBench(p) ? '<span class="badge bench">benchmarked</span>' : '<span class="badge notbench">not benchmarked</span>';
-    if(role==='jump') badge += reg.jumpGia ? ' <span class="badge gia">CN2 GIA</span>' : ' <span class="badge i163">163 · non-GIA</span>';
+    if(role==='jump') badge += reg.iplc ? ' <span class="badge iplc">IPLC · 沪美</span>' : (reg.jumpGia ? ' <span class="badge gia">CN2 GIA</span>' : ' <span class="badge i163">163 · non-GIA</span>');
     return '<button class="pcard" type="button" draggable="true" data-id="'+p.id+'" data-role="'+role+'" '+
       'aria-label="Add '+esc(p.name)+' as '+(role==='jump'?'jump host':'exit')+(both?' (fits both roles)':'')+'">'+
       '<span class="pc-top"><span class="nm">'+esc(p.name)+'</span>'+roleTag+recBadge(p)+'</span>'+
@@ -937,6 +960,7 @@
       '<span class="fnm"><span class="fnm-l">'+esc(p.name)+recBadge(p)+'</span><button class="x" type="button" data-remove="jump" aria-label="Remove '+esc(p.name)+'">×</button></span>'+
       '<span class="fsub">'+esc(netOf(node,'jump'))+(pl.metrics?' · perf '+pl.metrics.perf:'')+benchTag(pl)+stockBadge(pl)+'</span>';
     if(state.gatingOn && !giaOf(node)) h += '<span class="badge i163" style="margin-top:.3rem">'+esc(netOf(node,'jump'))+' · non-GIA entry</span>';
+    else if(node.region.iplc) h += '<span class="badge iplc" style="margin-top:.3rem">沪美 IPLC · Shanghai-province-locked</span>';
     h += configurator(node,'jump');
     if(p.cycles) h += cycleUI('jump');   // a cycle-billed provider as jump gets the cycle selector
     h += buyLink(node);
@@ -1007,7 +1031,7 @@
     est.edges.forEach(function(e){
       if(e.kind==='entry'){
         var line = (e.latency ? e.latency.lo+'–'+e.latency.hi+' ms · ' : '') +
-          (e.gia ? 'CN2 GIA ✓' : (esc(entryNet)+' · non-GIA'+(e.gated?' — gated':''))) +
+          (e.iplc ? esc(entryNet)+' ✓ (private circuit)' : (e.gia ? 'CN2 GIA ✓' : (esc(entryNet)+' · non-GIA'+(e.gated?' — gated':'')))) +
           (e.benchmarked ? '' : ' · not benchmarked');
         h += '<div class="edgerow entry'+(e.gated?' red':'')+'"><div class="ehead">'+esc(e.from)+' → '+esc(e.to)+'</div><div class="emetrics">'+line+'</div></div>';
       } else if(e.kind==='tail'){
